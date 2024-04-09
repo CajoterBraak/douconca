@@ -13,9 +13,8 @@
 #' @param facet logical. Default \code{TRUE} for CWMs and SNCs plots in separate panels.
 #' This parameter changes the position of the centroid names (from left to right for the environmental
 #' centroids).
-#' If \code{facet = TRUE} and \code{with_lines = TRUE}, the line fits ignore groups of species and of sites.
-#' @param with_lines logical. Default \code{FALSE}. TRUE for straight lines though groups of points.
-#' \code{traitfactor = NA} and \code{envfactor = NA}. Centroids are not displayed in this case.
+#' If \code{facet = FALSE} and \code{with_lines = TRUE}, the line fits ignore groups of species and of sites.
+#' @param with_lines logical. Default \code{TRUE} for straight lines though groups of points.
 #' @param nspecies integer. Default \code{20} for including a vertical species plot
 #' with at most \code{nspecies} that have the highest contribution.
 #' @param species_groups name of a variable in \code{dataTraits} of \code{\link{dc_CA_vegan}}. Default \code{NULL}
@@ -31,7 +30,8 @@
 #' \code{myplot <- plot_dcCA(object)}, and then consult \code{myplot$name.list$newnames} for the
 #' order of the names of traits and environmental variables. Note that covariates should not be in the
 #' list of names.
-#' Contribution (in the definition of species selection in \code{nspecies}) is defined (as in CA) as the total species abundance in the closed data
+#' Contribution (in the definition of species selection in \code{nspecies}) is defined
+#' (as in CA) as the total species abundance in the closed data
 #' multiplied by the square of the score on the axis.
 #'
 #' If the \code{plot_dcCA} returns the error \code{"Error in grid.Call"}, enlarge the plotting area or
@@ -44,7 +44,7 @@ plot_dcCA <- function(object, axis=1,
         gradient_description= "correlation",
         envfactor=NULL, traitfactor=NULL, nspecies=20, species_groups= NULL, widths = c(5,1,1),
         #size.centroids = 1,
-        newnames = NULL, facet = TRUE, remove.centroids=FALSE, with_lines = FALSE, verbose = TRUE){
+        newnames = NULL, facet = TRUE, remove.centroids=FALSE, with_lines = TRUE, verbose = TRUE){
 
 stats_vals = c("regression","weights","correlations","tvalues", "inter_set_correlation")
 if (length(gradient_description)==1) {

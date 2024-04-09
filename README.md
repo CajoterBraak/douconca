@@ -3,7 +3,7 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
- douconca analyzes multi-trait multi-environment ecological data by
+R library \code{douconca} analyzes multi-trait multi-environment ecological data by
 double constrained correspondence analysis (ter Braak et al. 2018) 
 using \code{vegan} and native R code. It has a \code{formula} interface
 for the trait- (column-) and environment- (row-) models,

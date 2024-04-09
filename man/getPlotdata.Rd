@@ -3,7 +3,7 @@
 \name{getPlotdata}
 \alias{getPlotdata}
 \title{Utility function: extracting data from a \code{\link{dc_CA_vegan}} object for plotting
- A Single Axis.}
+ a single axis.}
 \usage{
 getPlotdata(
   object,
@@ -51,7 +51,7 @@ rownames(dune_trait_env$comm) <- dune_trait_env$comm$Sites
 # must delete "Sites" from response matrix or data frame
 Y <- dune_trait_env$comm[,-1] # must delete "Sites"
 
-out <- dc_CA_vegan(formulaEnv = ~A1+Moist+Use+Manure+Condition(Mag),
+out <- dc_CA_vegan(formulaEnv = ~A1+Moist+Use+Manure+Mag,
                    formulaTraits = ~ SLA + Height + LDMC + Seedmass +Lifespan,
                    response = Y,
                    dataEnv =dune_trait_env$envir,

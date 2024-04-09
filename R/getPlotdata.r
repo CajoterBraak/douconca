@@ -1,5 +1,5 @@
 #'  Utility function: extracting data from a \code{\link{dc_CA_vegan}} object for plotting
-#'  A Single Axis.
+#'  a single axis.
 #' @description
 #'  \code{getPlotdata} extracts data from a \code{\link{dc_CA_vegan}} object for plotting the
 #' CWMs and SNCs of a single axis.

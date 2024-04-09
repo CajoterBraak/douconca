@@ -70,9 +70,12 @@ anova.dccav <- function(object, permutations = 999, by = NULL){
   if (is.null(by)) by <- "omnibus"
   if (is.na(pmatch(by, c("axis","omnibus")) )) stop(" set argument 'by' to 'axis' or 'NULL'")
 
-  if (length(permutations)==1) permutations <- as.list(rep(permutations,2)) else
-    if (!is.list(permutations)&& !length(permutations)==2) stop("permutations must be an integer of a list of 2 elements")
+  if (length(permutations)==1)  permutations <- as.list(rep(permutations,2)) else
+    if (!("list"%in% class(permutations)) ) stop("permutations must be a list of 2 elements specifying species and site permutations")
 
+  for (k in 1:2){
+    if (!(is.numeric(permutations[[k]])||"how" %in% class(permutations[[k]])))stop("permutations must be an integer of a list of 2 elements (numbers or of class how)")
+  }
 
     f_species0 <- anova_species(object, by = by, permutations = permutations[[1]]) #
 

@@ -16,7 +16,7 @@ plot_dcCA(
   newnames = NULL,
   facet = TRUE,
   remove.centroids = FALSE,
-  with_lines = FALSE,
+  with_lines = TRUE,
   verbose = TRUE
 )
 }
@@ -57,13 +57,12 @@ names derived from the result of \code{\link{scores.dccav}} with \code{tidy=TRUE
 \item{facet}{logical. Default \code{TRUE} for CWMs and SNCs plots in separate panels.
 This parameter changes the position of the centroid names (from left to right for the environmental
 centroids).
-If \code{facet = TRUE} and \code{with_lines = TRUE}, the line fits ignore groups of species and of sites.}
+If \code{facet = FALSE} and \code{with_lines = TRUE}, the line fits ignore groups of species and of sites.}
 
 \item{remove.centroids}{logical to remove any centroids from the plot data (default \code{FALSE}).
 Can be a two-vector, \emph{e.g.} \code{c(TRUE, FALSE)} to remove only the environmental centroids.}
 
-\item{with_lines}{logical. Default \code{FALSE}. TRUE for straight lines though groups of points.
-\code{traitfactor = NA} and \code{envfactor = NA}. Centroids are not displayed in this case.}
+\item{with_lines}{logical. Default \code{TRUE} for straight lines though groups of points.}
 
 \item{verbose}{logical. Default \code{TRUE} for plotting the result.}
 }
@@ -79,7 +78,8 @@ If you want to set new names, look at the names with all arguments default, i.e.
 \code{myplot <- plot_dcCA(object)}, and then consult \code{myplot$name.list$newnames} for the
 order of the names of traits and environmental variables. Note that covariates should not be in the
 list of names.
-Contribution (in the definition of species selection in \code{nspecies}) is defined (as in CA) as the total species abundance in the closed data
+Contribution (in the definition of species selection in \code{nspecies}) is defined
+(as in CA) as the total species abundance in the closed data
 multiplied by the square of the score on the axis.
 
 If the \code{plot_dcCA} returns the error \code{"Error in grid.Call"}, enlarge the plotting area or
@@ -93,7 +93,7 @@ rownames(dune_trait_env$comm) <- dune_trait_env$comm$Sites
 # must delete "Sites" from response matrix or data frame
 Y <- dune_trait_env$comm[,-1] # must delete "Sites"
 
-out <- dc_CA_vegan(formulaEnv = ~A1+Moist+Use+Manure+Condition(Mag),
+out <- dc_CA_vegan(formulaEnv = ~A1+Moist+Use+Manure+Mag,
                    formulaTraits = ~ SLA + Height + LDMC + Seedmass +Lifespan,
                    response = Y,
                    dataEnv =dune_trait_env$envir,

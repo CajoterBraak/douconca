@@ -24,8 +24,7 @@
 plot_dcCA_CWM_SNC <- function(object, axis=1, envfactor=NULL, traitfactor=NULL, #size.centroids = 1,
          facet = TRUE, newnames = NULL, remove.centroids=FALSE, with_lines = TRUE, getPlotdata2plotdCCA=NULL){
 
-# todo: outcomment if weight in smooth and extra band problems have been solved
-if (facet) with_lines <- FALSE
+
 if (is.null(getPlotdata2plotdCCA)){
 scorepair<- getPlotdata(object, axis=axis, envfactor=envfactor, traitfactor=traitfactor,
            newnames = newnames,              # size.centroids=size.centroids,
@@ -42,18 +41,13 @@ pp2<- ggplot2::ggplot(data= scorepair, ggplot2::aes(x = .data[[namaxis]], y = .d
   ggplot2::ylab("")+
   ggplot2::scale_size(guide="none")
 
-if (facet) pp2 <- pp2+ ggplot2::facet_grid(type~., switch = "y" )+ggplot2::scale_y_continuous(position = "right")
-
-#mylm <- function(fitweights, ...){stats::lm(formula= y~x, weights = fitweights,...)}
+if (facet) pp2 <- pp2+ ggplot2::facet_grid(type~., switch = "y" )+ggplot2::scale_y_continuous(position = "right") else pp2 <- pp2 + ggplot2::ylab("CWM and SNC")
 
 if (with_lines){
-  #if (sum(remove.centroids)==0 && !facet)
-  if (facet)  pp2 <-  pp2 +  ggplot2::geom_smooth(ggplot2::aes(x= .data[["xforsmooth"]]),
-              linewidth = 1, method = stats::lm, na.rm=TRUE)#+ scale_shape(guide="none")# ,
-                                        # method.args = list(weight = scorepair[["smoothweight"]]))
+  if (facet)  pp2 <-  pp2 +  ggplot2::geom_smooth(ggplot2::aes(x= .data[["xforsmooth"]],group=.data[["groups"]], weight = weight),
+              linewidth = 1, method = stats::lm, na.rm=TRUE)
     else
-    pp2 <-  pp2 +  ggplot2::geom_smooth(ggplot2::aes(x= .data[["xforsmooth"]],group=.data[["type"]]),linewidth = 1, method = stats::lm, na.rm=TRUE)
-                           #  method.args = list(weight = scorepair[["smoothweight"]]))
+    pp2 <-  pp2 +  ggplot2::geom_smooth(ggplot2::aes(x= .data[["xforsmooth"]],group=.data[["type"]], weight = weight),linewidth = 1, method = stats::lm, na.rm=TRUE)
 }
 
 TraitEnvINcondition <- attr(scorepair,"condition")
