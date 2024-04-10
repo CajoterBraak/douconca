@@ -114,9 +114,15 @@ if(is.null(qrZ)) Zw <- matrix(sWn) else  Zw<-  cbind(sWn, SVD(qr.X(qrZ)))
 
   F0 <-c(sapply(out_tes, function(x)x$F0[1]),NA)
   F.perm <- out_tes[[1]]$Fval
+  R2.perm <- out_tes[[1]]$R2.perm
   if (length(out_tes)>1){
-    for (k in seq_along(out_tes)[-1]) F.perm <- cbind(F.perm, out_tes[[k]]$Fval )
+    for (k in seq_along(out_tes)[-1]) {
+      F.perm <- cbind(F.perm, out_tes[[k]]$Fval )
+      R2.perm <- cbind(R2.perm,  out_tes[[k]]$R2.perm)
+    }
   }
+
+
 
 
   p_val_axes1 <- c(cummax(sapply(out_tes, function(x)x$pval[1])),NA)
@@ -138,6 +144,7 @@ if(is.null(qrZ)) Zw <- matrix(sWn) else  Zw<-  cbind(sWn, SVD(qr.X(qrZ)))
                         Random.seed =   attr(out_tes[[1]],"seed"),
                         control = attr(out_tes[[1]],"control"),
                         F.perm = F.perm,
+                        R2.perm = R2.perm,
                         class = c("anova.cca", "anova", "data.frame"))
 
   result <- list(table = f_species, eig = eig)
@@ -241,7 +248,7 @@ randperm_eX0sqrtw <- function(Y,X, Z = matrix(1, nrow = nrow(Y),ncol =1), by= NU
     res <- list(pval = pval, Fval = Fval, F0 = F0,
               ss = c(Model= ssX, Residual = sstot-ssX),
               df = c(Model = qr(eX)$rank, Residual = nrow(eY)- ncol(Z_orth)- p_eX ),
-              rank = rank,
+              rank = rank, R2.perm = ssX_perm/sstot,
               eig = eig, EigVector1 = EigVector1)
     if (is.matrix(permutations)){
             attr(perm.mat, "control") <-

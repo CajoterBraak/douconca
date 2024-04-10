@@ -172,7 +172,7 @@ p_sites   <- anova(mod$RDAonEnv, by = "axis")
 # a species-level permutation test required an dedicated new function
 # anova_species(mod) # see dune_test.r
 
-mod_scores <- scores(mod, display = c("all"), scaling = "sym")
+mod_scores <- vegan::scores(mod, display = c("all"), scaling = "sym")
 
 
 (meaning <- lapply(mod_scores, function(x)attr(x,which = "meaning")))
@@ -190,7 +190,7 @@ mod_scores$biplot_traits
 mod_scores$centroids_traits
 
 
-mod_scores_tidy <- scores(mod, display = "all", tidy = TRUE)
+mod_scores_tidy <- vegan::scores(mod, display = "all", tidy = TRUE)
 names(mod_scores_tidy)
 levels(mod_scores_tidy$score)
 
@@ -218,7 +218,7 @@ mod3B <- dc_CA_vegan(formulaEnv = ~A1+Moist+Use+Manure+Condition(Mag),
                     verbose = TRUE)
 all.equal(mod3,mod3B) # TRUE
 
-mod_scores <- scores(mod3, display = "all", scaling = "symmetric")
+mod_scores <- vegan::scores(mod3, display = "all", scaling = "symmetric")
 str(mod_scores)
 
 
@@ -240,7 +240,7 @@ mod_scores$centroids_traits
 
 
 
-mod_scores <- scores(mod3, display = "all", tidy = TRUE)
+mod_scores <- vegan::scores(mod3, display = "all", tidy = TRUE)
 names(mod_scores)
 levels(mod_scores$score)
 str(mod_scores)

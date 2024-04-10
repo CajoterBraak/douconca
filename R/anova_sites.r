@@ -105,8 +105,12 @@ if(is.null(qrZ)) Zw <- matrix(sWn) else  Zw<-  cbind(sWn, SVD(qr.X(qrZ)))
 
   F0 <-c(sapply(out_tes, function(x)x$F0[1]),NA)
   F.perm <- out_tes[[1]]$Fval
+  R2.perm <- out_tes[[1]]$R2.perm
   if (length(out_tes)>1){
-    for (k in seq_along(out_tes)[-1]) F.perm <- cbind(F.perm, out_tes[[k]]$Fval )
+    for (k in seq_along(out_tes)[-1]) {
+      F.perm <- cbind(F.perm, out_tes[[k]]$Fval )
+      R2.perm <- cbind(R2.perm,  out_tes[[k]]$R2.perm)
+    }
   }
 
 
@@ -127,6 +131,7 @@ if(is.null(qrZ)) Zw <- matrix(sWn) else  Zw<-  cbind(sWn, SVD(qr.X(qrZ)))
                         Random.seed =   attr(out_tes[[1]],"seed"),
                         control = attr(out_tes[[1]],"control"),
                         F.perm = F.perm,
+                        R2.perm = R2.perm,
                         class = c("anova.cca", "anova", "data.frame"))
 
   result <- list(table = f_sites, eig = eig)
