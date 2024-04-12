@@ -35,8 +35,13 @@
 #'  See \code{\link[vegan]{scores.cca}}.
 #' @param ...  Other arguments passed to the function (currently ignored).
 #' @details
-#'  An example of which_cor is: \code{which_cor = list(traits= c("SLA"), env = c("acidity","humidity") )}
 #'  The function is modeled after \code{\link[vegan]{scores.cca}}.
+#'
+#'  If you get the error message:  'arg' should be one of "sites", "species", "both",
+#'  then the vegan scores function has been called, instead of the one of douconca.
+#'  The work-around is to use douconca::scores() instead of scores() only.
+#'
+#'  An example of which_cor is: \code{which_cor = list(traits= c("SLA"), env = c("acidity","humidity") )}
 #' @example demo/dune_dcCA.R
 #' @returns A data frame if \code{tidy = TRUE}, a matrix if a single item is asked for and a named list of matrices if more than one item
 #' is asked for. The following names can be included: \code{c("sites",

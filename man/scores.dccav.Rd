@@ -107,8 +107,13 @@ that the linear combinations of traits (the \emph{constrained} species scores)
 also replace the usual (\emph{unconstrained}) species scores.
 }
 \details{
-An example of which_cor is: \code{which_cor = list(traits= c("SLA"), env = c("acidity","humidity") )}
- The function is modeled after \code{\link[vegan]{scores.cca}}.
+The function is modeled after \code{\link[vegan]{scores.cca}}.
+
+ If you get the error message:  'arg' should be one of "sites", "species", "both",
+ then the vegan scores function has been called, instead of the one of douconca.
+ The work-around is to use douconca::scores() instead of scores() only.
+
+ An example of which_cor is: \code{which_cor = list(traits= c("SLA"), env = c("acidity","humidity") )}
 }
 \examples{
 
@@ -134,7 +139,9 @@ p_sites   <- anova(mod$RDAonEnv, by = "axis")
 # a species-level permutation test required an dedicated new function
 # anova_species(mod) # see dune_test.r
 
-mod_scores <- vegan::scores(mod, display = c("all"), scaling = "sym")
+# douconca:: was added explicitly as sometimes the vegan scores function takes over command.
+# with error messaga:  'arg' should be one of "sites", "species", "both"
+mod_scores <- douconca::scores(mod, display = c("all"), scaling = "sym")
 
 
 (meaning <- lapply(mod_scores, function(x)attr(x,which = "meaning")))
@@ -152,7 +159,7 @@ mod_scores$biplot_traits
 mod_scores$centroids_traits
 
 
-mod_scores_tidy <- vegan::scores(mod, display = "all", tidy = TRUE)
+mod_scores_tidy <- douconca::scores(mod, display = "all", tidy = TRUE)
 names(mod_scores_tidy)
 levels(mod_scores_tidy$score)
 
@@ -180,7 +187,7 @@ mod3B <- dc_CA_vegan(formulaEnv = ~A1+Moist+Use+Manure+Condition(Mag),
                     verbose = TRUE)
 all.equal(mod3,mod3B) # TRUE
 
-mod_scores <- vegan::scores(mod3, display = "all", scaling = "symmetric")
+mod_scores <- douconca::scores(mod3, display = "all", scaling = "symmetric")
 str(mod_scores)
 
 
@@ -202,7 +209,7 @@ mod_scores$centroids_traits
 
 
 
-mod_scores <- vegan::scores(mod3, display = "all", tidy = TRUE)
+mod_scores <- douconca::scores(mod3, display = "all", tidy = TRUE)
 names(mod_scores)
 levels(mod_scores$score)
 str(mod_scores)

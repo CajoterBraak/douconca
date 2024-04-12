@@ -159,7 +159,8 @@ dc_CA_vegan <- function(formulaEnv = ~., formulaTraits = ~., response =NULL, dat
     if (any(is.na(response)))stop("The response should not have missing entries")
     if (any(response <0)) stop("The response should not have negative values")
     if (is.null(dataTraits)) stop("dataTraits must be specified in dc_CA_vegan")
-    if (!is.matrix(response)) response <- as.matrix(response) else stop("response (matrix or df) must specified")
+    if (!is.matrix(response)) response <- as.matrix(response)
+
     id0 <-1
     while(length(id0)){
       TotR <- rowSums(response)

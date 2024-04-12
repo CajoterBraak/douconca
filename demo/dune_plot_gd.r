@@ -8,7 +8,7 @@ mod <- dc_CA_vegan(formulaEnv = ~A1+Moist+Mag+Use+Manure,
                    dataEnv =dune_trait_env$envir,
                    dataTraits =dune_trait_env$traits,
                    verbose = FALSE)
-env_scores <- scores(mod, display = c("tval"))
+env_scores <- douconca::scores(mod, display = c("tval"))
 plot_species_scores_bk(
   species_scores= env_scores,
   ylab = "optimistic t-values",  threshold = 0,  y_lab_interval = 1,

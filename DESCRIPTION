@@ -2,7 +2,7 @@ Package: douconca
 Type: Package
 Title: Double Constrained Correspondence Analysis (dc-CA) For
         Trait-Environment Analysis in Ecology
-Version: 1.1.0
+Version: 1.1.1
 Authors@R: person(given ="Cajo J.F", family = "ter Braak", email="cajo.terbraak@wur.nl", 
    role=c("aut","cre"), comment=c(ORCID="0000-0002-0414-8745"))
 Maintainer: Cajo J.F. ter Braak <cajo.terbraak@wur.nl>
@@ -23,12 +23,12 @@ Description: Package douconca analyzes multi-trait multi-environment ecological 
    The technical reason for the closure, is that \code{vegan} \code{\link[vegan]{rda}} cannot do a weighted analysis.
 URL: https://doi.org/10.1007/s10651-017-0395-x
 BugReports: https://github.com/CajoterBraak/douconca/issues
-Depends: R (>= 3.5.0), stats, vegan
+Depends: R (>= 3.5.0), stats
 License: GPL-3 | file LICENSE
 Encoding: UTF-8
 LazyData: true
-Imports: permute, ggplot2, gridExtra, ggrepel
+Imports: vegan, permute, ggplot2, gridExtra, ggrepel
 RoxygenNote: 7.3.0
 NeedsCompilation: no
-Packaged: 2024-04-10 08:56:11 UTC; braak008
+Packaged: 2024-04-12 07:19:43 UTC; braak008
 Author: Cajo J.F ter Braak [aut, cre] (<https://orcid.org/0000-0002-0414-8745>)
