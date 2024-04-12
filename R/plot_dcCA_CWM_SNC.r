@@ -44,10 +44,20 @@ pp2<- ggplot2::ggplot(data= scorepair, ggplot2::aes(x = .data[[namaxis]], y = .d
 if (facet) pp2 <- pp2+ ggplot2::facet_grid(type~., switch = "y" )+ggplot2::scale_y_continuous(position = "right") else pp2 <- pp2 + ggplot2::ylab("CWM and SNC")
 
 if (with_lines){
-  if (facet)  pp2 <-  pp2 +  ggplot2::geom_smooth(ggplot2::aes(x= .data[["xforsmooth"]],group=.data[["groups"]], weight = .data[["weight"]]),
-              linewidth = 1, method = stats::lm, na.rm=TRUE)
-    else
-    pp2 <-  pp2 +  ggplot2::geom_smooth(ggplot2::aes(x= .data[["xforsmooth"]],group=.data[["type"]], weight = .data[["weight"]]),linewidth = 1, method = stats::lm, na.rm=TRUE)
+  if (facet)  pp2 <-  pp2 +
+    ggplot2::geom_smooth(ggplot2::aes(x= .data[["xforsmooth"]], y = .data[["CWM-SNC"]],
+                                      group=.data[["groups"]],
+                                      weight = .data[["weight"]]),
+                         linewidth = 1, method = stats::lm, formula = y ~ x,
+                         na.rm=TRUE, inherit.aes = FALSE)
+
+    else pp2 <-  pp2 +
+        ggplot2::geom_smooth(ggplot2::aes(x= .data[["xforsmooth"]], y = .data[["CWM-SNC"]],
+                                          group=.data[["type"]],
+                                          weight = .data[["weight"]]),
+                             linewidth = 1, method = stats::lm, formula = y ~ x,
+                             na.rm=TRUE, inherit.aes = FALSE)
+
 }
 
 TraitEnvINcondition <- attr(scorepair,"condition")
