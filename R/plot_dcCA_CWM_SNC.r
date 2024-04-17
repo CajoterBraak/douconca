@@ -11,8 +11,6 @@
 #' \code{traitfactor = NA} and \code{envfactor = NA}. Centroids are not displayed in this case.
 #' @param getPlotdata2plotdCCA the results of an \code{\link{getPlotdata}}. Default \code{NULL}.
 #' @details
-#' The lines with \code{with_lines=TRUE} do no use the weights in this version and
-#' give an extra band for an not-existing line (for missing centroids).
 #' The argument \code{getPlotdata2plotdCCA} is to allow some modifications of the data frame resulting
 #' from \code{\link{getPlotdata}}. The variable names and score levels should remain untouched.
 #' \code{plot_dcCA_CWM_SNC} uses the variables: \code{"dcCA\emph{k}"} with axis number \emph{k} and
@@ -76,5 +74,5 @@ if (ltraits >0 && lenv>0 ){
   pp3 <- pp2 + ggplot2::guides(col = ggplot2::guide_legend(title = NULL, position = "bottom", nrow = 1))
 }
 myxlab <- paste("dc-CA axis", axis)
-return(suppressWarnings(pp3+ggplot2::xlab(myxlab)))
+return(pp3+ggplot2::xlab(myxlab))
 }

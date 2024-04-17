@@ -11,7 +11,7 @@
 #' that the linear combinations of traits (the \emph{constrained} species scores)
 #' also replace the usual (\emph{unconstrained}) species scores.
 #'
-#' @param x object
+#' @param x object of class \code{"dccav"}, \emph{i.e.} result of \code{\link{dc_CA_vegan}}.
 #' @param choices integer vector of which axes to obtain. Default: all dc-CA axes.
 #' @param display a character vector, one or more of
 #' \code{c("all","species","sites","sp", "wa", "lc","bp", "cor", "ic", "reg","tval", "cn",
@@ -256,7 +256,7 @@ scores.dccav <- function(x, choices=c(1,2), display= c("all"), scaling = "sym", 
       }
       R <- sqrt(site_axes$R2_env[choices])
       if (length(R)==1) sR <- matrix(1/R) else sR <- diag(1/R)
-      sol$intra_set_correlation <- e_rcor%*% sR %*% diag_scal_sites
+      sol$intra_set_correlation <- e_rcor%*% sR
       colnames(sol$intra_set_correlation)<- paste("dcCA", choices, sep = "")
       attr(sol$intra_set_correlation,  which = "meaning")<-
         "intra set correlation, correlation between environmental variables and the dc-ca axis (constrained sites scores)"
@@ -347,7 +347,7 @@ scores.dccav <- function(x, choices=c(1,2), display= c("all"), scaling = "sym", 
       }
       R <- sqrt(species_axes$R2_traits[choices])
       if (length(R)==1) sR <- matrix(1/R) else sR <- diag(1/R)
-      sol$intra_set_correlation_traits <- e_rcor%*% sR %*% diag_scal_sites
+      sol$intra_set_correlation_traits <- e_rcor%*% sR
       colnames(sol$intra_set_correlation_traits)<- paste("dcCA", choices, sep = "")
       attr(sol$intra_set_correlation_traits,  which = "meaning")<-
         "intra set correlation, correlation between traits and the dc-ca axis (constrained species scores)"

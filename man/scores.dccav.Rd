@@ -15,7 +15,7 @@
 )
 }
 \arguments{
-\item{x}{object}
+\item{x}{object of class \code{"dccav"}, \emph{i.e.} result of \code{\link{dc_CA_vegan}}.}
 
 \item{choices}{integer vector of which axes to obtain. Default: all dc-CA axes.}
 

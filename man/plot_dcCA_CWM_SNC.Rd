@@ -51,8 +51,6 @@ Can be a two-vector, \emph{e.g.} \code{c(TRUE, FALSE)} to remove only the enviro
  with optional centroids and colors for groups of sites and/or species if available in the data.
 }
 \details{
-The lines with \code{with_lines=TRUE} do no use the weights in this version and
-give an extra band for an not-existing line (for missing centroids).
 The argument \code{getPlotdata2plotdCCA} is to allow some modifications of the data frame resulting
 from \code{\link{getPlotdata}}. The variable names and score levels should remain untouched.
 \code{plot_dcCA_CWM_SNC} uses the variables: \code{"dcCA\emph{k}"} with axis number \emph{k} and
