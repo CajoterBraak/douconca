@@ -18,10 +18,9 @@ Rownames of \code{response}, if any, are carried through.}
 \item{data}{matrix or data frame of the row predictors, with rows corresponding to those in \code{response}.
 (dimension \emph{n} x \emph{p}).}
 
-\item{verbose}{logical for printing a simple summary (default: TRUE)}
+\item{weights}{row weights (a vector). If not specified unit weights are used.}
 
-\item{weight}{row weights (a vector) or {not yet implemented} a list with two elements
-(row and column weigths). If not specified unit weights are used.}
+\item{verbose}{logical for printing a simple summary (default: TRUE)}
 }
 \value{
 All scores in the \code{dcca} object
@@ -50,17 +49,7 @@ object <- wrda(formula= ~A1+Moist+Mag+Use+Condition(Manure),
 print(object) # Proportions equal to those Canoco 5.15
 mod_scores <- douconca::scores(object, display = "all")
 douconca::scores(object, which_cor = c("A1", "Manure"), display = c("cor"))
-a <- anova(object) # to do
-#a <- anova.wrda(object)
-a$eig[seq_along(object$eigenvalues)] / object$eigenvalues
-a$eig[seq_along(object$eigenvalues)] / sum(a$eig[seq_along(object$eigenvalues)] )
-object$eigenvalues/ object$tot.chi
-a$eig/object$tot.chi
-all.equal(object$alldata$Yw,a$alldata$Yw)
-all.equal(object$alldata$Zw,a$alldata$Zw)
-range(object$alldata$XZw/a$alldata$XZw)# 1 1
-object <- wrda(formula= ~A1+Moist+Mag+Use+Manure,
-               response = response, data= dune_trait_env$envir, weights = w)
+anova(object)
 
 # The default is equal weights, which allows checking against vegan
 #object <- wrda(formula= ~A1+Moist+Mag+Use+Manure,
