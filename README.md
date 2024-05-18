@@ -16,14 +16,19 @@ species-level analysis of species-niche centroids (SNC)-based regression analysi
 The CWM regressions are specified with an environmental formula 
 and the SNC regressions are specified with a trait formula. dcCA finds 
 the environmental and trait gradients that optimize these regressions.
-The first step of the algorithm uses \code{\link[vegan]{cca}} 
-to regress the (transposed) abundance data on to the traits 
-and the second step uses \code{\link[vegan]{rda}} to regress the CWMs of the orthonormalized traits on to the environmental predictors.
-The abundance data are divided by the sample total
-(i.e. 'closed') in the vegan-based version. This
-has the advantage that this multivariate analysis corresponds with an unweighted (multi-trait)
+The first step uses \code{\link[vegan]{cca}} (Oksanen et al. 2022)
+to regress the transposed abundance data on to the traits
+and (weighted) redundancy analysis
+to regress the community-weighted means (CWMs) of the ortho-normalized traits,
+obtained from the first step, on to the environmental predictors.
+The sample total of the abundance data are used as weights.
+The redundancy analysis is carried out using \code{vegan} \code{\link[vegan]{rda}}
+if sites have equal weights (after division of the rows by their total) or,
+in the general weighted case, using \code{\link{wrda}}.
+Division by the sample total has the advantage that the multivariate analysis corresponds with an unweighted (multi-trait)
 community-level analysis, instead of being weighted, which may give a puzzling differences
-between common univarite and this multivariate analysis.
+between common univariate and this multivariate analysis.
+
 Reference: ter Braak, CJF, Šmilauer P, and Dray S. 2018. Algorithms and biplots fordouble constrained correspondence analysis. Environmental and Ecological Statistics, 25(2), 171-197. https://doi.org/10.1007/s10651-017-0395-x
 
 ## Installation
