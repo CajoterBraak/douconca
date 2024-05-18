@@ -35,13 +35,13 @@ get_Z_X_XZ_formula <- function(formula, data=NULL, factors_only = FALSE){
 #} else {fC_wo_tilde <- "NULL"; fC_formula <- NULL}
   if (!is.na(idC)) tl <- tl[-idC]
   fFocalX  <- paste(tl, collapse = "+" )
-  if (!is.na(idC))fFocalXZ <- as.formula(paste("~", fC_wo_tilde, "+", fFocalX)) else {
-    fFocalXZ <- as.formula(paste("~",fFocalX))}
-  fFocalX0 <- as.formula(paste("~0+",fFocalX))
-  fFocalX1 <- as.formula(paste("~1+",fFocalX))
+  if (!is.na(idC))fFocalXZ <- stats::as.formula(paste("~", fC_wo_tilde, "+", fFocalX)) else {
+    fFocalXZ <- stats::as.formula(paste("~",fFocalX))}
+  fFocalX0 <- stats::as.formula(paste("~0+",fFocalX))
+  fFocalX1 <- stats::as.formula(paste("~1+",fFocalX))
 
   focal_nams <- unique(unlist(strsplit(tl, split = ":", fixed = TRUE)))
-  Condi_nams <- unique(unlist(strsplit( attr(terms(fC_formula), "term.labels"), split= ":", fixed = TRUE)))
+  Condi_nams <- unique(unlist(strsplit( attr(stats::terms(fC_formula), "term.labels"), split= ":", fixed = TRUE)))
 
   focal_nams <- focal_nams[!focal_nams %in% Condi_nams]
 

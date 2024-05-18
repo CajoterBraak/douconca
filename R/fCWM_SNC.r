@@ -65,7 +65,7 @@
 #' http://CRAN.R-project.org/package=vegan.
 #'
 #' @seealso \code{\link{plot_dcCA}}, \code{\link{scores.dcca}}, \code{\link{print.dcca}} and \code{\link{anova.dcca}}
-#' @example demo/dune_dcCA_via_CWMSNC.R
+#' @example demo/dune_fCWMSNC.r
 #' @export
 
 fCWM_SNC <- function( response =NULL, dataEnv=NULL, dataTraits= NULL,

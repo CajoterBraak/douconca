@@ -12,8 +12,7 @@
 #' Rownames of \code{response}, if any, are carried through.
 #' @param data matrix or data frame of the row predictors, with rows corresponding to those in \code{response}.
 #' (dimension \emph{n} x \emph{p}).
-#' @param weight row weights (a vector) or {not yet implemented} a list with two elements
-#'   (row and column weigths). If not specified unit weights are used.
+#' @param weights row weights (a vector). If not specified unit weights are used.
 #'
 #' @param verbose logical for printing a simple summary (default: TRUE)
 #
@@ -69,11 +68,7 @@ wrda <- function(formula, response, data, weights= rep(1, nrow(data)), verbose =
   # [9] "inertia"        "regularization"
   # [11] "terms"          "terminfo"
   # needed?
-  if (1==0){
-  Xw <- model.matrix(f$formula_X0, data = data)*sqrt(Wn)
-  biplot <- cor(Xw, svd_Yfit_X$u)
-  colnames(biplot) <- paste("RDA", seq_len(ncol(biplot)), sep = "")
-  } else biplot <- NULL
+  biplot <- NULL
   Nobs <- nrow(Yw)
   fct <- (Nobs/(Nobs-1))
   total_variance <-total_variance *fct
@@ -86,8 +81,8 @@ wrda <- function(formula, response, data, weights= rep(1, nrow(data)), verbose =
 
   names(eig) <- paste("wRDA", seq_along(eig),sep="")
   CCA <- with(svd_Yfit_X, list(eig = eig, poseig = eig, u= u, v= v, rank= rank, qrank = msqr$qrXZ$rank,
-                               tot.chi = ssY_XgZ, QR = msqr$qrXZ, biplot = biplot
-                               , envcentre = NULL, centroids = NULL
+                               tot.chi = ssY_XgZ, QR = msqr$qrXZ, biplot = biplot,
+                               envcentre = NULL, centroids = NULL
                                ))
   if (ncol(msqr$Zw) ==1) pCCA <- NULL else
     pCCA  <- list(rank = min(ncol(Yw),msqr$qrZ$rank),tot.chi = total_variance - ssY_gZ,

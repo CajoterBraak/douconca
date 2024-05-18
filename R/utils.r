@@ -36,12 +36,12 @@ msdvif <- function(formula = NULL, data, weights, XZ = FALSE){
   # calc mean variance and vif from for X given Z or XZ with qr of X|Z or of centered XZ
   if (is.null(formula)) {f <- ~. } else {f <- formula}
   ff <- get_Z_X_XZ_formula(f,data)
-  if (XZ)X <- model.matrix(ff$formula_XZ, data = data)[,-1, drop = FALSE] else
-         X <- model.matrix(ff$formula_X1, data= data)[,-1, drop = FALSE]
+  if (XZ)X <- stats::model.matrix(ff$formula_XZ, data = data)[,-1, drop = FALSE] else
+         X <- stats::model.matrix(ff$formula_X1, data= data)[,-1, drop = FALSE]
   msd <- mean_sd_w(X,w= weights)
   avg = msd$mean ; sds = msd$sd;
   sWn <- sqrt(weights)
-  Zw <- model.matrix(ff$formula_Z, data)*sWn
+  Zw <- stats::model.matrix(ff$formula_Z, data)*sWn
   qrZ <- qr(Zw)
   if (XZ) Xw <- qr.resid(qr(matrix(sWn)), X*sWn) else Xw <- qr.resid(qrZ, X*sWn)
   qrX <- qr(Xw)
