@@ -38,7 +38,7 @@ f_trait_axes <- function(out, which_cor = "in model"){
         # must use model.matrix
         fX <- get_Z_X_XZ_formula(out$formulaTraits)
       #  idremoveZ <- seq_len(ncol(model.matrix(fX$formula_Z, data = out$data$dataTraits)[,-1],drop=FALSE))
-        X <-model.matrix(fX$formula_X1, data = out$data$dataTraits)[,-1,drop=FALSE]
+        X <-stats::model.matrix(fX$formula_X1, data = out$data$dataTraits)[,-1,drop=FALSE]
         lc_trait_scores <- standardize_w(X)%*% regr
         } else  {warning("Trait regression coefficients  are not availabe"); lc_trait_scores <-NULL}
       return(
