@@ -5,7 +5,7 @@ rownames(dune_trait_env$comm) <- dune_trait_env$comm$Sites
 # must delete "Sites" from response matrix or data frame
 Y <- dune_trait_env$comm[,-1] # must delete "Sites"
 
-out <- dc_CA_vegan(formulaEnv = ~A1+Moist+Use+Manure+Condition(Mag),
+out <- dc_CA(formulaEnv = ~A1+Moist+Use+Manure+Condition(Mag),
                    formulaTraits = ~ SLA + Height + LDMC + Seedmass +Lifespan,
                    response = Y,
                    dataEnv =dune_trait_env$envir,
@@ -16,9 +16,14 @@ out <- dc_CA_vegan(formulaEnv = ~A1+Moist+Use+Manure+Condition(Mag),
 
 plot_dcCA_CWM_SNC(out, facet = FALSE)
 CWM_SNC_env_trait_scores <- getPlotdata(out)
-myplot<-plot_dcCA(out, verbose = FALSE)
+myplot<-plot_dcCA(out)
+# Huge uncertainty band for BF as
+# management is in Condition() and there are one three BF plots,
+# Without these separate lines use:
+# plot_dcCA(out,envfactor = NA)
+
 names(myplot)
-plot_dcCA(out, gradient_description = c("corre", "tval"), verbose = FALSE )
+plot_dcCA(out, gradient_description = c("corre", "tval"), envfactor = NA, verbose = FALSE )
 
 newnames_without_covariates <-list(traits= c("SLA", "Height", "LDMC", "Seedmass", "annual", "perennial"),
                 env= c("A1 horizon", "Moisture", "Type of use",  "Manure"))

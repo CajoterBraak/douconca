@@ -2,7 +2,7 @@
 data("dune_trait_env")
 
 rownames(dune_trait_env$comm) <- dune_trait_env$comm$Sites
-out1 <- dc_CA_vegan(formulaEnv = ~A1+Moist+Mag+Use+Manure,
+out1 <- dc_CA(formulaEnv = ~A1+Moist+Mag+Use+Manure,
                    formulaTraits = ~. ,
                    response = dune_trait_env$comm[, -1],  # must delete "Sites"
                    dataEnv =dune_trait_env$envir,
@@ -38,7 +38,7 @@ for (k in seq_along(consider)){
 
   formulaE_FS <- as.formula(paste("~", consider[k]))
 
-  out_FS <- dc_CA_vegan(formulaE_FS, dc_CA_vegan_object = out1, verbose = FALSE)
+  out_FS <- dc_CA(formulaE_FS, dc_CA_object = out1, verbose = FALSE)
 
   if (test) {
     an <- anova(out_FS$RDAonEnv, permutations = cntr)
@@ -73,7 +73,7 @@ for (k in seq_along(considerk)){
   formulaE_FS <- as.formula(paste("~",
       considerk[k], "+Condition(", paste(considered, collapse = "+") ,")", sep ="" ))
 
-  out_FS <- dc_CA_vegan(formulaE_FS, dc_CA_vegan_object = out1, verbose = FALSE)
+  out_FS <- dc_CA(formulaE_FS, dc_CA_object = out1, verbose = FALSE)
 
   if (test) {
     an <- anova(out_FS$RDAonEnv, permutations = cntr)
@@ -100,7 +100,7 @@ for (k in seq_along(considerk)){
   formulaE_FS <- as.formula(paste("~", considerk[k],
       "+Condition(", paste(considered, collapse = "+") ,")", sep ="" ))
 
-  out_FS <- dc_CA_vegan(formulaE_FS, dc_CA_vegan_object = out1, verbose = FALSE)
+  out_FS <- dc_CA(formulaE_FS, dc_CA_object = out1, verbose = FALSE)
 
   if (test) {
     an <- anova(out_FS$RDAonEnv, permutations = cntr)
