@@ -6,9 +6,12 @@ dc_CA_vegan is now replaced by the more general function dc_CA. Specify
 the argument divide.by.site.totals to obtain the same analysis.
 * General dc-CA required weighted redundancy analysis. For this a new function
 wrda has been added, with methods for print, scores and anova.
-*A dc-CA can be computed from community-weighted means with
-trait and environment data. See the new function fCWM_SNC. This is of interest, for example,
-to make a dc-CA analysis reproducible when the abundance data cannot be made public.
+*A dc-CA can be computed from community-weighted means (CWMs) with
+trait and environment data with species and site weights. See the new function fCWM_SNC. This is of interest, for example,
+to make a dc-CA analysis reproducible when the abundance data cannot be made public, and
+it may also allow to perform dcCA with intra-species trait variation. 
+The user needs to be able to compute meaningful CWMs in this case and supply 
+trait data that reflect the (species-weighted) inter-trait covariance.
 * Several functions are updated. In particular, there are correction to
 the anova function.
 
