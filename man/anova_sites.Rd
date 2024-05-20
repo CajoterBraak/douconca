@@ -24,8 +24,8 @@ explained by the environmental predictors (without covariates).)
 The default is quicker computationally as it avoid computation of an svd of permuted data sets.}
 }
 \value{
-A list with two elements with names \code{table} and \code{eig}.
- The \code{table} is as from \code{\link[vegan]{anova.cca}} and \code{eig} gives the dc-CA eigenvalues,
+A list with two elements with names \code{table} and \code{eigenvalues}.
+ The \code{table} is as from \code{\link[vegan]{anova.cca}} and \code{eigenvalues} gives the dc-CA eigenvalues,
 }
 \description{
 \code{anova_sites} performs the community-level permutation test of dc-CA when site weights vary,

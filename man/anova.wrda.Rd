@@ -24,14 +24,14 @@ explained by the environmental predictors (without covariates).)
 The default is quicker computationally as it avoid computation of an svd of permuted data sets.}
 }
 \value{
-A list with two elements with names \code{table} and \code{eig}.
- The \code{table} is as from \code{\link[vegan]{anova.cca}} and \code{eig} gives the dc-CA eigenvalues,
+A list with two elements with names \code{table} and \code{eigenvalues}.
+ The \code{table} is as from \code{\link[vegan]{anova.cca}} and \code{eigenvalues} gives the dc-CA eigenvalues,
 }
 \description{
 \code{anova.wrda} performs residual predictor permutation (ter Braak 2022), which is robust
 against differences in the weights in weighted reduncancy analysis (ter Braak, 2022).
-The arguments of the function are similar to those of \code{\link[vegan]{anova.cca}}, but more restricted.
-With equal site-totals as in \code{\link{dc_CA}}, \code{anova(object$RDAonEnv)} is much faster.
+The arguments of the function are similar to those of \code{\link[vegan]{anova.cca}},
+but more restricted.
 }
 \details{
 The algorithm is based on published R-code for
