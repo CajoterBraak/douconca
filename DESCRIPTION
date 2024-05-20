@@ -9,11 +9,10 @@ Maintainer: Cajo J.F. ter Braak <cajo.terbraak@wur.nl>
 Description: Double constrained correspondence analysis (dc-CA) for analyzing (multi-)trait (multi-)environment ecological data using library vegan and native R code.
    Throughout the two step algorithm of ter Braak et al. (2018) is used. This algorithm combines and extends community- (sample-) and species-level analyses, i.e.
    the usual community weigthed means (CWM)-based regression analysis and the species-level analysis of species-niche centroids (SNC)-based regression analysis.
-   The two steps use vegan::cca to regress the abundance data on to the traits and vegan::rda or douconca::wrda to regress the CWM of the orthonormalized traits on to the environemtal predictors.
-   vegan::rda is used if the abundance data are divided by the sample total. This division 
-   has the advantage that the multivariate analysis corresponds with an unweighted (multi-trait) community-level analysis, instead of being weighted.
-   The current vegan-based analysis is efficient for sample-based permutation tests but slow for species-based permutation tests.
-   vegan::rda cannot do a weighted analysis, so for the general case weighted redundancy analysis douconca::wrda is used. 
+   The two steps use canonical correspondence analysis to regress the abundance data on to the traits and (weighted) redundancy analysis to regress the CWM of the orthonormalized traits on to the environemtal predictors.
+   The function dc_CA has an option to divide the abundance data of a site by the site total, giving equal site weights. 
+   This division has the advantage that the multivariate analysis corresponds with an unweighted (multi-trait) community-level analysis, instead of being weighted.
+   The first step of the algorithm uses vegan::cca. The second step uses douconca::wrda but vegan::rda if the site weights are equal.
    For details see ter Braak et al. 2018 https://doi.org/10.1007/s10651-017-0395-x
 URL: https://github.com/CajoterBraak/douconca
 BugReports: https://github.com/CajoterBraak/douconca/issues
@@ -24,5 +23,5 @@ LazyData: true
 Imports: vegan, permute, ggplot2 (>= 3.5.0), gridExtra, ggrepel
 RoxygenNote: 7.3.0
 NeedsCompilation: no
-Packaged: 2024-05-18 14:00:05 UTC; braak008
+Packaged: 2024-05-20 11:02:23 UTC; braak008
 Author: Cajo J.F ter Braak [aut, cre] (<https://orcid.org/0000-0002-0414-8745>)
