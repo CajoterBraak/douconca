@@ -3,9 +3,11 @@ Type: Package
 Title: Double Constrained Correspondence Analysis (dc-CA) For
         Trait-Environment Analysis in Ecology
 Version: 1.1.5
-Authors@R: person(given ="Cajo J.F", family = "ter Braak", email="cajo.terbraak@wur.nl", 
+Authors@R: c(
+   person(given ="Cajo J.F", family = "ter Braak", email="cajo.terbraak@wur.nl", 
    role=c("aut","cre"), comment=c(ORCID="0000-0002-0414-8745"))
-Maintainer: Cajo J.F. ter Braak <cajo.terbraak@wur.nl>
+            )
+Maintainer: Bart-Jan van Rossum <bart-jan.vanrossum@wur.nl>
 Description: Double constrained correspondence analysis (dc-CA) for analyzing (multi-)trait (multi-)environment ecological data using library vegan and native R code.
    Throughout the two step algorithm of ter Braak et al. (2018) is used. This algorithm combines and extends community- (sample-) and species-level analyses, i.e.
    the usual community weigthed means (CWM)-based regression analysis and the species-level analysis of species-niche centroids (SNC)-based regression analysis.
@@ -23,5 +25,5 @@ LazyData: true
 Imports: vegan, permute, ggplot2 (>= 3.5.0), gridExtra, ggrepel
 RoxygenNote: 7.3.0
 NeedsCompilation: no
-Packaged: 2024-05-20 11:02:23 UTC; braak008
+Packaged: 2024-05-20 13:28:04 UTC; braak008
 Author: Cajo J.F ter Braak [aut, cre] (<https://orcid.org/0000-0002-0414-8745>)
