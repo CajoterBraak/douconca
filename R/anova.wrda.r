@@ -3,8 +3,8 @@
 #' @description
 #' \code{anova.wrda} performs residual predictor permutation (ter Braak 2022), which is robust
 #' against differences in the weights in weighted reduncancy analysis (ter Braak, 2022).
-#' The arguments of the function are similar to those of \code{\link[vegan]{anova.cca}}, but more restricted.
-#' With equal site-totals as in \code{\link{dc_CA}}, \code{anova(object$RDAonEnv)} is much faster.
+#' The arguments of the function are similar to those of \code{\link[vegan]{anova.cca}},
+#' but more restricted.
 #
 #' @param  object  an object from \code{\link{dc_CA}}.
 #' @param permutations a list of control values for the permutations as
@@ -25,8 +25,8 @@
 #' residual predictor permutation in weighted redundancy analysis (ter Braak, 2022).
 #'
 #' @return
-#'  A list with two elements with names \code{table} and \code{eig}.
-#'  The \code{table} is as from \code{\link[vegan]{anova.cca}} and \code{eig} gives the dc-CA eigenvalues,
+#'  A list with two elements with names \code{table} and \code{eigenvalues}.
+#'  The \code{table} is as from \code{\link[vegan]{anova.cca}} and \code{eigenvalues} gives the dc-CA eigenvalues,
 #' @references
 #'
 #' ter Braak, C.J.F. (2022) Predictor versus response permutation

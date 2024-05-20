@@ -12,29 +12,30 @@
 #'
 #' Throughout the two step algorithm of ter Braak et al. (2018) is used. This algorithm
 #' combines and extends community- (sample-) and species-level analyses, \emph{i.e.}
-#' the usual community weighted means (CWM)-based regression analysis and the
-#' species-level analysis of species-niche centroids (SNC)-based regression analysis.
+#' (1) the usual community weighted means (CWM) regression analysis and (2) the
+#' species-level analysis of species-niche centroids (SNC) regression analysis.
 #' The SNC is the center of the realized niche of the species along an environmental variable or,
 #' in the case of dc-CA, an environmental gradient, \emph{i.e.} the dc-CA ordination axis.
 #' Computationally, dc-CA can be carried out by a single singular value decomposition (ter Braak et al. 2018),
 #' but it is here computed in two steps.
 #'
-#' The first step of the algorithm uses canonical correspondence analysis by \code{\link[vegan]{rda}} .
-#' The second step uses weighted redundancy analysis by \code{\link{wrda}}, but redundancy analysis by \code{\link[vegan]{rda}}
-#' if the site weights are equal.
-
-#' The default \code{\link{dc_CA}} (\code{divide.by.site.totals==TRUE}) is \code{vegan}-based.
-#' The first step uses \code{\link[vegan]{cca}} to regress the (transposed)
+#' The first step of the algorithm uses canonical correspondence analysis by \code{\link[vegan]{cca}} .
+#' The second step uses weighted redundancy analysis by \code{\link{wrda}},
+#' but redundancy analysis by \code{\link[vegan]{rda}}, if the site weights are equal.
+#'
+#' In detail, the first step uses \code{\link[vegan]{cca}} to regress the (transposed)
 #' abundance data on to the traits
-#' and the second step uses \code{\link[vegan]{rda}} to regress the
+#' and the second step uses either \code{\link[vegan]{rda}} or \code{\link{wrda}} to regress the
 #' CWMs of the orthonormalized traits, obtained from the first step, on to the environmental predictors.
 #' The second step is thus a community-level analysis.
-#' The abundance data are divided by the sample total
-#' (i.e. 'closed') in the vegan-based version. This
-#' has the advantage that this multivariate analysis corresponds with an unweighted (multi-trait)
-#' community-level analysis, instead of being weighted.
+#'
 #' If \code{divide.by.site.totals==FALSE}, the second step uses \code{\link{wrda}} and performs a
 #' weighted redundancy analyis of the CWMs on to the environmental variables.
+#'
+#' Division of the abundance data by the site totals
+#' has the advantage that the resulting analysis (withou dimension reduction,
+#' \emph{i.e.} retaining all dc-CA axes) corresponds with a series of unweighted
+#' community-level analyses, instead of the analyses being weighted.
 #'
 #' Warning: The \code{dcCA} package was built from \code{vegan} version 2.6-4 and uses some of the
 #' internal structure of the \code{vegan} \code{\link[vegan]{cca.object}}

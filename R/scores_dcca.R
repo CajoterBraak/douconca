@@ -91,6 +91,7 @@
 #'
 #' The statements on optimality for distance interpretations are based on the \code{scaling}
 #' and the relative magnitude of the dc-CA eigenvalues of the chosen axes.
+#' @noRd
 scores_dcca <- function(x, choices=c(1,2), display= c("all"), scaling = "sym", which_cor = "in model", tidy = FALSE,...){
    # internal function
   f_meaning <- function( type_of_scores, scaling, txt){

@@ -32,8 +32,8 @@
 #' R-code that is analogous to that of \code{\link{anova.wrda}}.
 #'
 #' @return
-#'  A list with two elements with names \code{table} and \code{eig}.
-#'  The \code{table} is as from \code{\link[vegan]{anova.cca}} and \code{eig} gives the dc-CA eigenvalues,
+#'  A list with two elements with names \code{table} and \code{eigenvalues}.
+#'  The \code{table} is as from \code{\link[vegan]{anova.cca}} and \code{eigenvalues} gives the dc-CA eigenvalues,
 #'  This output can be used for scripting forward selection of traits,
 #'  similar to the forward selection of environmental
 #'  variables in the demo \code{dune_select.r}.

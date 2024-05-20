@@ -26,8 +26,8 @@
 #' The algorithm is analogous to that of \code{\link{anova.wrda}}.
 #'
 #' @return
-#'  A list with two elements with names \code{table} and \code{eig}.
-#'  The \code{table} is as from \code{\link[vegan]{anova.cca}} and \code{eig} gives the dc-CA eigenvalues,
+#'  A list with two elements with names \code{table} and \code{eigenvalues}.
+#'  The \code{table} is as from \code{\link[vegan]{anova.cca}} and \code{eigenvalues} gives the dc-CA eigenvalues,
 #' @references
 #' ter Braak, C.J.F. & te Beest, D.E. 2022. Testing environmental effects
 #' on taxonomic composition with canonical correspondence analysis:
