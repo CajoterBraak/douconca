@@ -1,10 +1,15 @@
 #' @title The package douconca performs double constrained correspondence analysis for trait-environment analysis in ecology
 #'
 #' @description
-#' The \code{douconca} package analyzes multi-trait multi-environment ecological data by
-#' double constrained correspondence analysis (ter Braak et al. 2018) using \code{vegan} and native R code.
+#' Double constrained correspondence analysis (dc-CA) for analyzing
+#' (multi-)trait (multi-)environment ecological data using library \code{vegan} and native R code.
 #' It has a \code{formula} interface which allows to assess, for example, the importance
 #' of trait interactions in shaping ecological communities.
+#' The function\code{dc_CA} has an option to divide the abundance data of a site by the site total,
+#' giving equal site weights.
+#' This division has the advantage that the multivariate analysis corresponds
+#' with an unweighted (multi-trait) community-level analysis, instead of being weighted.
+#'
 #' Throughout the two step algorithm of ter Braak et al. (2018) is used. This algorithm
 #' combines and extends community- (sample-) and species-level analyses, \emph{i.e.}
 #' the usual community weighted means (CWM)-based regression analysis and the
@@ -13,7 +18,12 @@
 #' in the case of dc-CA, an environmental gradient, \emph{i.e.} the dc-CA ordination axis.
 #' Computationally, dc-CA can be carried out by a single singular value decomposition (ter Braak et al. 2018),
 #' but it is here computed in two steps.
-#' The default \code{\link{dc_CA}} (\code{divide.by.site.totals==TRUE}) is \code{vegan}-based,
+#'
+#' The first step of the algorithm uses canonical correspondence analysis by \code{\link[vegan]{rda}} .
+#' The second step uses weighted redundancy analysis by \code{\link{wrda}}, but redundancy analysis by \code{\link[vegan]{rda}}
+#' if the site weights are equal.
+
+#' The default \code{\link{dc_CA}} (\code{divide.by.site.totals==TRUE}) is \code{vegan}-based.
 #' The first step uses \code{\link[vegan]{cca}} to regress the (transposed)
 #' abundance data on to the traits
 #' and the second step uses \code{\link[vegan]{rda}} to regress the
@@ -25,16 +35,6 @@
 #' community-level analysis, instead of being weighted.
 #' If \code{divide.by.site.totals==FALSE}, the second step uses \code{\link{wrda}} and performs a
 #' weighted redundancy analyis of the CWMs on to the environmental variables.
-#'
-#' In \code{\link{anova_species}}, the first step extracts the SNCs with respect to the ordination axes
-#' from an existing dc-CA analysis (the SNCs, more precisely, a rotated version thereof, could have been obtained from a \code{\link[vegan]{cca}}
-#' to regress the abundance data on to the environmental variables), and then
-#' applies a weighted redundancy analysis of these SNCs with the traits as predictors. The second step is thus
-#' a species-level analysis, but the final result (eigenvalues/ordination axes) is identical with that of the
-#' analyses steps in \code{\link{dc_CA}} in which the second step is a community-level analysis.
-#' The vegan-based analysis is computationally efficient for community-level (site-based) permutation tests.
-#' but the a factor 20 or so slower for species-level permutation tests.
-#' The technical reason for the closure, is that \code{vegan} \code{\link[vegan]{rda}} cannot do a weighted analysis.
 #'
 #' Warning: The \code{dcCA} package was built from \code{vegan} version 2.6-4 and uses some of the
 #' internal structure of the \code{vegan} \code{\link[vegan]{cca.object}}

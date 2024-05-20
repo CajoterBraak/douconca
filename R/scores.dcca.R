@@ -1,4 +1,4 @@
-#' @title Extract results of a vegan-based double constrained correspondence analysis (dc-CA)
+#' @title Extract results of a double constrained correspondence analysis (dc-CA)
 #'
 #' @description
 #' This function works very much like the \code{vegan} \code{\link[vegan]{scores}} function,

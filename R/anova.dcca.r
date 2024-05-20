@@ -3,10 +3,6 @@
 #' @description
 #' \code{anova.dcca} performs the community- and species-level permutation tests of dc-CA
 #' and combines these with the 'max test', which takes the maximum of the \emph{P}-values.
-#' The test uses residualized response permutation for the community-level, as implemented in
-#' \code{\link[vegan]{anova.cca}} and
-#' residualized predictor permutation (ter Braak 2022) for the species-level, which is robust
-#' against differences in species total abundance in the \code{response} in \code{\link{dc_CA}} (ter Braak & te Beest, 2022)
 #' The function arguments are similar to (but more restrictive than) those of \code{\link[vegan]{anova.cca}}.
 #
 #' @param  object  an object from \code{\link{dc_CA}}.
@@ -27,22 +23,21 @@
 #'  explained by the environmental predictors (without covariates).
 #'  The default (\code{NULL}) is computationally quicker as it avoids computation of an svd of permuted data sets.
 #' @details
-#' The current vegan-based analysis is efficient for community-level (site-based) permutation tests
-#' but a factor 20 or so slower for species-level permutation tests.
-#' The community-level test is obtained by applying \code{anova} to \code{object$RDAonEnv}
-#'  using \code{\link[vegan]{anova.cca}}.
-#' This performs residualized response permutation but this permutation method performs about equal
-#' to residualized predictor permutation in the equi-weight case of \code{\link{dc_CA}}.
-#' The species-level test is obtained by applying residualized predictor permutation to
-#' the species-niche centroids with respect to orthonormalized environmental variables using
-#' the functions \code{\link{anova_species}} with the internal function \code{randperm_eX0sqrtw}
-#' (taken from ter Braak 2022 with re-structured return value and used for
-#' the residual predictor permutation (ter Braak 2022, ter
-#' Braak & te Beest, 2022).
-#' The \code{dcCA} package has the function \code{anova_sites}
-#' which does residual predictor permutation, also using \code{randperm_eX0sqrtw}, but this
-#' function is native \code{R} code and thus a factor of 20 or so slower than \code{\link[vegan]{anova.cca}}.
+#' In the general case of varying site abundance totals (\code{divide.by.site.totals = FALSE})
+#' both the community-level test and the species-level test use
+#' residualized predictor permutation (ter Braak 2022), so as to ensure that
+#' \code{\link{anova.dcca}} is robust against differences
+#' in species and site total abundance in the \code{response} (ter Braak & te Beest, 2022).
+#' The community-level test uses \code{\link{anova_sites}}.
+#' For the species-level test, \code{\link{anova_species}} is used.
 #'
+#' With equal site weights, obtained with \code{divide.by.site.total = TRUE},
+#' the community-level test is obtained by applying \code{anova} to \code{object$RDAonEnv}
+#' using \code{\link[vegan]{anova.cca}}.
+#' This performs residualized response permutation which performs about equal
+#' to residualized predictor permutation in the equi-weight case.
+#' The function \code{\link[vegan]{anova.cca}} is implemented in C and therefore
+#' a factor of 20 or so quicker than the native R-code used in \code{\link{anova_sites}}.
 #' @return
 #' A list of 3 of structures as from \code{\link[vegan]{anova.cca}}. The elements are \code{c("species","sites","max")}
 #'

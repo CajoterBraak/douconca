@@ -1,5 +1,5 @@
-#' Print a summary of a dc-CA object
-#' @param x a dc-CA object from \code{\link{dc_CA}}
+#' Print a summary of a dc-CA object.
+#' @param x a dc-CA object from \code{\link{dc_CA}}.
 #' @param ...  Other arguments passed to the function (currently ignored).
 #' @example demo/dune_dcCA.r
 #' @details

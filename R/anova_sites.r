@@ -1,7 +1,8 @@
-#' @title Community-level Permutation Test in Double Constrained Correspondence Analysis (dc-CA)
+#' @title Utility function: community-level permutation test in Double Constrained Correspondence Analysis (dc-CA)
 #'
 #' @description
-#' \code{anova_sites} performs a Community-level permutation test of dc-CA.
+#' \code{anova_sites} performs the community-level permutation test of dc-CA when site weights vary,
+#' which is part of \code{\link{anova.dcca}}.
 #' The test uses residual predictor permutation (ter Braak 2022), which is robust
 #' against differences in sites total abundance in the \code{response} in \code{\link{dc_CA}} (ter Braak & te Beest, 2022)
 #' The arguments of the function are similar to those of \code{\link[vegan]{anova.cca}}, but more restricted.
@@ -22,12 +23,7 @@
 #'  explained by the environmental predictors (without covariates).)
 #'  The default is quicker computationally as it avoid computation of an svd of permuted data sets.
 #' @details
-#' The algorithm is two-step. The first step is a \code{\link[vegan]{cca}}
-#' of the transposed \code{response} on to the traits using
-#' \code{formulaTraits}. The second is a weighted redundancy analysis of the community weighted means (CWM) of
-#' orthonormalized traits againt the environemtal variables using \code{formulaEnv} and
-#' published R-code for weighted redundancy analysis, which includes statistical significance
-#' tests using residual predictor permutation (ter Braak, 2022).
+#' The algorithm is analogous to that of \code{\link{anova.wrda}}.
 #'
 #' @return
 #'  A list with two elements with names \code{table} and \code{eig}.

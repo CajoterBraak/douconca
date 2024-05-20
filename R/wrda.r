@@ -17,6 +17,8 @@
 #' @param verbose logical for printing a simple summary (default: TRUE)
 #
 #' @details
+#' The algorithm is a modified version of published R-code for weighted redundancy analysis (ter Braak, 2022).
+#'
 #' In the current implementation, \code{formula} should
 #' contain variable names as is, \emph{i.e.} transformations of variables in the formulas gives
 #' an error ('undefined columns selected') when the \code{\link{scores}} function is applied.
