@@ -2,17 +2,17 @@
 % Please edit documentation in R/print.dcca.r
 \name{print.dcca}
 \alias{print.dcca}
-\title{Print a summary of a dc-CA object}
+\title{Print a summary of a dc-CA object.}
 \usage{
 \method{print}{dcca}(x, ...)
 }
 \arguments{
-\item{x}{a dc-CA object from \code{\link{dc_CA}}}
+\item{x}{a dc-CA object from \code{\link{dc_CA}}.}
 
 \item{...}{Other arguments passed to the function (currently ignored).}
 }
 \description{
-Print a summary of a dc-CA object
+Print a summary of a dc-CA object.
 }
 \details{
 \code{x <- print(x)} is more efficient for \code{\link{scores.dcca}} than just \code{print(x)}

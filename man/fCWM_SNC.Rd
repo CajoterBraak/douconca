@@ -59,14 +59,15 @@ as \code{response} in a call to \code{\link{dc_CA}}.}
 }
 \value{
 The default returns a list of CWMs, SNCs, weights,
-formulaTraits and a list of data with elements dataEnv and dataTraits.
+\code{formulaTraits} and a list of data with elements \code{dataEnv} and \code{dataTraits}.
 When \code{minimal_output = FALSE}, many more statistics are given that are mainly technical or recomputed
 when the return value is used as \code{response} in a call to \code{\link{dc_CA}}.
 }
 \description{
 Double constained correspondence analysis (dc-CA) can be calculated directly from
 community weighted means (CWMs), with the trait data from
-which the CWMs are calculated, and the enviromental data.
+which the CWMs are calculated, and the environmental data
+and weights for species and sites (the abundance totals for species and sites).
 Statistical testing at the species level requires also the species niche centroids (SNCs).
 The function \code{fCWM_SNC} calculates the CWMs and SNCs from the trait and environmental
 data, respectively, using a formula interface, so as to allow categorical traits and

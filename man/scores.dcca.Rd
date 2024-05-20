@@ -2,7 +2,7 @@
 % Please edit documentation in R/scores.dcca.R
 \name{scores.dcca}
 \alias{scores.dcca}
-\title{Extract results of a vegan-based double constrained correspondence analysis (dc-CA)}
+\title{Extract results of a double constrained correspondence analysis (dc-CA)}
 \usage{
 \method{scores}{dcca}(
   x,

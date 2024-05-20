@@ -2,7 +2,7 @@
 % Please edit documentation in R/anova_species.r
 \name{anova_species}
 \alias{anova_species}
-\title{Species-level Permutation Test in Double Constrained Correspondence Analysis (dc-CA)}
+\title{Utility function: Species-level Permutation Test in Double Constrained Correspondence Analysis (dc-CA)}
 \usage{
 anova_species(object, permutations = 999, by = NULL)
 }
@@ -31,7 +31,8 @@ A list with two elements with names \code{table} and \code{eig}.
  variables in the demo \code{dune_select.r}.
 }
 \description{
-\code{anova_species} performs a species-level permutation test of dc-CA.
+\code{anova_species} performs the species-level permutation test of dc-CA which is part of
+\code{\link{anova.dcca}}.
 The test uses residual predictor permutation (ter Braak 2022), which is robust
 against differences in species total abundance in the \code{response} in \code{\link{dc_CA}} (ter Braak & te Beest, 2022)
 The arguments of the function are similar to those of \code{\link[vegan]{anova.cca}},
@@ -40,15 +41,11 @@ but more restrictive.
 \details{
 In \code{\link{anova_species}}, the first step extracts the species-niche centroids (SNC)
 with respect to all dc-CA ordination axes
-from an existing dc-CA analysis. These SNCs (more precisely, a rotated version thereof)
-could have been obtained from a \code{\link[vegan]{cca}}
-of the abundance data with the environmental variables as predictors, but this is computationally slower,
-of course, than just extracting the unconstrained species scores from an existing dc-CA. The second step,
+from an existing dc-CA analysis. The second step,
 applies a weighted redundancy analysis of these SNCs with the traits as predictors. The second step is thus
 a species-level analysis, but the final results (eigenvalues/ordination axes) are identical to those of the
 analyses steps in \code{\link{dc_CA}}.The second step uses
-published R-code for weighted redundancy analysis, which includes statistical significance
-tests using residual predictor permutation (ter Braak, 2022).
+R-code that is analogous to that of \code{\link{anova.wrda}}.
 }
 \examples{
 data("dune_trait_env")

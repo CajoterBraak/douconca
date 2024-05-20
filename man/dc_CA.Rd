@@ -121,21 +121,13 @@ All scores in the \code{dccav} object
 are in scaling \code{"sites"} (1): the scaling with \emph{Focus on Case distances} .
 }
 \description{
-\code{dc_CA} allows three versions of double constained correspondence analysis (dc-CA)
-that differ in their preprocessing.
-See the argument \code{preprocessY} below.
-All versions use
-the two-step algorithm of ter Braak et al. (2018). This algorithm
-combines and extends community- (sample-) and species-level analyses.
-The first step uses \code{\link[vegan]{cca}} (Oksanen et al. 2022)
-to regress the transposed abundance data on to the traits
-and (weighted) redundancy analysis
-to regress the community-weighted means (CWMs) of the ortho-normalized traits,
-obtained from the first step, on to the environmental predictors.
-The sample total of the abundance data are used as weights.
-The redundancy analysis is carried out using \code{vegan} \code{\link[vegan]{rda}}
-if sites have equal weights (after division of the rows by their total) or,
-in the general weighted case, using \code{\link{wrda}}.
+Double constrained correspondence analysis (dc-CA) for analyzing
+(multi-)trait (multi-)environment ecological data using library \code{vegan} and native R code.
+It has a \code{formula} interface which allows to assess, for example, the importance
+of trait interactions in shaping ecological communities.
+The function \code{dc_CA} has an option to divide the abundance data of a site by the site total,
+giving equal site weights.
+This division has the advantage that the multivariate analysis corresponds with an unweighted (multi-trait) community-level analysis, instead of being weighted.
 }
 \details{
 Empty (all zero) rows and columns in \code{response} are removed from the \code{response} and the corresponding
@@ -143,26 +135,22 @@ rows from \code{dataEnv} and \code{dataTraits}. Subsequently, any columns with m
 are removed from  \code{dataEnv} and \code{dataTraits}. It gives an error (object 'name_of_variable' not found),
 if variables with missing entries are specified in \code{formulaEnv} and \code{formulaTraits}.
 
-The algorithm follows the two-step algorithm of ter Braak et al. (2018).
-and consits of two steps. First, the transpose of the \code{response}
+Computationally, dc-CA can be carried out by a single singular value decomposition (ter Braak et al. 2018),
+but it is here computed in two steps.
+In the first step, the transpose of the \code{response}
 is regressed on to the traits (the column predictors) using \code{\link[vegan]{cca}}
 with \code{formulaTraits}.
 The column scores of this analysis (in scaling 1) are community weigthed means (CWM) of the
 orthonormalized traits.
 These are then regressed on the environmental (row) predictors using \code{\link{wrda}} with
-with \code{formulaEnv}.
+with \code{formulaEnv} or using \code{\link[vegan]{rda}}, if site weights are equal.
 
-A dc-CA can be carried out on, what statisticians call, the sufficient statistics of the methods
-by another specification
-of the \code{response}. In this case, \code{response} should be a list with as first element
-community weighted means (CWMs with respect to the orthonormalized traits to result in a dc-CA)
+A dc-CA can be carried out on, what statisticians call, the sufficient statistics of the method.
+In this case, \code{response} should be a list with as first element
+community weighted means (CWMs) with respect to the traits, and the trait data,
 and, optionally, further elements, for functions related to \code{dc_CA}.
-If the CWMs are from standardized traits, the function does a CWM-RDA, as it is called in
-Kleyer et al. 2012. Note that CWM-RDA is an ad-hoc method
-which not have the mathematical rigour of dc-CA, \emph{e.g.} it does not optimize
-the fourth-corner correlation between the trait and environment axes.
-The function \code{\link{fCWM_SNC}} helps
-to set the appropriate \code{response} in these non-standard applications of dc-CA.
+The function \code{\link{fCWM_SNC}} shows how to set the \code{response} for this and helps
+to create the \code{response} from abundance data in these non-standard applications of dc-CA.
 
 The statistics and scores in the example \code{dune_dcCA.r},
  have been checked against the results in Canoco 5.15 (ter Braak & Smilauer, 1918).

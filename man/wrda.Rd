@@ -30,6 +30,8 @@ are in scaling \code{"sites"} (1): the scaling with \emph{Focus on Case distance
 \code{wrda} is formula-based implementation of weighted redundancy analysis.
 }
 \details{
+The algorithm is a modified version of published R-code for weighted redundancy analysis (ter Braak, 2022).
+
 In the current implementation, \code{formula} should
 contain variable names as is, \emph{i.e.} transformations of variables in the formulas gives
 an error ('undefined columns selected') when the \code{\link{scores}} function is applied.
