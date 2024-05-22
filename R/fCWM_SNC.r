@@ -242,7 +242,10 @@ f2_orth <- function(CWM,formulaTraits, dataTraits, weights){
   X = msqr$Xw/sWn; msd <- msqr$meansdvif
   CWM2CWM_ortho <- solve(qr.R(msqr$qrX))
   colnames(CWM2CWM_ortho)<- rownames(CWM2CWM_ortho)
-  CWMs_orthonormal_traits <- as.matrix(CWM)%*%CWM2CWM_ortho
+  CWM <- as.matrix(CWM)
+  msd <- mean_sd_w(CWM,w= weights)
+  CWM <- sweep(CWM, 2, STATS = msd$mean, FUN = '-')
+  CWMs_orthonormal_traits <- CWM %*%CWM2CWM_ortho
   rownames(CWMs_orthonormal_traits) <- rownames(CWM)
   return(list(CWMs_orthonormal_traits=CWMs_orthonormal_traits, CWM2CWM_ortho=CWM2CWM_ortho))
 }
