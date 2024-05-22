@@ -271,7 +271,7 @@ dc_CA <- function(formulaEnv = NULL, formulaTraits = NULL,
          "Use the default dataTraits argument, which is NULL."))
           dataTraits <- as.data.frame(lapply(dataTraits, function(x){if (is.character(x)) x<- as.factor(x) else x; return(x) } ))
       }
-      CWM2ortho <-  f2_orth(out1$CWM,out1$formulaTraits,dataTraits,out1$weights$columns)
+      CWM2ortho <-  f2_orth(out1$CWM,out1$formulaTraits,dataTraits,out1$weights$columns,out1$weights$rows)
       out1$CWMs_orthonormal_traits <- CWM2ortho$CWMs_orthonormal_traits * sqrt((out1$Nobs-1)/(out1$Nobs))
      # out1$traits_explain <- sum(out1$CWMs_orthonormal_traits^2*out1$weights$rows)*(out1$Nobs)/(out1$Nobs-1)
       if (is.null(formulaEnv)){
@@ -282,7 +282,7 @@ dc_CA <- function(formulaEnv = NULL, formulaTraits = NULL,
        if (!is.null(out1$SNC)&& !is.null(out1$weights$rows)){
         # print(out1$formulaEnv)
         #  print(str(out1$dataEn))
-        SNC2ortho <-  f2_orth(out1$SNC,formulaEnv,dataEnv,out1$weights$rows)
+        SNC2ortho <-  f2_orth(out1$SNC,formulaEnv,dataEnv,out1$weights$rows,out1$weights$columns)
         out1$SNCs_orthonormal_env <- SNC2ortho$CWMs_orthonormal_traits
       }
        out1$data <- list(dataEnv = dataEnv, dataTraits = dataTraits)

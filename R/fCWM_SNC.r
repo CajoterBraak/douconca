@@ -235,16 +235,16 @@ f_canonical_coef_traits2 <- function(out){
   return(coef_normed)
 }
 
-f2_orth <- function(CWM,formulaTraits, dataTraits, weights){
+f2_orth <- function(CWM,formulaTraits, dataTraits, weights.cols, weights.rows){
 
-  msqr <- msdvif(formulaTraits, dataTraits, weights, XZ = FALSE)
-  sWn <- sqrt(weights)
+  msqr <- msdvif(formulaTraits, dataTraits,  weights.cols, XZ = FALSE)
+  sWn <- sqrt( weights.cols)
   X = msqr$Xw/sWn; msd <- msqr$meansdvif
   CWM2CWM_ortho <- solve(qr.R(msqr$qrX))
   colnames(CWM2CWM_ortho)<- rownames(CWM2CWM_ortho)
   CWM <- as.matrix(CWM)
-  msd <- mean_sd_w(CWM,w= weights)
-  CWM <- sweep(CWM, 2, STATS = msd$mean, FUN = '-')
+  msd <- mean_sd_w(CWM,w= weights.rows)
+  CWM <- sweep(CWM, 2, STATS = c(msd$mean), FUN = '-')
   CWMs_orthonormal_traits <- CWM %*%CWM2CWM_ortho
   rownames(CWMs_orthonormal_traits) <- rownames(CWM)
   return(list(CWMs_orthonormal_traits=CWMs_orthonormal_traits, CWM2CWM_ortho=CWM2CWM_ortho))
