@@ -67,7 +67,7 @@ object1$CCA$tot.chi/object2$CCA$tot.chi
 range(object1$CCA$u/ object2$CCA$u)
 
 myconst <- sqrt(object1$Nobs*object2$tot.chi)
-range(object1$site_axes$site_scores$lc_env_scores/ vegan::scores(object2, choices = seq_len(ncol(object$site_axes$site_scores$lc_env_scores)),
+range(object1$site_axes$site_scores$lc_env_scores/ vegan::scores(object2, choices = seq_len(ncol(object1$site_axes$site_scores$lc_env_scores)),
                                                                 display= "lc", scaling= "sites",const = myconst)) # 1 1
 
 }
