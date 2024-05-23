@@ -231,13 +231,13 @@ dc_CA <- function(formulaEnv = NULL, formulaTraits = NULL,
 
     # end of check ----------------------------------------------------------------------
     if (divide.by.site.totals){
-      response <- sweep(response, 1, STATS = rowSums(response), FUN = '/')
+      response <- response / (rowSums(response) %*% t(rep(1, ncol(response))))
     }
     TotR <- rowSums(response)
     TotC <- colSums(response)
     tY <- t(response)
-    if (is.null(formulaTraits)) formulaTraits <- ~.
-    if (is.null(formulaEnv)) formulaEnv <- ~.
+    if (is.null(formulaTraits)) {formulaTraits <- ~.;   warning("formulaTraits set to ~. in dc_CA")}
+    if (is.null(formulaEnv)) {formulaEnv <- ~.;   warning("formulaEnv set to ~. in dc_CA")}
     formulaTraits <- change_reponse(formulaTraits, "tY", dataTraits)
     environment(formulaTraits)<- environment()
     step1 <-vegan::cca(formulaTraits, data = dataTraits)
@@ -249,6 +249,7 @@ dc_CA <- function(formulaEnv = NULL, formulaTraits = NULL,
     if (rownames(CWMs_orthonormal_traits)[1]=="col1") rownames(CWMs_orthonormal_traits) <- paste("Sam", seq_len((nrow(dataEnv))),sep="")
     out1 <- list(CCAonTraits = step1,
                  formulaTraits= formulaTraits,
+                 formulaEnv = formulaEnv,
                  data = list(Y = response, dataEnv = dataEnv, dataTraits = dataTraits),
                  call = call,
                  weights = list(rows = TotR/sum(TotR), columns = TotC/sum(TotC)),
@@ -256,59 +257,33 @@ dc_CA <- function(formulaEnv = NULL, formulaTraits = NULL,
                  CWMs_orthonormal_traits = CWMs_orthonormal_traits
     )
   } else {
-    #step1 <- dc_CA_object$CCAonTraits
+    if (!is.null(formulaEnv))dc_CA_object$formulaEnv <- formulaEnv else {
+      if (is.null(dc_CA_object$formulaEnv)) {
+        warning("formulaEnv set to ~. in dc_CA")
+        dc_CA_object$formulaEnv <- ~.
+      }
+    }
     if ("dcca" %in% class(dc_CA_object))
-      out1 <- dc_CA_object[c("CCAonTraits", "formulaTraits","data","call","weights","Nobs","CWMs_orthonormal_traits")]
+      out1 <- dc_CA_object[c("CCAonTraits", "formulaTraits","formulaEnv","data","call","weights","Nobs","CWMs_orthonormal_traits")]
     else if (is.list(response) && is.matrix(response[[1]])) {
-      out1 <- dc_CA_object
-      out1$Nobs <- nrow(out1$CWM)
-      if(is.null(dataEnv)) dataEnv <- out1$data$dataEnv else dataEnv <- as.data.frame(lapply(dataEnv, function(x){if (is.character(x)) x<- as.factor(x) else x; return(x) } ))
-      if (is.null(dataTraits)) {
-        if (!is.null(out1$dataTraits)) dataTraits <- out1$dataTraits else if (!is.null(out1$data$dataTraits))
-                               dataTraits <- out1$data$dataTraits else warning(" No trait data supplied to the dc_CA function.")
-      } else { warning(paste(" With CWM as first element in response in dc_CA, the trait data",
-         "used to obtain the CWMs are best supplied as response$dataTraits or response$data$dataTraits.",
-         "Use the default dataTraits argument, which is NULL."))
-          dataTraits <- as.data.frame(lapply(dataTraits, function(x){if (is.character(x)) x<- as.factor(x) else x; return(x) } ))
-      }
-      CWM2ortho <-  f2_orth(out1$CWM,out1$formulaTraits,dataTraits,out1$weights$columns,out1$weights$rows)
-      out1$CWMs_orthonormal_traits <- CWM2ortho$CWMs_orthonormal_traits * sqrt((out1$Nobs-1)/(out1$Nobs))
-     # out1$traits_explain <- sum(out1$CWMs_orthonormal_traits^2*out1$weights$rows)*(out1$Nobs)/(out1$Nobs-1)
-      if (is.null(formulaEnv)){
-        if(!is.null(out1$formulaEnv)) formulaEnv <- out1$formulaEnv else formulaEnv<- ~.
-      }
-      #print(formulaEnv)
-      out1$formulaEnv <- NULL
-       if (!is.null(out1$SNC)&& !is.null(out1$weights$rows)){
-        # print(out1$formulaEnv)
-        #  print(str(out1$dataEn))
-        SNC2ortho <-  f2_orth(out1$SNC,formulaEnv,dataEnv,out1$weights$rows,out1$weights$columns)
-        out1$SNCs_orthonormal_env <- SNC2ortho$CWMs_orthonormal_traits
-      }
-       out1$data <- list(dataEnv = dataEnv, dataTraits = dataTraits)
-
-      out1$data <- list(CWM = out1$CWM, dataEnv = dataEnv, dataTraits = dataTraits)
-      out1$CWM <- NULL
-      out1$CWM2CWM_ortho <- CWM2ortho$CWM2CWM_ortho
-
+       out1 <- checkCWM2dc_CA(dc_CA_object, dataEnv, dataTraits)
     } else{
        stop(paste(" the class of dc_CA_object should be dcca, whereas it is now:",
                       class(dc_CA_object)[1],class(dc_CA_object)[2]))
     }
   }
 
-  formulaEnv <- change_reponse(formulaEnv, "out1$CWMs_orthonormal_traits", data = out1$data$dataEnv)
+  formulaEnv <- change_reponse(out1$formulaEnv, "out1$CWMs_orthonormal_traits", data = out1$data$dataEnv)
   environment(formulaEnv)<- environment()
   if (diff(range(out1$weights$rows)) < 1.0e-4/out1$Nobs ){
-    step2 <- vegan::rda(formulaEnv, data = dataEnv)
+    step2 <- vegan::rda(formulaEnv, data = out1$data$dataEnv)
     eigenvalues <-  vegan::eigenvals(step2, model = "constrained")
   } else{
-    step2 <- wrda(formulaEnv, response =out1$CWMs_orthonormal_traits, weights = out1$weights$rows ,data = dataEnv)
+    step2 <- wrda(formulaEnv, response =out1$CWMs_orthonormal_traits, weights = out1$weights$rows ,data = out1$data$dataEnv)
     eigenvalues <-  step2$CCA$eig
   }
 
   out <- c(out1, list(RDAonEnv = step2,
-                      formulaEnv = formulaEnv,
                       eigenvalues =  eigenvalues
                       )
   )

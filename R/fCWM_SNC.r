@@ -128,8 +128,7 @@ fCWM_SNC <- function( response =NULL, dataEnv=NULL, dataTraits= NULL,
 
     # end of check -----------------------------------------------------------------------
     if (divide.by.site.totals){
-      response <- sweep(response, 1, STATS = TotR, FUN = '/')
-
+      response <- response / (TotR %*% t(rep(1, ncol(response))))
     }
     Y <- as.matrix(response)/ sum(response)
     TotR <- rowSums(Y)
@@ -244,8 +243,39 @@ f2_orth <- function(CWM,formulaTraits, dataTraits, weights.cols, weights.rows){
   colnames(CWM2CWM_ortho)<- rownames(CWM2CWM_ortho)
   CWM <- as.matrix(CWM)
   msd <- mean_sd_w(CWM,w= weights.rows)
-  CWM <- sweep(CWM, 2, STATS = c(msd$mean), FUN = '-')
+  CWM <- CWM -  rep(1,nrow(CWM)) %*% msd$mean
   CWMs_orthonormal_traits <- CWM %*%CWM2CWM_ortho
   rownames(CWMs_orthonormal_traits) <- rownames(CWM)
   return(list(CWMs_orthonormal_traits=CWMs_orthonormal_traits, CWM2CWM_ortho=CWM2CWM_ortho))
+}
+
+checkCWM2dc_CA <- function(object, dataEnv, dataTraits ){
+  # object is from CWMSNC object
+  object$Nobs <- nrow(object$CWM)
+  if (is.null(object$data)) object$data <- list()
+  if(is.null(dataEnv)) {
+    if (is.null(object$data$dataEnv)) stop("Supply environmental data to the dc_CA function.")
+  } else {
+    object$data$dataEnv <- as.data.frame(lapply(dataEnv, function(x){if (is.character(x)) x<- as.factor(x) else x; return(x) } ))
+  }
+  if (is.null(dataTraits)) {
+    if (!is.null(object$dataTraits)) object$data$dataTraits <- object$dataTraits else if (is.null(object$data$dataTraits))
+      warning(" Supply trait data to the dc_CA function.")
+  } else { warning(paste(" With CWM as first element in response in dc_CA, the trait data",
+                         "used to obtain the CWMs are best supplied as response$dataTraits or response$data$dataTraits.",
+                         "Use the default dataTraits argument, which is NULL."))
+    object$data$dataTraits <- as.data.frame(lapply(dataTraits, function(x){if (is.character(x)) x<- as.factor(x) else x; return(x) } ))
+  }
+  CWM2ortho <-  f2_orth(object$CWM,object$formulaTraits,object$data$dataTraits,object$weights$columns,object$weights$rows)
+  object$CWMs_orthonormal_traits <- CWM2ortho$CWMs_orthonormal_traits * sqrt((object$Nobs-1)/(object$Nobs))
+  # object$traits_explain <- sum(object$CWMs_orthonormal_traits^2*object$weights$rows)*(object$Nobs)/(object$Nobs-1)
+  if (!is.null(object$SNC)&& !is.null(object$weights$rows)){
+    SNC2ortho <-  with(object,f2_orth(SNC,formulaEnv,data$dataEnv,weights$rows,weights$columns))
+    object$SNCs_orthonormal_env <- SNC2ortho$CWMs_orthonormal_traits
+  }
+  object$data$CWM<- object$CWM
+  object$CWM <- NULL
+  object$CWM2CWM_ortho <- CWM2ortho$CWM2CWM_ortho
+  return(object)
+
 }
