@@ -151,6 +151,8 @@ community weighted means (CWMs) with respect to the traits, and the trait data,
 and, optionally, further elements, for functions related to \code{dc_CA}.
 The function \code{\link{fCWM_SNC}} shows how to set the \code{response} for this and helps
 to create the \code{response} from abundance data in these non-standard applications of dc-CA.
+Species and site weights, if not set in \code{response$weights} can be set by a variable
+\code{weight} in the data frames \code{dataTraits} and \code{dataEnv}, respectively.
 
 The statistics and scores in the example \code{dune_dcCA.r},
  have been checked against the results in Canoco 5.15 (ter Braak & Smilauer, 1918).
