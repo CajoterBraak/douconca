@@ -63,6 +63,8 @@
 #' and, optionally, further elements, for functions related to \code{dc_CA}.
 #' The function \code{\link{fCWM_SNC}} shows how to set the \code{response} for this and helps
 #' to create the \code{response} from abundance data in these non-standard applications of dc-CA.
+#' Species and site weights, if not set in \code{response$weights} can be set by a variable
+#' \code{weight} in the data frames \code{dataTraits} and \code{dataEnv}, respectively.
 #'
 #' The statistics and scores in the example \code{dune_dcCA.r},
 #'  have been checked against the results in Canoco 5.15 (ter Braak & Smilauer, 1918).
@@ -266,7 +268,7 @@ dc_CA <- function(formulaEnv = NULL, formulaTraits = NULL,
     if ("dcca" %in% class(dc_CA_object))
       out1 <- dc_CA_object[c("CCAonTraits", "formulaTraits","formulaEnv","data","call","weights","Nobs","CWMs_orthonormal_traits")]
     else if (is.list(response) && is.matrix(response[[1]])) {
-       out1 <- checkCWM2dc_CA(dc_CA_object, dataEnv, dataTraits)
+       out1 <- checkCWM2dc_CA(dc_CA_object,dataEnv, dataTraits)
     } else{
        stop(paste(" the class of dc_CA_object should be dcca, whereas it is now:",
                       class(dc_CA_object)[1],class(dc_CA_object)[2]))

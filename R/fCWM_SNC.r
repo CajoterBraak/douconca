@@ -249,9 +249,11 @@ f2_orth <- function(CWM,formulaTraits, dataTraits, weights.cols, weights.rows){
   return(list(CWMs_orthonormal_traits=CWMs_orthonormal_traits, CWM2CWM_ortho=CWM2CWM_ortho))
 }
 
-checkCWM2dc_CA <- function(object, dataEnv, dataTraits ){
+checkCWM2dc_CA <- function(object, dataEnv, dataTraits){
   # object is from CWMSNC object
   object$Nobs <- nrow(object$CWM)
+  # check object
+  ## check data dataEnv dataTraits
   if (is.null(object$data)) object$data <- list()
   if(is.null(dataEnv)) {
     if (is.null(object$data$dataEnv)) stop("Supply environmental data to the dc_CA function.")
@@ -266,6 +268,46 @@ checkCWM2dc_CA <- function(object, dataEnv, dataTraits ){
                          "Use the default dataTraits argument, which is NULL."))
     object$data$dataTraits <- as.data.frame(lapply(dataTraits, function(x){if (is.character(x)) x<- as.factor(x) else x; return(x) } ))
   }
+  # check weights
+  if (is.null(object$weights)) {
+    # try dataTraits and dataEnv
+    if (!is.null(object$data$dataTraits$weight)){
+      warning(" species weights taken from dataTraits$weight")
+      object$weights <- c(list(columns = object$data$dataTraits$weight),object$weights)
+    }
+    if (!is.null(object$data$dataEnv$weight)){
+      warning(" site weights taken from dataEnv$weight")
+      object$weights <- c(object$weights,list(rows = object$data$dataEnv$weight))
+    }
+  }
+  if (is.null(object$weights)) {
+    warning(" no weights supplied with response$CWM; weigths all set to 1")
+    object$weights <- list(rows = rep(1/object$Nobs, object$Nobs),
+                           columns = rep(1/nrow(object$data$dataTraits),nrow(object$data$dataTraits))
+                           )
+  } else if (!is.list(object$weights)){
+    ll <- length(object$weights)
+    if (ll == object$Nobs) {
+      warning(" no species weights supplied with response$CWM; weigths all set to 1")
+      object$weights <- list(rows = rep(1/object$Nobs, object$Nobs),
+                             columns = object$weights
+      )
+    } else if (ll == nrow(object$data$dataTraits)){
+      warning(" no site weights supplied with response$CWM; site weigths all set to 1")
+      object$weights <- list(rows = object$weights,
+                             columns = rep(1/nrow(object$data$dataTraits),nrow(object$data$dataTraits))
+      )
+    }
+  }
+  if (is.null(object$weights$rows)) {
+    warning(" no site weights supplied with response$CWM; site weigths all set to 1")
+    object$weights$rows <- rep(1/object$Nobs, object$Nobs)
+  }
+  if (is.null(object$weights$columns)) {
+    warning(" no species weights supplied with response$CWM; species weigths all set to 1")
+    object$weights$columns <- rep(1/nrow(object$data$dataTraits),nrow(object$data$dataTraits))
+  }
+  # object checked..
   CWM2ortho <-  f2_orth(object$CWM,object$formulaTraits,object$data$dataTraits,object$weights$columns,object$weights$rows)
   object$CWMs_orthonormal_traits <- CWM2ortho$CWMs_orthonormal_traits * sqrt((object$Nobs-1)/(object$Nobs))
   # object$traits_explain <- sum(object$CWMs_orthonormal_traits^2*object$weights$rows)*(object$Nobs)/(object$Nobs-1)
@@ -279,3 +321,4 @@ checkCWM2dc_CA <- function(object, dataEnv, dataTraits ){
   return(object)
 
 }
+
