@@ -15,7 +15,7 @@
 #' @param newdata An obtional data frame in which to look for variable with which to predict. If omitted,
 #' the fitted values are generated.
 #' @param rank rank or number of axes to use. Default "full" for all axes (no rank-reduction).
-#' @example dune_dcCA_predict.R
+#' @example demo/dune_dcCA_predict.R
 #' @export
 
 predict.dcca <- function(object,
