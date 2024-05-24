@@ -15,6 +15,12 @@
 #' @param newdata An obtional data frame in which to look for variable with which to predict. If omitted,
 #' the fitted values are generated.
 #' @param rank rank or number of axes to use. Default "full" for all axes (no rank-reduction).
+#' @details
+#' Variables that are in the model but not in \code{newdata} are set to their weighted means in
+#' the training data.
+#' Predictions are thus at the (weighted) mean of the quantitative variables not included.
+#' Predictions with not-included factors are at the weighted mean (none of the factor effects are included).
+#'
 #' @example demo/dune_dcCA_predict.R
 #' @export
 
@@ -26,24 +32,20 @@ predict.dcca <- function(object,
   if (rank == "full") rank = length(object$eigenvalues)
   if (type %in% c("traits","regr_env")) {
     ff <- get_Z_X_XZ_formula(object$formulaEnv)
+    c_normed <- object$c_env_normed
+    if (is.null(newdata)) newdata <- object$data$dataEnv
   } else {
     ff <- get_Z_X_XZ_formula(object$formulaTraits)
+    c_normed <- object$c_traits_normed
+    if (is.null(newdata)) newdata <- object$data$dataTraits
   }
 
   if (type %in% c("traits","env")) {
-    if (is.null(newdata)){
-      if (type =="traits") newdata <- object$data$dataEnv else #if (type == "env")
-        newdata <- object$data$dataTraits
-    }
       nams <- !ff$all_nams %in% names(newdata)
       nams <-ff$all_nams[nams]
       for (n in nams){
-        # ff.data <- get_Z_X_XZ_formula(object$formulaEnv,object$data$dataEnv)
-        # if (n %in% c(ff.data$focal_factor, ff.data$Condi_factor)){
-        #   #n is a factor: todo, this is a hack
-        #   newdata[[n]] <- 0
-        # } else
-          newdata[[n]] <- 0
+          if (n %in% rownames(c_normed)) newdata[[n]] <- c_normed[n,"Avg"] # set to average
+          else newdata[[n]] <- 0 # for factors
       }
       newdata1 <- stats::model.matrix(ff$formula_XZ, constrasts = FALSE, data = newdata)[,-1,drop=FALSE]
 
