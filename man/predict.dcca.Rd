@@ -31,6 +31,12 @@ With \code{type = "traits"} and \code{newdata=NULL}, predict gives the fitted me
 With \code{type = "env"} and \code{newdata=NULL}, predict gives the fitted mean environment,
 \emph{i.e.} the fitted species niche centroids.
 }
+\details{
+Variables that are in the model but not in \code{newdata} are set to their weighted means in
+the training data.
+Predictions are thus at the (weighted) mean of the quantitative variables not included.
+Predictions with not-included factors are at the weighted mean (none of the factor effects are included).
+}
 \examples{
 data("dune_trait_env")
 # rownames are carried forward in results
