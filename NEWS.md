@@ -6,6 +6,7 @@ dc_CA_vegan has been replaced by the more general function dc_CA. Specify
 the argument divide.by.site.totals to obtain the same analysis.
 * General dc-CA required weighted redundancy analysis. For this, a new function
 wrda has been added, with methods for print, scores and anova.
+* A predict function has been added.
 * A dc-CA can be computed from community-weighted means (CWMs) with
 trait and environment data with species and site weights. See the new function fCWM_SNC. This is of interest, for example,
 to make a dc-CA analysis reproducible when the abundance data cannot be made public, and
