@@ -244,7 +244,7 @@ f2_orth <- function(CWM,formulaTraits, dataTraits, weights.cols, weights.rows){
   CWM <- as.matrix(CWM)
   msd <- mean_sd_w(CWM,w= weights.rows)
   CWM <- CWM -  rep(1,nrow(CWM)) %*% msd$mean
-  CWMs_orthonormal_traits <- CWM %*%CWM2CWM_ortho
+  CWMs_orthonormal_traits <- CWM[, rownames(CWM2CWM_ortho) , drop = FALSE] %*%CWM2CWM_ortho
   rownames(CWMs_orthonormal_traits) <- rownames(CWM)
   return(list(CWMs_orthonormal_traits=CWMs_orthonormal_traits, CWM2CWM_ortho=CWM2CWM_ortho))
 }

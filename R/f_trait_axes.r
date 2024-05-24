@@ -21,7 +21,7 @@ f_trait_axes <- function(out, which_cor = "in model"){
     # the CWMs are taken.
     if(!is.null(out$SNCs_orthonormal_env)){
     SNC <- out$SNCs_orthonormal_env
-    step2 <- wrda(formula = out$formulaTraits,response = SNC,
+    step2 <- wrda(formula = out$formulaTraits,response = SNC * sqrt((nrow(SNC)-1)/nrow(SNC)),
                   data = out$data$dataTraits,weights = out$weights$columns)
     if (diff(range((step2$eigenvalues+1.e-10)/(out$eigenvalues+1.e-10)))>1.6e-3){
       warning("\nThe eigenvalues of the CWM and SNC analyses differ.",
@@ -81,7 +81,7 @@ f_trait_axes <- function(out, which_cor = "in model"){
       ncov <- nrow(c_traits_normed)- nrow(out$c_traits_normed0)
       if (ncov)
         ratio <- sign(colSums( sign(c_traits_normed[-seq_len(ncov), 3 + rseq, drop=FALSE ]/out$c_traits_normed0[,3 + rseq]))) else
-        ratio <- sign(colSums( sign(c_traits_normed[-seq_len(ncov), 3 + rseq, drop=FALSE ]/out$c_traits_normed0[,3 + rseq])))
+        ratio <- sign(colSums( sign(c_traits_normed[, 3 + rseq, drop=FALSE ]/out$c_traits_normed0[,3 + rseq])))
 
       if (length(ratio)==1) flip <- matrix(ratio) else flip <- diag(ratio)
       c_traits_normed[, 3 + rseq ] <-   c_traits_normed[, 3 + rseq, drop = FALSE ] %*% flip
