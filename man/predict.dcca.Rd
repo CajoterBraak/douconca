@@ -14,8 +14,8 @@
 \arguments{
 \item{object}{return value of \code{\link{dc_CA}}.}
 
-\item{type}{type of prediction, c("env", "traits","response","reg_env","reg_trait", "response") for
-environmental values, values of traits,
+\item{type}{type of prediction, \code{c("env", "traits","response","reg_env","reg_trait")} for
+environmental values, values of traits, response (expected abundance),
 regression coefficients for environmenal and trait predictors.}
 
 \item{rank}{rank or number of axes to use. Default "full" for all axes (no rank-reduction).}
@@ -29,7 +29,8 @@ with trait and environmental values in this order,
 \emph{e.g.} list(traits = dataTraits, env = dataEnv).}
 }
 \description{
-Prediction of traits from environment and environment from traits
+Prediction of traits from environment, environment from traits
+and response from trait and environment data.
 
 With \code{type = "traits"} and \code{newdata=NULL}, predict gives the fitted mean traits,
 \emph{i.e.} the fitted community weighted means.
@@ -50,7 +51,7 @@ indicating expected absences (0) or small expected response values.
 data("dune_trait_env")
 # rownames are carried forward in results
 rownames(dune_trait_env$comm) <- dune_trait_env$comm$Sites
-divide <- FALSE # divide by site.totals if TRUE
+divide <- TRUE # divide by site.totals if TRUE
 
 
 cat("\n\n\n******* divide.by.site.totals ==", divide, "*******\n\n\n")
