@@ -37,3 +37,16 @@ mod$eigenvalues/mod2$eigenvalues
 mod2$site_axes$R2_env # perfect fit
 mod2$species_axes$R2_traits # perfect fit
 
+pred <- predict(mod,type= "response")
+# pred has negative values and dc_CA cannot have negatives in the response
+pred[pred<0] <-0
+
+mod3 <- dc_CA(formulaEnv = mod$formulaEnv,
+              formulaTraits = mod$formulaTraits,
+              response = pred,  # must delete "Sites"
+              dataEnv =dune_trait_env$envir,
+              dataTraits =dune_trait_env$traits,
+              divide.by.site.totals = divide,
+              verbose = TRUE)
+mod3$eigenvalues/mod$eigenvalues
+
