@@ -1,7 +1,8 @@
 #' @title Prediction for double-constrained correspondence analysis (dc-CA)
 #'
 #' @description
-#' Prediction of traits from environment and environment from traits
+#' Prediction of traits from environment, environment from traits
+#' and response from trait and environment data.
 #'
 #' With \code{type = "traits"} and \code{newdata=NULL}, predict gives the fitted mean traits,
 #' \emph{i.e.} the fitted community weighted means.
@@ -9,8 +10,8 @@
 #' \emph{i.e.} the fitted species niche centroids.
 #'
 #' @param object return value of \code{\link{dc_CA}}.
-#' @param type type of prediction, c("env", "traits","response","reg_env","reg_trait", "response") for
-#' environmental values, values of traits,
+#' @param type type of prediction, \code{c("env", "traits","response","reg_env","reg_trait")} for
+#' environmental values, values of traits, response (expected abundance),
 #' regression coefficients for environmenal and trait predictors.
 #' @param newdata Data in which to look for variable with which to predict.
 #' For \code{type = "reg_env" or "reg_trait"} newdata is ignored.
