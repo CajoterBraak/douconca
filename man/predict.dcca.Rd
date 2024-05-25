@@ -14,14 +14,19 @@
 \arguments{
 \item{object}{return value of \code{\link{dc_CA}}.}
 
-\item{type}{type of prediction, c("env", "traits","response","reg_env","reg_trait") for
+\item{type}{type of prediction, c("env", "traits","response","reg_env","reg_trait", "response") for
 environmental values, values of traits,
 regression coefficients for environmenal and trait predictors.}
 
 \item{rank}{rank or number of axes to use. Default "full" for all axes (no rank-reduction).}
 
-\item{newdata}{An obtional data frame in which to look for variable with which to predict. If omitted,
-the fitted values are generated.}
+\item{newdata}{Data in which to look for variable with which to predict.
+For \code{type = "reg_env" or "reg_trait"} newdata is ignored.
+For \code{type = "env" or "trait"}, newdata is data frame of trait and environmental values,
+respectively, which are used for the prediction. If omitted, fitted values are generated.
+For \code{type = "response"}, newdata is a list of two data frames
+with trait and environmental values in this order,
+\emph{e.g.} list(traits = dataTraits, env = dataEnv).}
 }
 \description{
 Prediction of traits from environment and environment from traits
@@ -36,6 +41,10 @@ Variables that are in the model but not in \code{newdata} are set to their weigh
 the training data.
 Predictions are thus at the (weighted) mean of the quantitative variables not included.
 Predictions with not-included factors are at the weighted mean (none of the factor effects are included).
+
+For \code{type = "response"} and non-null newdata, the species weights of the training
+are used; the site weights are taken equal. Many of the predicted values may be negative,
+indicating expected absences (0) or small expected response values.
 }
 \examples{
 data("dune_trait_env")
@@ -76,5 +85,18 @@ mod2 <- dc_CA(response = CWMSNC,
 mod$eigenvalues/mod2$eigenvalues
 mod2$site_axes$R2_env # perfect fit
 mod2$species_axes$R2_traits # perfect fit
+
+pred <- predict(mod,type= "response")
+# pred has negative values and dc_CA cannot have negatives in the response
+pred[pred<0] <-0
+
+mod3 <- dc_CA(formulaEnv = mod$formulaEnv,
+              formulaTraits = mod$formulaTraits,
+              response = pred,  # must delete "Sites"
+              dataEnv =dune_trait_env$envir,
+              dataTraits =dune_trait_env$traits,
+              divide.by.site.totals = divide,
+              verbose = TRUE)
+mod3$eigenvalues/mod$eigenvalues
 
 }
