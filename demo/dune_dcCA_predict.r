@@ -1,7 +1,7 @@
 data("dune_trait_env")
 # rownames are carried forward in results
 rownames(dune_trait_env$comm) <- dune_trait_env$comm$Sites
-divide <- FALSE # divide by site.totals if TRUE
+divide <- TRUE # divide by site.totals if TRUE
 
 
 cat("\n\n\n******* divide.by.site.totals ==", divide, "*******\n\n\n")
