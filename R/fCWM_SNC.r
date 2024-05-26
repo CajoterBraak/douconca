@@ -315,8 +315,10 @@ checkCWM2dc_CA <- function(object, dataEnv, dataTraits){
     warning(" no species weights supplied with response$CWM; species weigths all set to 1")
     object$weights$columns <- rep(1/nrow(object$data$dataTraits),nrow(object$data$dataTraits))
   }
+  # change ~. to names
+  formulaTraits <- change_reponse(object$formulaTraits,"Y",object$dataTraits)
   # object checked..
-  CWM2ortho <-  with(object, f2_orth(CWM,object$formulaTraits,data$dataTraits,weights$columns,weights$rows))
+  CWM2ortho <-  with(object, f2_orth(CWM,formulaTraits,data$dataTraits,weights$columns,weights$rows))
   object$CWMs_orthonormal_traits <- CWM2ortho$CWMs_orthonormal_traits * sqrt((object$Nobs-1)/(object$Nobs))
   # object$traits_explain <- sum(object$CWMs_orthonormal_traits^2*object$weights$rows)*(object$Nobs)/(object$Nobs-1)
   if (!is.null(object$SNC)&& !is.null(object$weights$rows)){

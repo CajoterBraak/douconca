@@ -33,6 +33,7 @@ f_env_axes <- function(out, which_cor = "in model"){
     dataEnv <- out$data
     formulaEnv <- out$formula
   } else stop("input must be a result of dc_CA or wrda")
+  formulaEnv <- change_reponse(formulaEnv, "Y",dataEnv)
   QR <- get_QR(out)
   res <- calculate_b_se_tval(QR, y=CWM,
                              w = w,  scale2 = 0, name = "CWM")
@@ -42,7 +43,7 @@ f_env_axes <- function(out, which_cor = "in model"){
 
   # correlations of the dataEnv with the CWMs wrt the  axes
   if (which_cor[1] == "in model"){
-      fX <- get_Z_X_XZ_formula(formulaEnv)$formula_X0
+      fX <- get_Z_X_XZ_formula(formulaEnv, dataEnv)$formula_X0
       env0 <-  stats::model.matrix(fX, constrasts = FALSE, data = dataEnv)
   } else {
     whichc = which_cor
