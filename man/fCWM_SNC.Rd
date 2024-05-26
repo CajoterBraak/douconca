@@ -79,7 +79,11 @@ at least up to sign changes of the axes.
 }
 \details{
 The argument \code{formulaTraits} determines which CWMs are calculated.
-The CWMs are calculated for centered but further unstandardized trait data.
+The CWMs are calculated from the trait data (non-centered, non-standardized).
+With trait covariates, the other predictor trait are adjusted for the
+trait covariates by weighted regression, after which the overall weighted mean trait is added.
+This has the advantage that each CWM has the scale of the original trait.
+
 The argument \code{formulaEnv} determines which SNCs are calculated.
 The SNCs are calculated for centered but further unstandardized environmental data.
 
