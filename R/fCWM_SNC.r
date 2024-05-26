@@ -140,6 +140,7 @@ fCWM_SNC <- function( response =NULL, dataEnv=NULL, dataTraits= NULL,
     Nobs = nrow(Y)
     # CWM and CWM ortho -------------------------------------------------------
    # formula = formulaTraits; data = dataTraits; w = weights$columns
+    formulaTraits <- change_reponse(formulaTraits,"Y",dataTraits)
     msqr <- msdvif(formulaTraits, dataTraits, weights$columns, XZ = FALSE)
     sWn <- sqrt(weights$columns)
     X = msqr$Xw/sWn; msd <- msqr$meansdvif
@@ -163,6 +164,7 @@ fCWM_SNC <- function( response =NULL, dataEnv=NULL, dataTraits= NULL,
 
 # SNC and SNC ortho -------------------------------------------------------
     #formula = formulaEnv; data = dataEnv; w = weights$rows
+    formulaEnv <- change_reponse(formulaEnv,"Y",dataEnv)
     msqr <- msdvif(formulaEnv, dataEnv, weights$rows, XZ = FALSE)
     sWn <- sqrt(weights$rows)
     X = msqr$Xw/sWn; msd <- msqr$meansdvif
