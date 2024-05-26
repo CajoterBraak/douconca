@@ -84,8 +84,7 @@ With trait covariates, the other predictor trait are adjusted for the
 trait covariates by weighted regression, after which the overall weighted mean trait is added.
 This has the advantage that each CWM has the scale of the original trait.
 
-The argument \code{formulaEnv} determines which SNCs are calculated.
-The SNCs are calculated for centered but further unstandardized environmental data.
+The SNCs are calculated analogously from environmental data.
 
 Empty (all zero) rows and columns in \code{response} are removed from the \code{response} and the corresponding
 rows from \code{dataEnv} and \code{dataTraits}. Subsequently, any columns with missing values
