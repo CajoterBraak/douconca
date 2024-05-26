@@ -259,6 +259,8 @@ f2_orth <- function(CWM,formulaTraits, dataTraits, weights.cols, weights.rows){
 
 checkCWM2dc_CA <- function(object, dataEnv, dataTraits){
   # object is from CWMSNC object
+  object$CWM <- as.matrix(object$CWM)
+  if (!is.null(object$response$SNC))object$response$SNC <- as.matrix(object$response$SNC)
   object$Nobs <- nrow(object$CWM)
   # check object
   ## check data dataEnv dataTraits

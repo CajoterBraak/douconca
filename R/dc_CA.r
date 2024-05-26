@@ -19,9 +19,9 @@
 #' to \code{formulaTraits} as in \code{\link[vegan]{cca}}. The \code{covariate-formula} should not contain a \code{~} (tilde).
 #' Default: \code{~.}, i.e. all variables in \code{dataTraits} are predictor traits.
 #' @param response matrix, data frame of the abundance data (dimension \emph{n} x \emph{m}) or
-#' object from \code{\link{fCWM_SNC}}.
-#' Rownames of \code{response}, if any, are carried through. See Details for analyses starting from
+#' object with community weighted means from \code{\link{fCWM_SNC}}. See Details for analyses starting from
 #' community weighted means.
+#' Rownames of \code{response}, if any, are carried through.
 #' @param dataEnv matrix or data frame of the row predictors, with rows corresponding to those in \code{response}.
 #' (dimension \emph{n} x \emph{p}).
 #' @param dataTraits matrix or data frame of the column predictors,
@@ -175,7 +175,7 @@ dc_CA <- function(formulaEnv = NULL, formulaTraits = NULL,
   # If set, formulaTraits, response, dataEnv, dataTraits are not used at all and have no efffect on the result
   call <- match.call()
   if (!is.null(response)) {
-    if (is.list(response) && is.matrix(response[[1]])) {
+    if (is.list(response) && any(c("matrix","data.frame") %in% class(response[[1]]))) {
         # response is a list of CWMs_orthonormal_traits and a weights list
         if (any(is.na(response[[1]])))stop("The CWMs should not have missing entries")
         # create a sufficient dc_CA_object object
@@ -267,7 +267,7 @@ dc_CA <- function(formulaEnv = NULL, formulaTraits = NULL,
     }
     if ("dcca" %in% class(dc_CA_object))
       out1 <- dc_CA_object[c("CCAonTraits", "formulaTraits","formulaEnv","data","call","weights","Nobs","CWMs_orthonormal_traits")]
-    else if (is.list(response) && is.matrix(response[[1]])) {
+    else if (is.list(response) && any(c("matrix","data.frame") %in% class(response[[1]]))) {
        out1 <- checkCWM2dc_CA(dc_CA_object,dataEnv, dataTraits)
     } else{
        stop(paste(" the class of dc_CA_object should be dcca, whereas it is now:",
