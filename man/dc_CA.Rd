@@ -28,9 +28,9 @@ to \code{formulaTraits} as in \code{\link[vegan]{cca}}. The \code{covariate-form
 Default: \code{~.}, i.e. all variables in \code{dataTraits} are predictor traits.}
 
 \item{response}{matrix, data frame of the abundance data (dimension \emph{n} x \emph{m}) or
-object from \code{\link{fCWM_SNC}}.
-Rownames of \code{response}, if any, are carried through. See Details for analyses starting from
-community weighted means.}
+object with community weighted means from \code{\link{fCWM_SNC}}. See Details for analyses starting from
+community weighted means.
+Rownames of \code{response}, if any, are carried through.}
 
 \item{dataEnv}{matrix or data frame of the row predictors, with rows corresponding to those in \code{response}.
 (dimension \emph{n} x \emph{p}).}
