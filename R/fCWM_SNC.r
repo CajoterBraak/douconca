@@ -29,8 +29,7 @@
 #' trait covariates by weighted regression, after which the overall weighted mean trait is added.
 #' This has the advantage that each CWM has the scale of the original trait.
 #'
-#' The argument \code{formulaEnv} determines which SNCs are calculated.
-#' The SNCs are calculated for centered but further unstandardized environmental data.
+#' The SNCs are calculated analogously from environmental data.
 #'
 #' Empty (all zero) rows and columns in \code{response} are removed from the \code{response} and the corresponding
 #' rows from \code{dataEnv} and \code{dataTraits}. Subsequently, any columns with missing values
@@ -148,10 +147,8 @@ fCWM_SNC <- function( response =NULL, dataEnv=NULL, dataTraits= NULL,
     CWM2CWM_ortho <- solve(qr.R(msqr$qrX))
     # so Q represents the orthonormalized predictors
     CWM <- diag(1/weights$rows)%*% Y %*% X
-    #if (is.null(get_Z_X_XZ_formula(formulaTraits)$Condi_nams)){
       # add mean
     CWM <- CWM + rep(1,nrow(CWM))%*% matrix(msd[,1],nrow=1)
-    #}
     rownames(CWM) <- rownames(response)
     # # check
     #CWM_ortho <- CWM%*%CWM2CWM_ortho
@@ -173,6 +170,7 @@ fCWM_SNC <- function( response =NULL, dataEnv=NULL, dataTraits= NULL,
     SNC2SNC_ortho <- solve(qr.R(msqr$qrX))
     # so Q represents the orthonormalized predictors
     SNC <- diag(1/weights$columns)%*% t(Y) %*% X
+    SNC <- SNC + rep(1,nrow(SNC))%*% matrix(msd[,1],nrow=1)
     rownames(SNC) <- colnames(response)
     SNCs_orthonormal_env <- SNC %*% SNC2SNC_ortho
     env_explain <- sum(SNCs_orthonormal_env^2 * weights$columns )
