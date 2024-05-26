@@ -318,7 +318,7 @@ checkCWM2dc_CA <- function(object, dataEnv, dataTraits){
     object$weights$columns <- rep(1/nrow(object$data$dataTraits),nrow(object$data$dataTraits))
   }
   # change ~. to names
-  formulaTraits <- change_reponse(object$formulaTraits,"Y",object$dataTraits)
+  formulaTraits <- change_reponse(object$formulaTraits,"Y",object$data$dataTraits)
   # object checked..
   CWM2ortho <-  with(object, f2_orth(CWM,formulaTraits,data$dataTraits,weights$columns,weights$rows))
   object$CWMs_orthonormal_traits <- CWM2ortho$CWMs_orthonormal_traits * sqrt((object$Nobs-1)/(object$Nobs))

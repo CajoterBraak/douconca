@@ -36,7 +36,7 @@ f_trait_axes <- function(out, which_cor = "in model"){
         warning("Trait regression coefficients are derived from the CWM analysis")
         regr <- out$c_traits_normed0[, -c(1,2,3)]; regr <- regr[,-ncol(regr), drop = FALSE]
         # must use model.matrix
-        fX <- get_Z_X_XZ_formula(out$formulaTraits)
+        fX <- get_Z_X_XZ_formula(out$formulaTraits, out$data$dataTraits)
       #  idremoveZ <- seq_len(ncol(model.matrix(fX$formula_Z, data = out$data$dataTraits)[,-1],drop=FALSE))
         X <-stats::model.matrix(fX$formula_X1, data = out$data$dataTraits)[,-1,drop=FALSE]
         lc_trait_scores <- standardize_w(X)%*% regr
@@ -96,7 +96,7 @@ f_trait_axes <- function(out, which_cor = "in model"){
   # correlations of the dataTraits with the SNC wrt the axes
   if (which_cor[1] == "in model") {
     whichc <- get_Z_X_XZ_formula(out$formulaTraits, out$data$dataTraits)$focal_nams
-    gg <- get_Z_X_XZ_formula(out$formulaTraits)
+    gg <- get_Z_X_XZ_formula(out$formulaTraits, out$data$dataTraits)
     traits0 <- stats::model.matrix(gg$formula_X0, constrasts = FALSE, data = out$data$dataTraits)
   } else {whichc = which_cor
     traits0 <-  stats::model.matrix(~.-1, constrasts = FALSE, data = out$data$dataTraits[, whichc, drop= FALSE])
