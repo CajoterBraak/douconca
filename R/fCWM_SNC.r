@@ -257,8 +257,14 @@ f2_orth <- function(CWM,formulaTraits, dataTraits, weights.cols, weights.rows){
   return(list(CWMs_orthonormal_traits=CWMs_orthonormal_traits, CWM2CWM_ortho=CWM2CWM_ortho))
 }
 
-checkCWM2dc_CA <- function(object, dataEnv, dataTraits){
+checkCWM2dc_CA <- function(object, dataEnv, dataTraits, formulaTraits){
   # object is from CWMSNC object
+  if (!is.null(formulaTraits)) {object$formulaTraits <- formulaTraits} else {
+    if (is.null(object$formulaTraits)) {
+      warning("formulaTraits set to ~. in checkCWM2dc_CA")
+      object$formulaTraits <- ~.
+    }
+  }
   object$CWM <- as.matrix(object$CWM)
   if (!is.null(object$response$SNC))object$response$SNC <- as.matrix(object$response$SNC)
   object$Nobs <- nrow(object$CWM)

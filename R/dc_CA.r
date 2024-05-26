@@ -269,17 +269,10 @@ dc_CA <- function(formulaEnv = NULL, formulaTraits = NULL,
         dc_CA_object$formulaEnv <- ~.
       }
     }
-    if (!is.null(formulaTraits)) {dc_CA_object$formulaTraits <- formulaTraits} else {
-      if (is.null(dc_CA_object$formulaTraits)) {
-        warning("formulaTraits set to ~. in dc_CA")
-        dc_CA_object$formulaTraits <- ~.
-      }
-    }
-
     if ("dcca" %in% class(dc_CA_object))
       out1 <- dc_CA_object[c("CCAonTraits", "formulaTraits","formulaEnv","data","call","weights","Nobs","CWMs_orthonormal_traits")]
     else if (is.list(response) && any(c("matrix","data.frame") %in% class(response[[1]]))) {
-       out1 <- checkCWM2dc_CA(dc_CA_object,dataEnv, dataTraits)
+       out1 <- checkCWM2dc_CA(dc_CA_object,dataEnv, dataTraits, formulaTraits)
     } else{
        stop(paste(" the class of dc_CA_object should be dcca, whereas it is now:",
                       class(dc_CA_object)[1],class(dc_CA_object)[2]))
