@@ -24,7 +24,11 @@
 #
 #' @details
 #' The argument \code{formulaTraits} determines which CWMs are calculated.
-#' The CWMs are calculated for centered but further unstandardized trait data.
+#' The CWMs are calculated from the trait data (non-centered, non-standardized).
+#' With trait covariates, the other predictor trait are adjusted for the
+#' trait covariates by weighted regression, after which the overall weighted mean trait is added.
+#' This has the advantage that each CWM has the scale of the original trait.
+#'
 #' The argument \code{formulaEnv} determines which SNCs are calculated.
 #' The SNCs are calculated for centered but further unstandardized environmental data.
 #'
@@ -144,6 +148,10 @@ fCWM_SNC <- function( response =NULL, dataEnv=NULL, dataTraits= NULL,
     CWM2CWM_ortho <- solve(qr.R(msqr$qrX))
     # so Q represents the orthonormalized predictors
     CWM <- diag(1/weights$rows)%*% Y %*% X
+    #if (is.null(get_Z_X_XZ_formula(formulaTraits)$Condi_nams)){
+      # add mean
+    CWM <- CWM + rep(1,nrow(CWM))%*% matrix(msd[,1],nrow=1)
+    #}
     rownames(CWM) <- rownames(response)
     # # check
     #CWM_ortho <- CWM%*%CWM2CWM_ortho
@@ -308,7 +316,7 @@ checkCWM2dc_CA <- function(object, dataEnv, dataTraits){
     object$weights$columns <- rep(1/nrow(object$data$dataTraits),nrow(object$data$dataTraits))
   }
   # object checked..
-  CWM2ortho <-  f2_orth(object$CWM,object$formulaTraits,object$data$dataTraits,object$weights$columns,object$weights$rows)
+  CWM2ortho <-  with(object, f2_orth(CWM,object$formulaTraits,data$dataTraits,weights$columns,weights$rows))
   object$CWMs_orthonormal_traits <- CWM2ortho$CWMs_orthonormal_traits * sqrt((object$Nobs-1)/(object$Nobs))
   # object$traits_explain <- sum(object$CWMs_orthonormal_traits^2*object$weights$rows)*(object$Nobs)/(object$Nobs-1)
   if (!is.null(object$SNC)&& !is.null(object$weights$rows)){
