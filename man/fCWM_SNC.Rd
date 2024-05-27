@@ -159,13 +159,9 @@ mod4 <- dc_CA(formulaEnv =mod1$formulaEnv,
 # the eigenvalues of the CWM analyses are not those of mod1
 mod4$eigenvalues/mod1$eigenvalues
 
-# and
-
-
-
 
 CWMSNCe <-CWMSNCd
-CWMSNCd$weights <- NULL
+CWMSNCe$weights <- NULL
 # example of weights specified via dataTraits and dataEnv
 CWMSNCe$dataTraits <- dune_trait_env$traits
 CWMSNCe$dataTraits$weight <- CWMSNCa$weights$columns
@@ -175,6 +171,19 @@ mod5 <- dc_CA(formulaEnv =mod1$formulaEnv,
               response = CWMSNCe,  # included dataEnv, dataTraits
               verbose = TRUE)
 mod5$eigenvalues/mod1$eigenvalues # mod5 is a proper dc-CA
+
+# a minimal specification giving 4 warnings
+dune_trait_env$envir$weight <- NULL
+CWMSNCf <- list(CWM = as.data.frame(CWMSNC0$CWM),
+                weights= list(columns = 100*mod1$weights$columns),
+                dataTraits =dune_trait_env$traits[,-c(1,2)]
+)
+# the trait model is implicit in the CWMs, different environmental predictors can be used
+mod6 <- dc_CA(response =CWMSNCf,
+                dataEnv =dune_trait_env$envir,
+                formulaEnv = ~ Moist,
+                verbose = TRUE)
+
 }
 \references{
 Kleyer, M., Dray, S., Bello, F., Lepš, J., Pakeman, R.J., Strauss, B., Thuiller,
