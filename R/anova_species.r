@@ -75,7 +75,7 @@ anova_species <- function(object, permutations = 999, by = NULL ){
 
 if (is.null(object$SNCs_orthonormal_env)){
 
-  formulaEnv <- change_reponse(object$formulaEnv, "object$data$Y")
+  formulaEnv <- change_reponse(object$formulaEnv, "object$data$Y", object$data$dataEnv)
   environment(formulaEnv)<- environment()
   step1_sp <-vegan::cca(formulaEnv, data = object$data$dataEnv)
 
