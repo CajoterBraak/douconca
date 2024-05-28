@@ -73,7 +73,7 @@
 #' @export
 
 fCWM_SNC <- function( response =NULL, dataEnv=NULL, dataTraits= NULL,
-          formulaEnv = ~., formulaTraits = ~.,  divide.by.site.totals = TRUE, dc_CA_object  = NULL, minimal_output = TRUE, verbose = TRUE) {
+          formulaEnv = NULL, formulaTraits = NULL,  divide.by.site.totals = TRUE, dc_CA_object  = NULL, minimal_output = TRUE, verbose = TRUE) {
   # response matrix or data frame, dataEnv and dataTraits data frames in which formualaE and formulaT are evaluated
   #dc_CA_object = result (value) of a previous run, can be used to save computing time for
   # runs that modify the formula for samples (step2: RDAonEnv) only
@@ -138,6 +138,14 @@ fCWM_SNC <- function( response =NULL, dataEnv=NULL, dataTraits= NULL,
     TotC <- colSums(Y)
     weights = list(rows = TotR, columns = TotC) # unite sums
     Nobs = nrow(Y)
+    if (is.null(formulaTraits)) {
+      formulaTraits <- as.formula(paste("~", paste0(names(dataTraits),collapse = "+")))
+      warning("formulaTraits set to ~. in fCWMSNC")
+    }
+
+    if (is.null(formulaEnv)) {
+      formulaEnv <- as.formula(paste("~", paste0(names(dataEnv),collapse = "+")))
+      warning("formulaEnv set to ~. in fCWMSNC")}
     # CWM and CWM ortho -------------------------------------------------------
    # formula = formulaTraits; data = dataTraits; w = weights$columns
     formulaTraits <- change_reponse(formulaTraits,"Y",dataTraits)

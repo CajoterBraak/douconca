@@ -242,8 +242,15 @@ dc_CA <- function(formulaEnv = NULL, formulaTraits = NULL,
     TotR <- rowSums(response)
     TotC <- colSums(response)
     tY <- t(response)
-    if (is.null(formulaTraits)) {formulaTraits <- ~.;   warning("formulaTraits set to ~. in dc_CA")}
-    if (is.null(formulaEnv)) {formulaEnv <- ~.;   warning("formulaEnv set to ~. in dc_CA")}
+    if (is.null(formulaTraits)) {
+     formulaTraits <- as.formula(paste("~", paste0(names(dataTraits),collapse = "+")))
+      warning("formulaTraits set to ~. in dc_CA")
+     }
+
+    if (is.null(formulaEnv)) {
+    formulaEnv <- as.formula(paste("~", paste0(names(dataEnv),collapse = "+")))
+    warning("formulaEnv set to ~. in dc_CA")}
+
     formulaTraits <- change_reponse(formulaTraits, "tY", dataTraits)
     environment(formulaTraits)<- environment()
     step1 <-vegan::cca(formulaTraits, data = dataTraits)
