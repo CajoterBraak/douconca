@@ -44,10 +44,10 @@ f_env_axes <- function(out, which_cor = "in model"){
   # correlations of the dataEnv with the CWMs wrt the  axes
   if (which_cor[1] == "in model"){
       fX <- get_Z_X_XZ_formula(formulaEnv, dataEnv)$formula_X0
-      env0 <-  stats::model.matrix(fX, constrasts = FALSE, data = dataEnv)
+      env0 <-  stats::model.matrix(fX, data = dataEnv)
   } else {
     whichc = which_cor
-    env0 <-  stats::model.matrix(~.-1, constrasts = FALSE, data = dataEnv[, whichc, drop= FALSE])
+    env0 <-  stats::model.matrix(~.-1, data = dataEnv[, whichc, drop= FALSE])
     }
   Cor_Env_CWM <- wcor(env0, CWM, w = w)
   colnames(Cor_Env_CWM) <- paste("CWM-ax", seq_len(ncol(Cor_Env_CWM)), sep= "")

@@ -32,13 +32,17 @@ mean_sd_w <- function(X,w = rep(1/nrow(X),nrow(X))){
   return(list(mean = mean_w, sd = sd_w))
 }
 
-msdvif <- function(formula = NULL, data, weights, XZ = FALSE){
+msdvif <- function(formula = NULL, data, weights, XZ = FALSE, novif = FALSE, contrast= FALSE){
   # calc mean variance and vif from for X given Z or XZ with qr of X|Z or of centered XZ
   if (is.null(formula)) {f <- ~. } else {f <- formula}
   ff <- get_Z_X_XZ_formula(f,data)
-  if (XZ)X <- stats::model.matrix(ff$formula_XZ, data = data)[,-1, drop = FALSE] else
-         X <- stats::model.matrix(ff$formula_X1, data= data)[,-1, drop = FALSE]
+  if (XZ)X <- stats::model.matrix(ff$formula_XZ, data = data)[,-1, drop = FALSE] else {
+    if (contrast) X <- stats::model.matrix(ff$formula_X1, data= data)[,-1, drop = FALSE] else {
+      X <- stats::model.matrix(ff$formula_X0, contrasts = FALSE  ,data= data)
+    }
+         }
   msd <- mean_sd_w(X,w= weights)
+  if (novif) return(list(msd=msd, ff_get = ff))
   avg = msd$mean ; sds = msd$sd;
   sWn <- sqrt(weights)
   Zw <- stats::model.matrix(ff$formula_Z, data)*sWn

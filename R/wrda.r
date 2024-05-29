@@ -97,7 +97,7 @@ wrda <- function(formula, response, data, weights= rep(1, nrow(data)), verbose =
   fct <- sqrt(fct)
   site_axes <- list(site_scores = list(
     site_scores_unconstrained =  qr.resid(msqr$qrZ, eY %*% svd_Yfit_X$v)/ (sWn/fct),
-    lc_env_scores             =  (svd_Yfit_X$u %*% diag(svd_Yfit_X$d)) / (sWn/fct)
+    lc_env_scores             =  (svd_Yfit_X$u %*% diagd) / (sWn/fct)
                                        )
   )
 

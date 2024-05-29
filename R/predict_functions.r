@@ -17,10 +17,9 @@ predict_regr_traits <- function(object, rank){
 predict_traits <- function(object, newdata1, rank){
   # missing factors in newdata1 : no contribution of the missing factors
   reg <- predict_regr_env(object, rank)
-  c_normed <- scores(object, choices = seq_len(rank), display = c("reg"))
-  pred_scaled <- fpred_scaled(newdata1, reg, c_normed)
+  pred_scaled <- fpred_scaled(newdata1, reg)
   gg <- get_Z_X_XZ_formula(object$formulaTraits)
-  traits0 <- stats::model.matrix(gg$formula_X0, constrasts = FALSE, data = object$data$dataTraits)
+  traits0 <- stats::model.matrix(gg$formula_X0, data = object$data$dataTraits)
   msd = mean_sd_w(traits0, w = object$weights$columns)
   #mean_sd = cbind(mean = c(mean_sd1$mean),sd = c(mean_sd1$sd))
   #rownames(mean_sd) <- colnames(mean_sd1$mean)
@@ -53,34 +52,42 @@ check_newdata <- function(object, newdata, type){
   # where check_newdata gives environmental data and trait data respectively
 
   if (type %in% c("traits")) {
-    ff <- get_Z_X_XZ_formula(object$formulaEnv)
-    c_normed <- object$c_env_normed
+    #ff <- get_Z_X_XZ_formula(object$formulaEnv)
+    wmff<- msdvif(object$formulaEnv, object$data$dataEnv,  object$weights$rows,
+                XZ = TRUE, novif= TRUE)
+    wm <- wmff$mean; ff <- wmff$ff_get
+    c_normed <- cbind(Avg = c(wmff$msd$mean), SDS = c(wmff$msd$sd) )
+    rownames(c_normed) <- colnames(wmff$msd$mean)
     if (is.null(newdata)) newdata1 <- object$data$dataEnv
   } else if (type %in% c("env")){ # "env", "reg_traits"
     ff <- get_Z_X_XZ_formula(object$formulaTraits)
-    c_normed <- object$c_traits_normed
+    wm <- t(object$c_traits_normed0[,"Avg", drop = FALSE])
+    c_normed <- object$c_traits_normed0
     if (is.null(newdata)) newdata1 <- object$data$dataTraits
   }
   if (!is.null(newdata)){
     newdata1 <- newdata
-    nams <- !ff$all_nams %in% names(newdata1)
-    nams <-ff$all_nams[nams]
+    nams <- !colnames(wm) %in% names(newdata1)
+    nams <-colnames(wm)[nams]
     for (n in nams){
-      if (n %in% rownames(c_normed)) newdata1[[n]] <- c_normed[n,"Avg"] # set to average
+      if (n %in% colnames(wm)) newdata1[[n]] <- wm[1,n] # set to the mean
+          #c_normed[n,"Avg"] # set to average
       else newdata1[[n]] <- 0 # for factors
     }
 
   }
-  newdata1 <- stats::model.matrix(ff$formula_XZ, constrasts = FALSE, data = newdata1)[,-1,drop=FALSE]
+  dat0 <- stats::model.matrix(ff$formula_XZ, constrasts = FALSE, data = newdata1)[,-1,drop=FALSE]
+  #colnames(dat0)
+  newdata1  <- scale_data(dat0, mean_sd = c_normed[,c(1,2)])
   return(newdata1)
 }
 
 predict_env <- function(object,  newdata1, rank){
   # missing factors in newdata1 : no contribution of the missing factors
   reg <- predict_regr_traits(object, rank)
-  pred_scaled <- fpred_scaled(newdata1, reg, c_normed= object$c_traits_normed0)
+  pred_scaled <- fpred_scaled(newdata1, reg)
   gg <- get_Z_X_XZ_formula(object$formulaEnv)
-  env0 <- stats::model.matrix(gg$formula_X0, constrasts = FALSE, data = object$data$dataEnv)
+  env0 <- stats::model.matrix(gg$formula_X0, data = object$data$dataEnv)
   msd = mean_sd_w(env0, w = object$weights$rows)
   #mean_sd = cbind(mean = c(mean_sd1$mean),sd = c(mean_sd1$sd))
   #rownames(mean_sd) <- colnames(mean_sd1$mean)
@@ -89,25 +96,23 @@ predict_env <- function(object,  newdata1, rank){
 
 }
 
-fpred_scaled <- function(newdata1, reg, c_normed){
+fpred_scaled <- function(newdata1, reg){
   #reg <- predict_regr_traits(object, rank)
   nms <- rownames(reg)
   nms <- nms[nms %in% colnames(newdata1)] # still needed for missing factors; see predict.dcca.r
-  dat0 <- newdata1[,nms, drop = FALSE]
-  dat <- scale_data(dat0, mean_sd = c_normed[,c(1,2)])
   # reg may not have the covariates (e.g. when dc-CA was started from CWM) and
   # newdata1 may not have all predictors
-  nams <- intersect(colnames(dat), rownames(reg))
-  pred_scaled <- dat[, nams,drop = FALSE] %*% reg[nams,, drop = FALSE ]
+  nams <- intersect(colnames(newdata1), rownames(reg))
+  pred_scaled <- newdata1[, nams,drop = FALSE] %*% reg[nams,, drop = FALSE ]
   return(pred_scaled)
 }
 
 predict_response <- function(object, newdata1, rank){
   # newdata1 must be a list two dataframes, element 1: trait and  element 2 env data
   B_traits_regr <- scores(object, choices = seq_len(rank), display = c("reg_traits"), scaling ="sites")
-  pred_scaled_species <- fpred_scaled(newdata1[[1]], B_traits_regr[,-c(1,2,3), drop = FALSE], object$c_traits_normed0)
+  pred_scaled_species <- fpred_scaled(newdata1[[1]], B_traits_regr[,-c(1,2,3), drop = FALSE])
   B_env_regr <- scores(object, choices = seq_len(rank), display = c("reg"), scaling ="sites")
-  pred_scaled_sites <- fpred_scaled(newdata1[[2]], B_env_regr[,-c(1,2,3), drop = FALSE], B_env_regr)
+  pred_scaled_sites <- fpred_scaled(newdata1[[2]], B_env_regr[,-c(1,2,3), drop = FALSE])
   interact <- pred_scaled_sites %*% t(pred_scaled_species)
   pred <- (1+interact) * rep(1, rep(nrow(interact)))%*% t(object$weights$columns)
   return(pred)
