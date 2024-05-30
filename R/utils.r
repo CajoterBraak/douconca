@@ -32,13 +32,14 @@ mean_sd_w <- function(X,w = rep(1/nrow(X),nrow(X))){
   return(list(mean = mean_w, sd = sd_w))
 }
 
-msdvif <- function(formula = NULL, data, weights, XZ = FALSE, novif = FALSE, contrast= FALSE){
+msdvif <- function(formula = NULL, data, weights, XZ = FALSE, novif = FALSE, contrast= TRUE){
   # calc mean variance and vif from for X given Z or XZ with qr of X|Z or of centered XZ
   if (is.null(formula)) {f <- ~. } else {f <- formula}
   ff <- get_Z_X_XZ_formula(f,data)
   if (XZ)X <- stats::model.matrix(ff$formula_XZ, data = data)[,-1, drop = FALSE] else {
     if (contrast) X <- stats::model.matrix(ff$formula_X1, data= data)[,-1, drop = FALSE] else {
-      X <- stats::model.matrix(ff$formula_X0, contrasts = FALSE  ,data= data)
+      X <- modelmatrixI(ff$formula_X1, data = data, XZ = FALSE)
+      #X <- stats::model.matrix(ff$formula_X0, contrasts = FALSE  ,data= data)
     }
          }
   msd <- mean_sd_w(X,w= weights)
@@ -104,3 +105,16 @@ centroids.cca <-  function(x, mf, wt)
     out
   }
 
+modelmatrixI <- function(formula, data, XZ = TRUE){
+  # model matrix with full identity contracts = full indicator coding
+  ccontrasts <- function(x, data){stats::contrasts(data[[x]],contrasts = FALSE)}
+  ff <- get_Z_X_XZ_formula(formula,data)
+  if (XZ) f <- ff$formula_XZ else f <- ff$formula_X1
+  fcts <- c(ff$Condi_factor, ff$focal_factor)
+  if (length(fcts)){
+    cntI <-  lapply(as.list(fcts), ccontrasts, data = data)
+    names(cntI) <- fcts
+    X <- stats::model.matrix(f, contrasts.arg = cntI, data =data)
+  } else X <- stats::model.matrix(ff$formula_XZ, data =data)
+  return(X[,-1,drop = FALSE])
+}
