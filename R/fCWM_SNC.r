@@ -139,12 +139,12 @@ fCWM_SNC <- function( response =NULL, dataEnv=NULL, dataTraits= NULL,
     weights = list(rows = TotR, columns = TotC) # unite sums
     Nobs = nrow(Y)
     if (is.null(formulaTraits)) {
-      formulaTraits <- as.formula(paste("~", paste0(names(dataTraits),collapse = "+")))
+      formulaTraits <- stats::as.formula(paste("~", paste0(names(dataTraits),collapse = "+")))
       warning("formulaTraits set to ~. in fCWMSNC")
     }
 
     if (is.null(formulaEnv)) {
-      formulaEnv <- as.formula(paste("~", paste0(names(dataEnv),collapse = "+")))
+      formulaEnv <- stats::as.formula(paste("~", paste0(names(dataEnv),collapse = "+")))
       warning("formulaEnv set to ~. in fCWMSNC")}
     # CWM and CWM ortho -------------------------------------------------------
    # formula = formulaTraits; data = dataTraits; w = weights$columns

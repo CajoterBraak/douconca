@@ -243,12 +243,12 @@ dc_CA <- function(formulaEnv = NULL, formulaTraits = NULL,
     TotC <- colSums(response)
     tY <- t(response)
     if (is.null(formulaTraits)) {
-     formulaTraits <- as.formula(paste("~", paste0(names(dataTraits),collapse = "+")))
+     formulaTraits <- stats::as.formula(paste("~", paste0(names(dataTraits),collapse = "+")))
       warning("formulaTraits set to ~. in dc_CA")
      }
 
     if (is.null(formulaEnv)) {
-    formulaEnv <- as.formula(paste("~", paste0(names(dataEnv),collapse = "+")))
+    formulaEnv <- stats::as.formula(paste("~", paste0(names(dataEnv),collapse = "+")))
     warning("formulaEnv set to ~. in dc_CA")}
 
     formulaTraits <- change_reponse(formulaTraits, "tY", dataTraits)
