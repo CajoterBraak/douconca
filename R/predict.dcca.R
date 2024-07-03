@@ -40,7 +40,7 @@
 #' 
 #' Regression coefficients obtained with \code{type="reg_env"} or  
 #' \code{type="reg_traits"} are 
-#' for standardized response and predictor variables.
+#' for standardized traits and environmental variables.
 #'
 #' @example demo/dune_dcCA_predict.R
 #' @export
