@@ -32,8 +32,9 @@
 #' variables in the model, including collinear variables and levels.
 #' @param scaling numeric (1,2 or 3) or character \code{"sites", "species" or
 #' "symmetric"}. Default: "symmetric". Either site- (1) or species- (2) related
-#' scores are scaled by eigenvalues, and the other set of scores is left 
-#' unscaled, or with 3 both are scaled symmetrically by square root of 
+#' scores are scaled by eigenvalues, and the other set of scores have
+#' unit weighted mean square or with 3 both are scaled symmetrically 
+#' to weighted mean squares equal to the square root of 
 #' eigenvalues. Negative values are treated as the corresponding positive ones
 #' by \code{abs(scaling)}.
 #' @param tidy Return scores that are compatible with \code{ggplot2}: all 

@@ -16,9 +16,10 @@
 #' species-level test first and that for the sites-level second), or
 #' a list of two permutation matrices (again, species first, sites second)
 #' where each row gives the permuted indices.
-#' @param by character \code{"axis"} which performs a series of test, one for
+#' @param by character \code{"axis"} which performs a series of tests, one for
 #' each axis, with the eigenvalue of the axis as test statistic. 
-#' Default: \code{NULL} which set the test statistic to the inertia named 
+#' Default: \code{NULL} which sets the test statistic to the inertia
+#' (sum of all double constrained eigenvalues; named 
 #' \code{constraintsTE} in the inertia element of \code{\link{dc_CA}}). 
 #' The interpretation of this inertia is, at the species-level, the 
 #' environmentally constrained inertia explained by the traits (without trait
@@ -54,12 +55,13 @@
 #' on taxonomic composition with canonical correspondence analysis:
 #' alternative permutation tests are not equal.
 #' Environmental and Ecological Statistics. 29 (4), 849-868.
-#' \doi{10.1007/s10651-022-00545-4}
+#' \url{https://doi.org/10.1007/s10651-022-00545-4}
 #'
 #' ter Braak, C.J.F. (2022) Predictor versus response permutation
 #' for significance testing in weighted regression and redundancy analysis.
 #' Journal of statistical computation and simulation, 92, 2041-2059.
-#' \doi{10.1080/00949655.2021.2019256}
+#' \url{https://doi.org/10.1080/00949655.2021.2019256}
+#' 
 #' @example demo/dune_test.R
 #' 
 #' @importFrom stats anova

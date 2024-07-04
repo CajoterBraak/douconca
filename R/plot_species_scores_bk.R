@@ -8,7 +8,7 @@
 #' rownames (species names) or a tibble with variable with name
 #' \code{speciesname} containing species names and a column or variabe with 
 #' name \code{scoresname} containing the scores (default: \code{"RDA1"}), e.g.
-#' species scores from library \code{vegan}
+#' species scores from library \code{vegan}.
 #' @param ylab y-axis label. Default: $b_k$.
 #' @param y_lab_interval interval of the y-axis ticks. A tick at no effect (0) 
 #' is always included; default: 0.5.
@@ -20,14 +20,14 @@
 #' \code{selectname} is not in \code{species_scores}, the \code{threshold} is 
 #' divided by \code{14}, so that the default is 0.5.
 #' @param speciesname name of the variable containing the species names 
-#' (default \code{NULL} uses rownames)
+#' (default \code{NULL} uses rownames).
 #' @param scoresname name of the column or variable containing the species 
-#' scores to be plotted (default \code{"RDA1"})
+#' scores to be plotted (default \code{"RDA1"}).
 #' @param selectname name of the column or variable containing the criterion 
 #' for the selection of species to be displayed. Default: \code{"Fratio1"}; 
 #' if \code{selectname} is not found in \code{species_scores}, set 
 #' to \code{scoresname}.
-#' @param expand amount of extension of the line plot (default 0.2)
+#' @param expand amount of extension of the line plot (default 0.2).
 #' @param verbose logical for printing the number of species with names out of
 #' the total number (default: \code{TRUE}).
 #' 
@@ -36,6 +36,8 @@
 #' that also the species scores of the ordination can serve as a criterion
 #' (e.g. \code{selectname = "RDA1"}). The function has been copied from 
 #' the \code{PRC} package at https://github.com/CajoterBraak/PRC.
+#' 
+#' The function is used in \code{\link{plot_dcCA}}.
 #'
 #' @return  a ggplot object
 #' 

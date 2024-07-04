@@ -13,7 +13,7 @@
 #' \emph{n} x \emph{m}). Rownames of \code{response}, if any, are carried 
 #' through.
 #' @param data matrix or data frame of the row predictors, with rows 
-#' corresponding to those in \code{response}. (dimension \emph{n} x \emph{p}).
+#' corresponding to those in \code{response} (dimension \emph{n} x \emph{p}).
 #' @param weights row weights (a vector). If not specified unit weights are 
 #' used.
 #' @param verbose logical for printing a simple summary (default: TRUE)
@@ -28,7 +28,7 @@
 #' function is applied.
 #'
 #' Compared to  \code{\link[vegan]{rda}}, \code{wrda} does not have residual 
-#' axes, (\emph{i.e.} no SVD or PCA of the residuals).
+#' axes, \emph{i.e.} no SVD or PCA of the residuals is performed.
 #'
 #' @return
 #' All scores in the \code{dcca} object are in scaling \code{"sites"} (1): 

@@ -80,18 +80,11 @@ fCWM_SNC <- function(response = NULL,
                      formulaEnv = NULL,
                      formulaTraits = NULL,
                      divide.by.site.totals = TRUE,
-                     dc_CA_object = NULL,
+  #               dc_CA_object = NULL,
                      minimal_output = TRUE,
                      verbose = TRUE) {
   # response matrix or data frame, dataEnv and dataTraits data frames in which 
   # formualaE and formulaT are evaluated
-  # dc_CA_object = result (value) of a previous run, can be used to save 
-  # computing time for runs that modify the formula for samples 
-  # (step2: RDAonEnv) only
-  # The step1 (CCAonTraits and the data and formulaTraits) are taken from 
-  # dc_CA_object into the new result.
-  # If set, formulaTraits, response, dataEnv, dataTraits are not used at all 
-  # and have no efffect on the result
   call <- match.call()
   #  check and amend: make sure there are no empty rows or columns -----------------------------------------------------------------------
   if (any(is.na(response))) {

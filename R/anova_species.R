@@ -17,11 +17,13 @@
 #' gives the permuted indices.
 #' @param by character \code{"axis"} which sets the test statistic to the first
 #' eigenvalue of the dc-CA model. Default: \code{NULL} which set the test 
-#' statistic to the inertia named \code{constraintsTE} in the inertia element
-#' of \code{\link{dc_CA}}). This is the environmentally constrained inertia
-#' explained by the traits (without trait covariates). (which is equal to the 
+#' statistic to the inertia 
+#' (sum of all double constrained eigenvalues; named 
+#' \code{constraintsTE} in the inertia element of \code{\link{dc_CA}}). 
+#' This is the environmentally constrained inertia
+#' explained by the traits (without trait covariates), which is equal to the 
 #' trait-constrained inertia explained by the environmental predictors 
-#' (without covariates).) The default is quicker computationally as it avoids 
+#' (without covariates). The default is quicker computationally as it avoids 
 #' computation of an svd of permuted data sets.
 #' 
 #' @details

@@ -1,9 +1,10 @@
 #' @title Permutation Test for weighted redundancy analysis
 #'
 #' @description
-#' \code{anova.wrda} performs residual predictor permutation (ter Braak 2022), 
-#' which is robust against differences in the weights in weighted redundancy 
-#' analysis (ter Braak, 2022). The arguments of the function are similar to 
+#' \code{anova.wrda} performs residual predictor permutation 
+#' for weighted redundancy analysis (wRDA), 
+#' which is robust against differences in the weights (ter Braak, 2022).
+#' The arguments of the function are similar to 
 #' those of \code{\link[vegan]{anova.cca}}, but more restricted.
 #
 #' @param object an object from \code{\link{dc_CA}}.
@@ -14,28 +15,27 @@
 #' gives the permuted indices.
 #'
 #' @param  by character \code{"axis"} which sets the test statistic to the
-#' first eigenvalue of the dc-CA model. Default: \code{NULL} which set the test
-#' statistic to the inertia named \code{constraintsTE} in the inertia element 
-#' of \code{\link{dc_CA}}). This is the environmentally constrained inertia 
-#' explained by the traits (without trait covariates). (which is equal to the 
-#' trait-constrained inertia explained by the environmental predictors 
-#' (without covariates).) The default is quicker computationally as it avoids
+#' first eigenvalue of the RDA model. Default: \code{NULL} which sets the test
+#' statistic to the weighted variance fitted by the predictors
+#' (=sum of all constrained eigenvalues).
+#' The default is quicker computationally as it avoids
 #' computation of an svd of permuted data sets.
 #' 
 #' @details
 #' The algorithm is based on published R-code for residual predictor 
-#' permutation in weighted redundancy analysis (ter Braak, 2022).
+#' permutation in weighted redundancy analysis (ter Braak, 2022), but
+#' using QR-decomposition instead of ad-hoc least-squares functions.
 #'
 #' @return
 #' A list with two elements with names \code{table} and \code{eigenvalues}.
 #' The \code{table} is as from \code{\link[vegan]{anova.cca}} and 
-#' \code{eigenvalues} gives the dc-CA eigenvalues.
+#' \code{eigenvalues} gives the wrda eigenvalues.
 #' 
 #' @references
 #' ter Braak, C.J.F. (2022) Predictor versus response permutation
 #' for significance testing in weighted regression and redundancy analysis.
 #' Journal of statistical computation and simulation, 92, 2041-2059.
-#' \doi{10.1080/00949655.2021.2019256}
+#' \url{https://doi.org/10.1080/00949655.2021.2019256}
 #' 
 #' @example demo/dune_wrda.R
 #' 

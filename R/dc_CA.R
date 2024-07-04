@@ -63,14 +63,19 @@
 #' are equal.
 #'
 #' A dc-CA can be carried out on, what statisticians call, the sufficient 
-#' statistics of the method. In this case, \code{response} should be a list 
+#' statistics of the method. This is useful, when the abundance data
+#' are not available or could not be made public in a paper attempting 
+#' reproducible research.
+#' In this case, \code{response} should be a list 
 #' with as first element community weighted means (CWMs) with respect to the 
 #' traits, and the trait data, and, optionally, further elements, for functions
 #' related to \code{dc_CA}. The minimum is a 
 #' \code{list(CWM, weight = list(columns = species_weights))} with CWM a matrix
-#' or data.frame, but then formulaEnv,
-#' formulaTraits, dataEnv, dataTraits must be specified in the call to 
-#' \code{dc_CA}. The function \code{\link{fCWM_SNC}} shows how to set the
+#' or data.frame, but then \code{formulaEnv},
+#' \code{formulaTraits}, \code{dataEnv}, \code{dataTraits} 
+#' must be specified in the call to 
+#' \code{dc_CA}. The function \code{\link{fCWM_SNC}} and its example
+#' show how to set the
 #' \code{response} for this and helps to create the \code{response} from 
 #' abundance data in these non-standard applications of dc-CA. Species and site 
 #' weights, if not set in \code{response$weights} can be set by a variable
@@ -115,7 +120,7 @@
 #' \code{\link[vegan]{rda}} analysis).}
 #' \item{c_traits_normed0}{mean, sd, VIF and (regression) coefficients of 
 #' the traits that define the dc-CA axes in terms of the 
-#' traits with t-ratios missing indicated by \code{NA} for 'tval1'.}
+#' traits with t-ratios missing indicated by \code{NA}s for 'tval1'.}
 #' \item{inertia}{a one-column matrix with four inertias (weighted variances):
 #' \itemize{
 #' \item total: the total inertia.
@@ -185,7 +190,7 @@
 #' ter Braak, CJF, Šmilauer P, and Dray S. 2018. Algorithms and biplots for
 #' double constrained correspondence analysis.
 #' Environmental and Ecological Statistics, 25(2), 171-197.
-#' \doi{10.1007/s10651-017-0395-x}
+#' \url{https://doi.org/10.1007/s10651-017-0395-x}
 #'
 #' ter Braak C.J.F. and  P. Šmilauer  (2018). Canoco reference manual
 #' and user's guide: software for ordination (version 5.1x).
