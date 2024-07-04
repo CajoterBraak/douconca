@@ -15,9 +15,10 @@
 #' "reg_env", "reg_trait")} for environmental values, values of traits, 
 #' response (expected abundance), regression coefficients for environmental 
 #' and trait predictors.
-#' @param newdata Data in which to look for variable with which to predict.
+#' @param newdata Data in which to look for variables with which to predict.
 #' For \code{type = "reg_env" or "reg_trait"} newdata is ignored.
-#' For \code{type = "env" or "trait"}, newdata is data frame of trait and 
+#' For \code{type = "env" or "trait"},
+#' \code{newdata} is a data frame of trait and 
 #' environmental values, respectively, which are used for the prediction. If 
 #' omitted, fitted values are generated.
 #' For \code{type = "response"}, newdata is a list of two data frames with 

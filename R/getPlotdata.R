@@ -12,7 +12,7 @@
 #' environmental model. If set to \code{NA}, no additional coloring and lines
 #' are displayed in \code{\link{plot_dcCA}}. The parameter sets the 
 #' \code{groups} variable in the \code{CWM_SNC} data frame of the return 
-#' value/in the plot
+#' value/in the plot.
 #' @param traitfactor name of column factor to display as color and lines in
 #' the SNC plot (default \code{NULL}). The default extracts the factor from
 #' the trait model. If set to \code{NA}, no additional coloring and lines are
@@ -25,7 +25,7 @@
 #' (default \code{FALSE}). Can be a two-vector, \emph{e.g.} 
 #' \code{c(TRUE, FALSE)} to remove only the environmental centroids.
 #' @param facet logical. Default \code{TRUE} for CWMs and SNCs plots in 
-#' separate panels. If \code{FALSE},this parameter changes the position of 
+#' separate panels. If \code{FALSE}, this parameter changes the position of 
 #' the environmental centroid names (from left to right).
 #' 
 #' @example demo/dune_plot_dcCA.R

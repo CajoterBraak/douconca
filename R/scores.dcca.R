@@ -12,7 +12,7 @@
 #' \emph{constrained} site scores) replace the usual (\emph{unconstrained}) 
 #' site scores, and for dc-CA, that the linear combinations of traits (the 
 #' \emph{constrained} species scores) also replace the usual 
-#' (\emph{unconstrained}) species scores.
+#' (\emph{unconstrained}) species scores in the transition formulas.
 #'
 #' @param x object of class \code{"dcca"}, \emph{i.e.} result of
 #' \code{\link{dc_CA}}.
@@ -45,16 +45,15 @@
 #' 
 #' @details
 #' The function is modeled after \code{\link[vegan]{scores.cca}}.
-#'
-#' If you get the error message: 'arg' should be one of "sites", "species", 
-#' "both", then the vegan scores function has been called, instead of the one 
-#' of douconca. The work-around is to use douconca::scores() instead of 
-#' scores() only.
-#'
-#' An example of which_cor is: \code{which_cor = list(traits = "SLA", 
-#' env = c("acidity", "humidity"))}
 #' 
-#' @return A data frame if \code{tidy = TRUE}, a matrix if a single item is 
+#' The t-ratios are taken from a multiple regression of the unconstrained
+#' species (or site) scores on to the traits (or environmental variables).
+#'
+#' An example of \code{which_cor} is: \code{which_cor = list(traits = "SLA", 
+#' env = c("acidity", "humidity"))}.
+#' 
+#' @return A data frame if \code{tidy = TRUE}.
+#' Otherwise, a matrix if a single item is 
 #' asked for and a named list of matrices if more than one item is asked for. 
 #' The following names can be included: \code{c("sites", "constraints_sites",
 #' "centroids", "regression", "t_values", "correlation", 

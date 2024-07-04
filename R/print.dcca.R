@@ -5,8 +5,8 @@
 #' 
 #' @details
 #' \code{x <- print(x)} is more efficient for \code{\link{scores.dcca}} than 
-#' just \code{print(x)} if \code{\link{dc_CA}} is called without argument 
-#' \code{verbose} (or called with \code{verbose = FALSE}).
+#' just \code{print(x)} if \code{\link{dc_CA}} is called 
+#' with \code{verbose = FALSE}).
 #'
 #' @example demo/dune_dcCA.r
 #'

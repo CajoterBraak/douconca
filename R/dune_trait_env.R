@@ -10,8 +10,8 @@
 #'
 #' The Dune Meadow Data originate from a MSc thesis report of Batterink & Wijffels (1983).
 #' It consisted of 80 relevés in about 68 dune meadows (lots) on the island Terschelling in the Netherlands.
-#' A subset of their data was selected by Caspar Looman as an example data set for the edited book Jongman, ter Braak and van Tongeren (1987/1995)
-#' The subset consists of 20 relevés, 28 species (and 2 mosses, excluded here) and 5 environmental variables
+#' A subset of their data was selected by Caspar Looman as an example data set for the edited book Jongman, ter Braak and van Tongeren (1987/1995).
+#' The subset consists of 20 relevés, 28 species (and 2 mosses, excluded here) and 5 environmental variables.
 #'
 #' The trait data were taken from the LEDA database by  Jamil et al 2013.
 #' The spatial coordinates were retrieved by geo-referencing in GIS of the maps in Batterink & Wijffels (1993) by Ruut Wegman and Cajo ter Braak
@@ -21,7 +21,7 @@
 #' \itemize{
 #' \item \code{comm}:   community data; vegetation data.
 #' \item \code{traits}: trait data, taken from the LEDA database.
-#' \item \code{envir}:  environmental data, taken from Jongman et al. (1987,1995)
+#' \item \code{envir}:  environmental data, taken from Jongman et al. (1987,1995).
 #' }
 #'  The community data collection was done by the Braun-Blanquet method;
 #'  the data are recorded according to the ordinal scale of van der Maarel (1979, Vegetatio, 39, 97-114);

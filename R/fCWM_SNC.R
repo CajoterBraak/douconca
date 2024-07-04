@@ -23,7 +23,7 @@
 #' @details
 #' The argument \code{formulaTraits} determines which CWMs are calculated.
 #' The CWMs are calculated from the trait data (non-centered, non-standardized).
-#' With trait covariates, the other predictor trait are adjusted for the trait 
+#' With trait covariates, the other predictor traits are adjusted for the trait 
 #' covariates by weighted regression, after which the overall weighted mean 
 #' trait is added. This has the advantage that each CWM has the scale of the 
 #' original trait.
@@ -69,7 +69,7 @@
 #' vegan: Community Ecology Package. R package version 2.6-4.
 #' \url{https://CRAN.R-project.org/package=vegan}.
 #'
-#' @seealso \code{\link{plot_dcCA}}, \code{\link{scores.dcca}}, 
+#' @seealso \code{\link{dc_CA}}, \code{\link{plot_dcCA}}, \code{\link{scores.dcca}}, 
 #' \code{\link{print.dcca}} and \code{\link{anova.dcca}}
 #' 
 #' @example demo/dune_fCWMSNC.r
