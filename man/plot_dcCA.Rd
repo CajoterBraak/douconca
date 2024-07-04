@@ -26,10 +26,11 @@ plot_dcCA(
 \item{axis}{the axis number to get (default 1).}
 
 \item{gradient_description}{character or 2-character vector for the trait
-and environmental gradient, respectively. What to plot in the vertical line 
+and environmental gradient, respectively, 
+specifying what to plot in the vertical line 
 plots to describe the dc-CA axis (trait and environmental gradients). 
 Default: \code{correlation} for intra-set correlations of both sets of 
-variables with the dc-CA axis. Other values are: 
+variables with their dc-CA axis. Other values are: 
 \code{c("regression","weights","tvalues", "inter_set_correlation")} for 
 regression weights, t-values and (other) namely inter-set correlation, 
 being the correlation of the SNCs and CWMs with the traits and environmental
@@ -40,7 +41,7 @@ plot (default \code{NULL}). The default extracts the factor from the
 environmental model. If set to \code{NA}, no additional coloring and lines
 are displayed in \code{\link{plot_dcCA}}. The parameter sets the 
 \code{groups} variable in the \code{CWM_SNC} data frame of the return 
-value/in the plot}
+value/in the plot.}
 
 \item{traitfactor}{name of column factor to display as color and lines in
 the SNC plot (default \code{NULL}). The default extracts the factor from
@@ -90,7 +91,8 @@ i.e. \code{myplot <- plot_dcCA(object)}, and then consult
 environmental variables. Note that covariates should not be in the list of
 names. Contribution (in the definition of species selection in 
 \code{nspecies}) is defined (as in CA) as the total species abundance in 
-the closed data multiplied by the square of the score on the axis.
+the (possibly, closed) data multiplied by the square of
+the score on the axis.
 
 If the \code{plot_dcCA} returns the error \code{"Error in grid.Call"}, 
 enlarge the plotting area or use \code{verbose = FALSE} and assign the 

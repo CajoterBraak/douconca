@@ -21,7 +21,7 @@ row predictors in \code{dataEnv}. When two-sided, the left hand side of
 the formula is not used. Specify row covariates (if any ) by 
 adding \code{+ Condition(covariate-formula)} to \code{formulaEnv} as 
 in \code{\link[vegan]{rda}}. The \code{covariate-formula} should not contain 
-a \code{~} (tilde). Default: \code{~.}, i.e. all variables in \code{dataEnv} 
+a \code{~} (tilde). Default: \code{NULL} for \code{~.}, i.e. all variables in \code{dataEnv} 
 are predictor variables.}
 
 \item{formulaTraits}{formula or one-sided formula for the columns (species) 
@@ -29,13 +29,14 @@ with colum predictors in \code{dataTraits}. When two-sided, the left hand
 side of the formula is not used. Specify column covariates (if any ) by 
 adding \code{+ Condition(covariate-formula)} to \code{formulaTraits} as 
 in \code{\link[vegan]{cca}}. The \code{covariate-formula} should not contain 
-a \code{~} (tilde). Default: \code{~.}, i.e. all variables in 
+a \code{~} (tilde). Default: \code{NULL} for \code{~.}, i.e. all variables in 
 \code{dataTraits} are predictor traits.}
 
 \item{response}{matrix, data frame of the abundance data 
-(dimension \emph{n} x \emph{m}) or object with community weighted means 
+(dimension \emph{n} x \emph{m}) or list with community weighted means (CWMs)
 from \code{\link{fCWM_SNC}}. See Details for analyses starting from community
-weighted means. Rownames of \code{response}, if any, are carried through.}
+weighted means. Rownames of \code{response}, if any, are carried 
+through.}
 
 \item{dataEnv}{matrix or data frame of the row predictors, with rows 
 corresponding to those in \code{response}. (dimension \emph{n} x \emph{p}).}
@@ -51,39 +52,41 @@ data by dividing the rows in the \code{response} by their total.}
 Useful if the same formula for the columns (\code{formulaTraits}), 
 \code{dataTraits} and \code{response} are used with a new formula for the 
 rows. If set, the data of the previous run is used and the result of its 
-first step is taken for the new analysis. The \code{data$Y} element in the 
-object can be set to \code{NULL}, which is useful. In the case of non-public 
-abundance data and a wish for reproducibility of the analysis use the 
-function \code{fCWM_SNC} to create an object for use as \code{response} 
-argument in a new call to \code{dc_CA}. From this object, the analysis can 
-be reproduced from CWMs (and, for full analysis, SNCs) instead of from 
-abundance data.}
+first step is taken for the new analysis.}
 
 \item{verbose}{logical for printing a simple summary (default: TRUE)}
 }
 \value{
-A list of \code{class} \code{dccav}; that is a list with elements
+A list of \code{class} \code{dcca}; that is a list with elements
 \describe{
 \item{CCAonTraits}{a \code{\link[vegan]{cca.object}} from the 
 \code{\link[vegan]{cca}} analysis of the transpose of the closed 
 \code{response} using formula \code{formulaTraits}.}
-\item{formalaTraits}{the argument \code{formulaTraits}. If the formula was
+\item{formulaTraits}{the argument \code{formulaTraits}. If the formula was
 \code{~.}, it was changed to explicit trait names.}
-\item{data}{a list of \code{Y} (response data after removing empty rows and 
-columns and after closure) and \code{dataEnv} and \code{dataTraits}.}
+\item{data}{a list of \code{Y}, \code{dataEnv} and \code{dataTraits}, 
+after removing empty rows and 
+columns in \code{response} and after closure if 
+\code{divide.by.site.totals = TRUE} and with the corresponding rows in 
+\code{dataEnv} and \code{dataTraits} removed.}
 \item{weights}{a list of unit-sum weights of row and columns. The names of 
 the list are \code{c("row","columns")}, in that order.}
 \item{Nobs}{number of sites (rows).}
 \item{CWMs_orthonormal_traits}{Community weighted means w.r.t. 
 orthonormalized traits.}
-\item{RDAonEnv}{a \code{\link[vegan]{cca.object}} from the 
-\code{\link[vegan]{rda}} analysis of the column scores of the \code{cca}, 
+\item{RDAonEnv}{a \code{\link{wrda}} object or 
+\code{\link[vegan]{cca.object}} from the 
+\code{\link{wrda}} or, if with equal row weights, 
+\code{\link[vegan]{rda}} analysis, respectively of the column scores of the \code{cca}, 
 which are the CWMs of orthonormalized traits, using formula 
 \code{formulaEnv}.}
-\item{formalaEnv}{the argument \code{formulaEnv}. If the formula was 
+\item{formulaEnv}{the argument \code{formulaEnv}. If the formula was 
 \code{~.}, it was changed to explicit environmental variable names.}
 \item{eigenvalues}{the dc-CA eigenvalues (same as those of the 
-\code{\link[vegan]{rda}} analysis)}
+\code{\link[vegan]{rda}} analysis).}
+\item{c_traits_normed0}{mean, sd, VIF and (regression) coefficients of 
+the traits that define the dc-CA axes in terms of the 
+traits with t-ratios missing indicated by \code{NA} for 'tval1'.}
 \item{inertia}{a one-column matrix with four inertias (weighted variances):
 \itemize{
 \item total: the total inertia.
@@ -101,7 +104,7 @@ predictors (without the row covariates).
 }
 }
 If \code{verbose} is \code{TRUE} (or after \code{out <- print(out)} is 
-invoked) there are three more items (in this version).
+invoked) there are three more items.
 \itemize{
 \item \code{c_traits_normed}: mean, sd, VIF and (regression) coefficients of
 the traits that define the dc-CA trait axes (composite traits), and their 
@@ -140,7 +143,7 @@ environmental variables (composite gradients), and their optimistic t-ratio.
    has been called the species-environmental correlation in CCA.
  }
 }
-All scores in the \code{dccav} object are in scaling \code{"sites"} (1): 
+All scores in the \code{dcca} object are in scaling \code{"sites"} (1): 
 the scaling with \emph{Focus on Case distances} .
 }
 \description{
@@ -151,14 +154,15 @@ for example, the importance of trait interactions in shaping ecological
 communities. The function \code{dc_CA} has an option to divide the abundance
 data of a site by the site total, giving equal site weights. This division 
 has the advantage that the multivariate analysis corresponds with an 
-unweighted (multi-trait) community-level analysis, instead of being weighted.
+unweighted (multi-trait) community-level analysis, instead of being weighted
+(Kleyer et al. 2012).
 }
 \details{
 Empty (all zero) rows and columns in \code{response} are removed from the 
 \code{response} and the corresponding rows from \code{dataEnv} and 
 \code{dataTraits}. Subsequently, any columns with missing values are 
 removed from  \code{dataEnv} and \code{dataTraits}. It gives an error 
-(object 'name_of_variable' not found), if variables with missing entries are
+('name_of_variable' not found), if variables with missing entries are
 specified in \code{formulaEnv} and \code{formulaTraits}.
 
 Computationally, dc-CA can be carried out by a single singular value 
@@ -177,14 +181,14 @@ with as first element community weighted means (CWMs) with respect to the
 traits, and the trait data, and, optionally, further elements, for functions
 related to \code{dc_CA}. The minimum is a 
 \code{list(CWM, weight = list(columns = species_weights))} with CWM a matrix
-or data.frame (or with data.frame in its class vector), but then formulaEnv,
+or data.frame, but then formulaEnv,
 formulaTraits, dataEnv, dataTraits must be specified in the call to 
 \code{dc_CA}. The function \code{\link{fCWM_SNC}} shows how to set the
 \code{response} for this and helps to create the \code{response} from 
 abundance data in these non-standard applications of dc-CA. Species and site 
 weights, if not set in \code{response$weights} can be set by a variable
 \code{weight} in the data frames \code{dataTraits} and \code{dataEnv}, 
-respectively, but formulas should the not be \code{~.}.
+respectively, but formulas should then not be \code{~.}.
 
 The statistics and scores in the example \code{dune_dcCA.r}, have been 
 checked against the results in Canoco 5.15 (ter Braak & Smilauer, 2018).

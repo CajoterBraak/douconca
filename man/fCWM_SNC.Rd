@@ -19,9 +19,10 @@ fCWM_SNC(
 }
 \arguments{
 \item{response}{matrix, data frame of the abundance data 
-(dimension \emph{n} x \emph{m}) or object with community weighted means 
+(dimension \emph{n} x \emph{m}) or list with community weighted means (CWMs)
 from \code{\link{fCWM_SNC}}. See Details for analyses starting from community
-weighted means. Rownames of \code{response}, if any, are carried through.}
+weighted means. Rownames of \code{response}, if any, are carried 
+through.}
 
 \item{dataEnv}{matrix or data frame of the row predictors, with rows 
 corresponding to those in \code{response}. (dimension \emph{n} x \emph{p}).}
@@ -35,7 +36,7 @@ row predictors in \code{dataEnv}. When two-sided, the left hand side of
 the formula is not used. Specify row covariates (if any ) by 
 adding \code{+ Condition(covariate-formula)} to \code{formulaEnv} as 
 in \code{\link[vegan]{rda}}. The \code{covariate-formula} should not contain 
-a \code{~} (tilde). Default: \code{~.}, i.e. all variables in \code{dataEnv} 
+a \code{~} (tilde). Default: \code{NULL} for \code{~.}, i.e. all variables in \code{dataEnv} 
 are predictor variables.}
 
 \item{formulaTraits}{formula or one-sided formula for the columns (species) 
@@ -43,7 +44,7 @@ with colum predictors in \code{dataTraits}. When two-sided, the left hand
 side of the formula is not used. Specify column covariates (if any ) by 
 adding \code{+ Condition(covariate-formula)} to \code{formulaTraits} as 
 in \code{\link[vegan]{cca}}. The \code{covariate-formula} should not contain 
-a \code{~} (tilde). Default: \code{~.}, i.e. all variables in 
+a \code{~} (tilde). Default: \code{NULL} for \code{~.}, i.e. all variables in 
 \code{dataTraits} are predictor traits.}
 
 \item{divide.by.site.totals}{logical; default \code{TRUE} for closing the 
@@ -53,13 +54,7 @@ data by dividing the rows in the \code{response} by their total.}
 Useful if the same formula for the columns (\code{formulaTraits}), 
 \code{dataTraits} and \code{response} are used with a new formula for the 
 rows. If set, the data of the previous run is used and the result of its 
-first step is taken for the new analysis. The \code{data$Y} element in the 
-object can be set to \code{NULL}, which is useful. In the case of non-public 
-abundance data and a wish for reproducibility of the analysis use the 
-function \code{fCWM_SNC} to create an object for use as \code{response} 
-argument in a new call to \code{dc_CA}. From this object, the analysis can 
-be reproduced from CWMs (and, for full analysis, SNCs) instead of from 
-abundance data.}
+first step is taken for the new analysis.}
 
 \item{minimal_output}{logical. Default \code{TRUE} for use of the return 
 value as \code{response} in a call to \code{\link{dc_CA}}.}
@@ -89,7 +84,7 @@ data as \code{response}, at least up to sign changes of the axes.
 \details{
 The argument \code{formulaTraits} determines which CWMs are calculated.
 The CWMs are calculated from the trait data (non-centered, non-standardized).
-With trait covariates, the other predictor trait are adjusted for the trait 
+With trait covariates, the other predictor traits are adjusted for the trait 
 covariates by weighted regression, after which the overall weighted mean 
 trait is added. This has the advantage that each CWM has the scale of the 
 original trait.
@@ -225,6 +220,6 @@ vegan: Community Ecology Package. R package version 2.6-4.
 \url{https://CRAN.R-project.org/package=vegan}.
 }
 \seealso{
-\code{\link{plot_dcCA}}, \code{\link{scores.dcca}}, 
+\code{\link{dc_CA}}, \code{\link{plot_dcCA}}, \code{\link{scores.dcca}}, 
 \code{\link{print.dcca}} and \code{\link{anova.dcca}}
 }

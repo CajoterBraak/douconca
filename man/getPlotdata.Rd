@@ -25,7 +25,7 @@ plot (default \code{NULL}). The default extracts the factor from the
 environmental model. If set to \code{NA}, no additional coloring and lines
 are displayed in \code{\link{plot_dcCA}}. The parameter sets the 
 \code{groups} variable in the \code{CWM_SNC} data frame of the return 
-value/in the plot}
+value/in the plot.}
 
 \item{traitfactor}{name of column factor to display as color and lines in
 the SNC plot (default \code{NULL}). The default extracts the factor from
@@ -38,7 +38,7 @@ environmental variables, default \code{NULL} for names derived from the
 result of \code{\link{scores.dcca}} with \code{tidy = TRUE}.}
 
 \item{facet}{logical. Default \code{TRUE} for CWMs and SNCs plots in 
-separate panels. If \code{FALSE},this parameter changes the position of 
+separate panels. If \code{FALSE}, this parameter changes the position of 
 the environmental centroid names (from left to right).}
 
 \item{remove.centroids}{logical to remove any centroids from the plot data 

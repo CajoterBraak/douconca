@@ -26,7 +26,7 @@ plot (default \code{NULL}). The default extracts the factor from the
 environmental model. If set to \code{NA}, no additional coloring and lines
 are displayed in \code{\link{plot_dcCA}}. The parameter sets the 
 \code{groups} variable in the \code{CWM_SNC} data frame of the return 
-value/in the plot}
+value/in the plot.}
 
 \item{traitfactor}{name of column factor to display as color and lines in
 the SNC plot (default \code{NULL}). The default extracts the factor from
