@@ -50,7 +50,7 @@ and uses some of the internal structure of the \code{vegan}
 ter Braak, CJF, Šmilauer P, and Dray S. 2018. Algorithms and biplots for
 double constrained correspondence analysis.
 Environmental and Ecological Statistics, 25(2), 171-197.
-\doi{10.1007/s10651-017-0395-x} 
+\url{https://doi.org/10.1007/s10651-017-0395-x}
 
 Oksanen, J., et al. (2022)
 vegan: Community Ecology Package. R package version 2.6-4.

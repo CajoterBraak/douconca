@@ -110,10 +110,10 @@ ter Braak, C.J.F. & te Beest, D.E. 2022. Testing environmental effects
 on taxonomic composition with canonical correspondence analysis:
 alternative permutation tests are not equal.
 Environmental and Ecological Statistics. 29 (4), 849-868.
-\doi{10.1007/s10651-022-00545-4}
+\url{https://doi.org/10.1007/s10651-022-00545-4}
 
 ter Braak, C.J.F. (2022) Predictor versus response permutation
 for significance testing in weighted regression and redundancy analysis.
 Journal of statistical computation and simulation, 92, 2041-2059.
-\doi{10.1080/00949655.2021.2019256}
+\url{https://doi.org/10.1080/00949655.2021.2019256}
 }

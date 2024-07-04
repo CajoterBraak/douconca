@@ -19,7 +19,7 @@ should not contain a \code{~} (tilde).}
 through.}
 
 \item{data}{matrix or data frame of the row predictors, with rows 
-corresponding to those in \code{response}. (dimension \emph{n} x \emph{p}).}
+corresponding to those in \code{response} (dimension \emph{n} x \emph{p}).}
 
 \item{weights}{row weights (a vector). If not specified unit weights are 
 used.}
@@ -43,7 +43,7 @@ an error ('undefined columns selected') when the \code{\link{scores}}
 function is applied.
 
 Compared to  \code{\link[vegan]{rda}}, \code{wrda} does not have residual 
-axes, (\emph{i.e.} no SVD or PCA of the residuals).
+axes, \emph{i.e.} no SVD or PCA of the residuals is performed.
 }
 \examples{
 data("dune_trait_env")

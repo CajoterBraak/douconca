@@ -12,7 +12,6 @@ fCWM_SNC(
   formulaEnv = NULL,
   formulaTraits = NULL,
   divide.by.site.totals = TRUE,
-  dc_CA_object = NULL,
   minimal_output = TRUE,
   verbose = TRUE
 )
@@ -49,12 +48,6 @@ a \code{~} (tilde). Default: \code{NULL} for \code{~.}, i.e. all variables in
 
 \item{divide.by.site.totals}{logical; default \code{TRUE} for closing the 
 data by dividing the rows in the \code{response} by their total.}
-
-\item{dc_CA_object}{optional object from an earlier run of this function. 
-Useful if the same formula for the columns (\code{formulaTraits}), 
-\code{dataTraits} and \code{response} are used with a new formula for the 
-rows. If set, the data of the previous run is used and the result of its 
-first step is taken for the new analysis.}
 
 \item{minimal_output}{logical. Default \code{TRUE} for use of the return 
 value as \code{response} in a call to \code{\link{dc_CA}}.}

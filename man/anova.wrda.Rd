@@ -31,7 +31,7 @@ The \code{table} is as from \code{\link[vegan]{anova.cca}} and
 \description{
 \code{anova.wrda} performs residual predictor permutation 
 for weighted redundancy analysis (wRDA), 
-which is robust against differences in the weights(ter Braak, 2022).
+which is robust against differences in the weights (ter Braak, 2022).
 The arguments of the function are similar to 
 those of \code{\link[vegan]{anova.cca}}, but more restricted.
 }
@@ -89,5 +89,5 @@ range(object1$site_axes$site_scores$lc_env_scores / veganScores)
 ter Braak, C.J.F. (2022) Predictor versus response permutation
 for significance testing in weighted regression and redundancy analysis.
 Journal of statistical computation and simulation, 92, 2041-2059.
-\doi{10.1080/00949655.2021.2019256}
+\url{https://doi.org/10.1080/00949655.2021.2019256}
 }

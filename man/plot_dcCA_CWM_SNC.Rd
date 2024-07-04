@@ -64,9 +64,11 @@ species if available in the data.
 The argument \code{getPlotdata2plotdCCA} is to allow some modifications of
 the data frame resulting from \code{\link{getPlotdata}}. The variable names
 and score levels should remain untouched. \code{plot_dcCA_CWM_SNC} uses the
-variables: \code{"dcCA\emph{k}"} with axis number \emph{k} and
+variables: \code{dcCA}\emph{k} with axis number \emph{k} and
 \code{"CWM-SNC", "groups", "points", "sizeweight"} for the y-axis, coloring, 
 shape and size of items, respectively.
+
+The function is used in \code{\link{plot_dcCA}}.
 }
 \examples{
 data("dune_trait_env")

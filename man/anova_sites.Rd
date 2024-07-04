@@ -33,9 +33,9 @@ The \code{table} is as from \code{\link[vegan]{anova.cca}} and
 }
 \description{
 \code{anova_sites} performs the community-level permutation test of dc-CA 
-when site weights vary, which is part of \code{\link{anova.dcca}}.
+when site weights vary.
 The test uses residual predictor permutation (ter Braak 2022), which is 
-robust against differences in sites total abundance in the \code{response} 
+robust against differences in site total abundance in the \code{response} 
 in \code{\link{dc_CA}} (ter Braak & te Beest, 2022).
 The arguments of the function are similar to those of 
 \code{\link[vegan]{anova.cca}}, but more restricted. With equal site-totals 
@@ -43,6 +43,7 @@ as in \code{\link{dc_CA}}, \code{anova(object$RDAonEnv)} is much faster.
 }
 \details{
 The algorithm is analogous to that of \code{\link{anova.wrda}}.
+The function is used in \code{\link{anova.dcca}}.
 }
 \examples{
 data("dune_trait_env")
