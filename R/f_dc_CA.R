@@ -81,6 +81,7 @@ calculate_b_se_tval <- function(X_or_qr_decomp_of_X,
     sigma_hat_sq <- RSS / (n - p - 1 ) 
     # Calculate variance-covariance matrix of the estimated regression coefficients
     diagXtX_inv <- diag(chol2inv(QR$qr, size = QR$rank))
+    diagXtX_inv <- c(diagXtX_inv, rep(NA,nrow(beta_hat)- length(diagXtX_inv) ))
     se <- matrix(nrow = nrow(beta_hat), ncol = length(sigma_hat_sq))
     for (i in seq_along(sigma_hat_sq)) {
       var_covar_matrix <- diagXtX_inv * sigma_hat_sq[i]

@@ -90,6 +90,7 @@ msdvif <- function(formula = NULL,
   }
   qrX <- qr(Xw)
   diagXtX_inv <- diag(chol2inv(qrX$qr, size = qrX$rank))
+  diagXtX_inv <- c(diagXtX_inv, rep(NA,length(sds)- length(diagXtX_inv) ))
   VIF <- diagXtX_inv * sds ^ 2
   attr(qrX$qr, "scaled:center") <- c(msd$mean)
   attr(qrX$qr, "sd") <- c(msd$sd)
