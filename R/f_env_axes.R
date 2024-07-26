@@ -26,7 +26,7 @@ f_env_axes <- function(out,
     myconst <- sqrt(out$Nobs * out$RDAonEnv$tot.chi)
     CWM <- as.matrix(scores(out$RDAonEnv, display = "sites", 
                             scaling = "sites",
-                            choices = seq_len(Rank_mod(out$RDAonEnv)), 
+                            choices = seq_len(rank_mod(out$RDAonEnv)), 
                             const = myconst))
     dataEnv <- out$data$dataEnv
     formulaEnv <-out$formulaEnv
@@ -36,7 +36,7 @@ f_env_axes <- function(out,
     dataEnv <- out$data
     formulaEnv <- out$formula
   } else {
-    stop("input must be a result of dc_CA or wrda")
+    stop("input must be a result of dc_CA or wrda.\n")
   }
   formulaEnv <- change_reponse(formulaEnv, "Y", dataEnv)
   QR <- get_QR(out)
@@ -46,11 +46,14 @@ f_env_axes <- function(out,
     "The t-values are optimistic, i.e. an underestimate of their true absolute value"
   # correlations of the dataEnv with the CWMs wrt the  axes
   if (which_cor[1] == "in model"){
-    fX <- get_Z_X_XZ_formula(formulaEnv, dataEnv)$formula_X0
-    env0 <- model.matrix(fX, data = dataEnv)
+    fX <- get_Z_X_XZ_formula(formulaEnv, dataEnv)$formula_X1
+    #env0 <- model.matrix(fX, data = dataEnv)
+    env0 <- modelmatrixI(formula= fX , data= dataEnv, XZ = FALSE)
   } else {
     whichc <- which_cor
-    env0 <- model.matrix(~.-1, data = dataEnv[, whichc, drop = FALSE])
+    #env0 <- model.matrix(~.-1, data = dataEnv[, whichc, drop = FALSE])
+    fX <- as.formula(paste("~", paste0(whichc, collapse = "+")))
+    env0 <- modelmatrixI(formula= fX , data= dataEnv, XZ = FALSE)
   }
   Cor_Env_CWM <- wcor(env0, CWM, w = w)
   colnames(Cor_Env_CWM) <- paste0("CWM-ax", seq_len(ncol(Cor_Env_CWM)))

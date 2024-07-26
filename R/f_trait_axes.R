@@ -14,7 +14,7 @@ f_trait_axes <- function(out,
   #  Default "in_model" for all traits and variables in the model
   # SNC lc_traits and trait regr, tval, cor
   if (is.null(out$data$Y) && is.null(out$SNC)) {
-    warning("SNC analysis is not available (e.g. no unconstrained species scores).")
+    warning("SNC analysis is not available (e.g. no unconstrained species scores).\n")
   }
   if (is.null(out$data$Y)) {
     # NB: need to check whether the axes have not been flipped
@@ -32,13 +32,14 @@ f_trait_axes <- function(out,
                      (out$eigenvalues+1.e-10))) > 1.6e-3) {
         warning("\nThe eigenvalues of the CWM and SNC analyses differ.",
                 "\nCWM analysis has eigenvalues\n", round(out$eigenvalues, 6),
-                "\nSNC analysis has eigenvalues\n", round(step2$eigenvalues, 6))
+                "\nSNC analysis has eigenvalues\n", round(step2$eigenvalues, 6), 
+                ".\n")
       }
       SNC <- step2$site_axes$site_scores$site_scores_unconstrained
       out$CCAonTraits$CCA$QR <- step2$CCA$QR
     } else { #is.null(out$SNCs_orthonormal_env)
       if (!is.null(out$CWM2CWM_ortho)) {
-        warning("Trait regression coefficients are derived from the CWM analysis")
+        warning("Trait regression coefficients are derived from the CWM analysis.\n")
         regr <- out$c_traits_normed0[, -c(1, 2, 3)]
         regr <- regr[, -ncol(regr), drop = FALSE]
         # must use model.matrix
@@ -47,7 +48,7 @@ f_trait_axes <- function(out,
                           data = out$data$dataTraits)[, -1, drop = FALSE]
         lc_trait_scores <- standardize_w(X) %*% regr
       } else  {
-        warning("Trait regression coefficients  are not availabe")
+        warning("Trait regression coefficients are not availabe.\n")
         lc_trait_scores <-NULL
       }
       return(
@@ -64,17 +65,17 @@ f_trait_axes <- function(out,
       if (inherits(out, "dccav")) {
         lc_scores  <- scores(out$RDAonEnv, display = "lc", 
                              scaling = "species",
-                             choices = seq_len(Rank_mod(out$RDAonEnv)), 
+                             choices = seq_len(rank_mod(out$RDAonEnv)), 
                              const = sqrt(out$Nobs))
       } else if (inherits(out, "dcca")) {
         lc_scores <- out$RDAonEnv$site_axes$site_scores$lc_env_scores
       } else {
-        stop("first argument must be of class dcca or dccav")
+        stop("first argument must be of class dcca or dccav.\n")
       }
       SNC <-  (t(as.matrix(out$data$Y)) %*% lc_scores) / 
         (out$weights$columns * out$Nobs)
     } else {
-      warning("something wrong in f_trait_axes")
+      warning("something wrong in f_trait_axes.\n")
       return(NULL)}
   }
   if (!is.null(out$CCAonTraits$pCCA)) {
@@ -88,11 +89,11 @@ f_trait_axes <- function(out,
                              w = out$weights$columns,  scale2 = 1, name = "SNC")
   c_traits_normed <- res$coef_normed
   attr(c_traits_normed, which = "warning") <-
-    "The t-values are optimistic, i.e. an underestimate of their true absolute value"
+    "The t-values are optimistic, i.e. an underestimate of their true absolute value.\n"
   # check sign of axes when !is.null(out$SNCs_orthonormal_env)
   if (!is.null(out$SNCs_orthonormal_env) && is.null(out$data$Y)) {
     if(!is.null(out$c_traits_normed0)) {
-      rseq <- seq_len(Rank_mod(out))
+      rseq <- seq_len(rank_mod(out))
       ncov <- nrow(c_traits_normed) - nrow(out$c_traits_normed0)
       if (ncov) {
         ratio <- sign(colSums(sign(c_traits_normed[-seq_len(ncov), 
@@ -117,27 +118,26 @@ f_trait_axes <- function(out,
       SNC <- SNC %*% flip
     } else { 
       warning("The orientation of the trait and environmental axes cannot be ", 
-      "aligned, as information is missing how the orthonormized traits must ", 
-      "be backtransformed to the original traits.")
+              "aligned, as information is missing how the orthonormized traits must ", 
+              "be backtransformed to the original traits.\n")
     }
   }
   # correlations of the dataTraits with the SNC wrt the axes
   if (which_cor[1] == "in model") {
-    whichc <- get_Z_X_XZ_formula(out$formulaTraits, out$data$dataTraits)$focal_nams
-    gg <- get_Z_X_XZ_formula(out$formulaTraits, out$data$dataTraits)
-    traits0 <- model.matrix(gg$formula_X0, data = out$data$dataTraits)
+    fX <- get_Z_X_XZ_formula(out$formulaTraits, out$data$dataTraits)$formula_X1
+    traits0 <- modelmatrixI(formula= fX , data= out$data$dataTraits, XZ = FALSE)
   } else {
     whichc <- which_cor
-    traits0 <- model.matrix(~.-1, 
-                            data = out$data$dataTraits[, whichc, drop = FALSE])
+    fX <- as.formula(paste("~", paste0(whichc, collapse = "+")))
+    traits0 <- modelmatrixI(formula= fX , data= out$data$dataTraits, XZ = FALSE)
   }
-  Cor_Trait_SNC <- wcor(traits0, SNC, w = out$weights$columns)
-  colnames(Cor_Trait_SNC) <- paste0("SNC-ax", seq_len(ncol(Cor_Trait_SNC)))
-  attr(Cor_Trait_SNC, which = "meaning") <- 
+  corTraitSNC <- wcor(traits0, SNC, w = out$weights$columns)
+  colnames(corTraitSNC) <- paste0("SNC-ax", seq_len(ncol(corTraitSNC)))
+  attr(corTraitSNC, which = "meaning") <- 
     "inter set correlation, correlation between traits and SNC of axes"
   out2 <- list(species_scores = list(species_scores_unconstrained = res$y,
                                      lc_traits_scores = res$fitted), 
-               correlation = Cor_Trait_SNC, 
+               correlation = corTraitSNC, 
                c_traits_normed = c_traits_normed, 
                b_se = res$b_se, 
                R2_traits = res$R2, 

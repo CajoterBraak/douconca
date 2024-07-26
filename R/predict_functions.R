@@ -27,9 +27,10 @@ predict_traits <- function(object,
                            rank) {
   # missing factors in newdata1 : no contribution of the missing factors
   reg <- predict_regr_env(object, rank)
+  reg[is.na(reg)] <- 0
   pred_scaled <- fpred_scaled(newdata1, reg)
   gg <- get_Z_X_XZ_formula(object$formulaTraits)
-  traits0 <- model.matrix(gg$formula_X0, data = object$data$dataTraits)
+  traits0 <- modelmatrixI(formula= gg$formula_X1 , data= object$data$dataTraits, XZ = FALSE)
   msd <- mean_sd_w(traits0, w = object$weights$columns)
   pred <- backscale_data(pred_scaled, msd)
   return(pred)
@@ -39,14 +40,11 @@ predict_traits <- function(object,
 #' @keywords internal
 scale_data <- function(dat0,
                        mean_sd) {
-  # newdata1 and mean_sd should  be matrices
+  # dat0 and mean_sd should  be matrices
   nams <- intersect(colnames(dat0), rownames(mean_sd))
- 
   ones <- rep(1, nrow(dat0))
-  Xc <- dat0[,nams, drop=FALSE] - 
-    ones %*% t(mean_sd[nams, 1, drop = FALSE])
-  Xc <- Xc / 
-    (ones %*% t(mean_sd[nams, 2, drop = FALSE]))
+  Xc <- dat0[, nams, drop = FALSE] - ones %*% t(mean_sd[nams, 1, drop = FALSE])
+  Xc <- Xc / (ones %*% t(mean_sd[nams, 2, drop = FALSE]))
   return(Xc)
 }
 
@@ -92,15 +90,14 @@ check_newdata <- function(object,
     newdata1 <- newdata
     nams <- !ff$all_nams %in% names(newdata1)
     nams <- ff$all_nams[nams]
-    #nams <- ! names(newdata1)%in% colnames(wm) 
-    #nams <- names(newdata1)[nams]
     for (n in nams) {
-        if (n %in% colnames(wm))
+      if (n %in% colnames(wm)) {
         newdata1[[n]] <- wm[1,n] # set to the mean
-        else newdata1[[n]]<- 0
+      } else {
+        newdata1[[n]] <- 0 
+      }
     }
   }
-
   dat0 <- model.matrix(ff$formula_XZ, constrasts = FALSE, 
                        data = newdata1)[, -1, drop = FALSE]
   newdata1 <- scale_data(dat0, mean_sd = c_normed[, c(1, 2)])
@@ -114,9 +111,10 @@ predict_env <- function(object,
                         rank) {
   # missing factors in newdata1 : no contribution of the missing factors
   reg <- predict_regr_traits(object, rank)
+  reg[is.na(reg)] <- 0
   pred_scaled <- fpred_scaled(newdata1, reg)
   gg <- get_Z_X_XZ_formula(object$formulaEnv)
-  env0 <- model.matrix(gg$formula_X0, data = object$data$dataEnv)
+  env0 <- modelmatrixI(formula= gg$formula_X1 , data= object$data$dataEnv, XZ = FALSE)
   msd <- mean_sd_w(env0, w = object$weights$rows)
   pred <- backscale_data(pred_scaled, msd)
   return(pred)
