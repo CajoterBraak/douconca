@@ -19,18 +19,17 @@
 #'
 #' @param  by character \code{"axis"} which sets the test statistic to the 
 #' first eigenvalue of the dc-CA model. Default: \code{NULL} which sets the 
-#' test statistic to the inertia
-#' (sum of all double constrained eigenvalues; named 
-#' \code{constraintsTE} in the inertia element of \code{\link{dc_CA}}). 
-#' This is the trait constrained 
-#' inertia explained by the environmental predictos (without covariates), which is equal
-#' to the environmentally -constrained inertia explained by the traits
-#' (without trait covariates). The default is quicker computationally as it avoids 
+#' test statistic to the inertia (sum of all double constrained eigenvalues; 
+#' named  \code{constraintsTE} in the inertia element of \code{\link{dc_CA}}). 
+#' This is the trait constrained inertia explained by the environmental 
+#' predictors (without covariates), which is equal to the 
+#' environmentally-constrained inertia explained by the traits (without trait 
+#' covariates). The default is quicker computationally as it avoids
 #' computation of an svd of permuted data sets.
 #' 
 #' @details
-#' The algorithm is analogous to that of \code{\link{anova.wrda}}.
-#' The function is used in \code{\link{anova.dcca}}.
+#' The algorithm is analogous to that of \code{\link{anova.wrda}}. The function
+#' is used in \code{\link{anova.dcca}}.
 #'
 #' @return
 #' A list with two elements with names \code{table} and \code{eigenvalues}.
@@ -57,23 +56,23 @@ anova_sites <- function(object,
                         by = NULL){
   if (is.null(object$CWMs_orthonormal_traits)) {
     warning("Site level anova requires abundance data or ", 
-            "community weighted means (CWMs")
+            "community weighted means (CWMs).\n")
     return(list(eigenvalues = object$eigenvalues))
   }
   if (is.null(by)) by <- "omnibus"
-  if (is.na(pmatch(by, c("axis","omnibus")))) {
-    stop("Set argument 'by' to 'axis' or 'NULL'")
+  if (is.na(pmatch(by, c("axis", "omnibus")))) {
+    stop("Set argument 'by' to 'axis' or 'NULL'.\n")
   }
   N <- nrow(object$data$dataEnv) 
   if (inherits(permutations, c("numeric", "how", "matrix"))) {
     if (is.numeric(permutations) && !is.matrix(permutations)) {
       permutations <- permute::how(nperm = permutations[1])
     } else if (is.matrix(permutations) && ncol(permutations) != N) {
-      stop("Each row of permutations should have", N, "elements")
+      stop("Each row of permutations should have", N, "elements.\n")
     }
   } else {
     stop("Argument permutations should be integer, matrix ", 
-         "or specified by permute::how().")
+         "or specified by permute::how().\n")
   }
   # start of new dc-ca 
   out1 <- object[c("CCAonTraits", "formulaTraits", "data", "weights", "call",
@@ -82,7 +81,7 @@ anova_sites <- function(object,
   if (is.null(out1$CWMs_orthonormal_traits)) {
     CWMs_orthonormal_traits <- 
       scores(object$CCAonTraits, display = "species", scaling = "species", 
-             choices = 1:Rank_mod(object$CCAonTraits))
+             choices = 1:rank_mod(object$CCAonTraits))
   } else {
     CWMs_orthonormal_traits <- out1$CWMs_orthonormal_traits * sqrt(n / (n - 1))
   }

@@ -16,32 +16,31 @@
 #' the formula is not used. Specify row covariates (if any ) by 
 #' adding \code{+ Condition(covariate-formula)} to \code{formulaEnv} as 
 #' in \code{\link[vegan]{rda}}. The \code{covariate-formula} should not contain 
-#' a \code{~} (tilde). Default: \code{NULL} for \code{~.}, i.e. all variables in \code{dataEnv} 
-#' are predictor variables.
+#' a \code{~} (tilde). Default: \code{NULL} for \code{~.}, i.e. all variables 
+#' in \code{dataEnv} are predictor variables.
 #' @param formulaTraits formula or one-sided formula for the columns (species) 
-#' with colum predictors in \code{dataTraits}. When two-sided, the left hand 
+#' with column predictors in \code{dataTraits}. When two-sided, the left hand 
 #' side of the formula is not used. Specify column covariates (if any ) by 
 #' adding \code{+ Condition(covariate-formula)} to \code{formulaTraits} as 
 #' in \code{\link[vegan]{cca}}. The \code{covariate-formula} should not contain 
-#' a \code{~} (tilde). Default: \code{NULL} for \code{~.}, i.e. all variables in 
-#' \code{dataTraits} are predictor traits.
+#' a \code{~} (tilde). Default: \code{NULL} for \code{~.}, i.e. all variables 
+#' in \code{dataTraits} are predictor traits.
 #' @param response matrix, data frame of the abundance data 
 #' (dimension \emph{n} x \emph{m}) or list with community weighted means (CWMs)
 #' from \code{\link{fCWM_SNC}}. See Details for analyses starting from community
-#' weighted means. Rownames of \code{response}, if any, are carried 
-#' through.
+#' weighted means. Rownames of \code{response}, if any, are carried through.
 #' @param dataEnv matrix or data frame of the row predictors, with rows 
 #' corresponding to those in \code{response}. (dimension \emph{n} x \emph{p}).
 #' @param dataTraits matrix or data frame of the column predictors, with rows 
 #' corresponding to the columns in \code{response}.
 #' (dimension \emph{m} x \emph{q}).
-#' @param divide.by.site.totals logical; default \code{TRUE} for closing the 
+#' @param divideBySiteTotals logical; default \code{TRUE} for closing the 
 #' data by dividing the rows in the \code{response} by their total.
 #' @param dc_CA_object  optional object from an earlier run of this function. 
 #' Useful if the same formula for the columns (\code{formulaTraits}), 
 #' \code{dataTraits} and \code{response} are used with a new formula for the 
 #' rows. If set, the data of the previous run is used and the result of its 
-#' first step is taken for the new analysis.
+#' first step is taken for the new analysis. 
 #' @param verbose logical for printing a simple summary (default: TRUE)
 #
 #' @details
@@ -62,18 +61,16 @@
 #' with \code{formulaEnv} or using \code{\link[vegan]{rda}}, if site weights 
 #' are equal.
 #'
-#' A dc-CA can be carried out on, what statisticians call, the sufficient 
-#' statistics of the method. This is useful, when the abundance data
-#' are not available or could not be made public in a paper attempting 
-#' reproducible research.
-#' In this case, \code{response} should be a list 
+#' A dc-CA can be carried out on, what statisticians call, the sufficient
+#' statistics of the method. This is useful, when the abundance data are not 
+#' available or could not be made public in a paper attempting reproducible 
+#' research. In this case, \code{response} should be a list
 #' with as first element community weighted means (CWMs) with respect to the 
 #' traits, and the trait data, and, optionally, further elements, for functions
 #' related to \code{dc_CA}. The minimum is a 
 #' \code{list(CWM, weight = list(columns = species_weights))} with CWM a matrix
-#' or data.frame, but then \code{formulaEnv},
-#' \code{formulaTraits}, \code{dataEnv}, \code{dataTraits} 
-#' must be specified in the call to 
+#' or data.frame, but then \code{formulaEnv}, \code{formulaTraits}, 
+#' \code{dataEnv}, \code{dataTraits} must be specified in the call to 
 #' \code{dc_CA}. The function \code{\link{fCWM_SNC}} and its example
 #' show how to set the
 #' \code{response} for this and helps to create the \code{response} from 
@@ -83,7 +80,7 @@
 #' respectively, but formulas should then not be \code{~.}.
 #'
 #' The statistics and scores in the example \code{dune_dcCA.r}, have been 
-#' checked against the results in Canoco 5.15 (ter Braak & Smilauer, 2018).
+#' checked against the results in Canoco 5.15 (ter Braak & Šmilauer, 2018).
 #'
 #' In the current implementation, \code{formulaEnv} and \code{formulaTraits} 
 #' should contain variable names as is, \emph{i.e.} transformations of 
@@ -99,20 +96,19 @@
 #' \item{formulaTraits}{the argument \code{formulaTraits}. If the formula was
 #' \code{~.}, it was changed to explicit trait names.}
 #' \item{data}{a list of \code{Y}, \code{dataEnv} and \code{dataTraits}, 
-#' after removing empty rows and 
-#' columns in \code{response} and after closure if 
-#' \code{divide.by.site.totals = TRUE} and with the corresponding rows in 
+#' after removing empty rows and columns in \code{response} and after closure if 
+#' \code{divideBySiteTotals = TRUE} and with the corresponding rows in 
 #' \code{dataEnv} and \code{dataTraits} removed.}
 #' \item{weights}{a list of unit-sum weights of row and columns. The names of 
-#' the list are \code{c("row","columns")}, in that order.}
+#' the list are \code{c("row", "columns")}, in that order.}
 #' \item{Nobs}{number of sites (rows).}
 #' \item{CWMs_orthonormal_traits}{Community weighted means w.r.t. 
 #' orthonormalized traits.}
 #' \item{RDAonEnv}{a \code{\link{wrda}} object or 
 #' \code{\link[vegan]{cca.object}} from the 
 #' \code{\link{wrda}} or, if with equal row weights, 
-#' \code{\link[vegan]{rda}} analysis, respectively of the column scores of the \code{cca}, 
-#' which are the CWMs of orthonormalized traits, using formula 
+#' \code{\link[vegan]{rda}} analysis, respectively of the column scores of the
+#' \code{cca}, which are the CWMs of orthonormalized traits, using formula 
 #' \code{formulaEnv}.}
 #' \item{formulaEnv}{the argument \code{formulaEnv}. If the formula was 
 #' \code{~.}, it was changed to explicit environmental variable names.}
@@ -151,7 +147,7 @@
 #'   \item \code{species_scores}: a list with names 
 #'   \code{c("species_scores_unconstrained", "lc_traits_scores")} with the
 #'   matrix with species niche centroids along the dc-CA axes (composite 
-#'   gradients) andthe matrix with linear combinations of traits.
+#'   gradients) and the matrix with linear combinations of traits.
 #'   \item \code{correlation}: a matrix with inter-set correlations of the 
 #'   traits with their SNCs.
 #'   \item \code{b_se}: a matrix with (unstandardized) regression coefficients 
@@ -190,7 +186,7 @@
 #' ter Braak, CJF, Šmilauer P, and Dray S. 2018. Algorithms and biplots for
 #' double constrained correspondence analysis.
 #' Environmental and Ecological Statistics, 25(2), 171-197.
-#' \url{https://doi.org/10.1007/s10651-017-0395-x}
+#' \doi{10.1007/s10651-017-0395-x}
 #'
 #' ter Braak C.J.F. and  P. Šmilauer  (2018). Canoco reference manual
 #' and user's guide: software for ordination (version 5.1x).
@@ -200,7 +196,7 @@
 #' vegan: Community Ecology Package. R package version 2.6-6.1.
 #' \url{https://CRAN.R-project.org/package=vegan}.
 #'
-#' @seealso \code{\link{plot_dcCA}}, \code{\link{scores.dcca}}, 
+#' @seealso \code{\link{plot.dcca}}, \code{\link{scores.dcca}}, 
 #' \code{\link{print.dcca}} and \code{\link{anova.dcca}}
 #' 
 #' @example demo/dune_dcCA.R
@@ -210,7 +206,7 @@ dc_CA <- function(formulaEnv = NULL,
                   response = NULL, 
                   dataEnv = NULL,
                   dataTraits = NULL,
-                  divide.by.site.totals = TRUE,
+                  divideBySiteTotals = TRUE,
                   dc_CA_object = NULL, 
                   verbose = TRUE) {
   # response matrix or data frame, dataEnv and dataTraits data frames 
@@ -224,10 +220,10 @@ dc_CA <- function(formulaEnv = NULL,
   # and have no efffect on the result
   call <- match.call()
   if (!is.null(response)) {
-    if (is.list(response) && inherits(response[[1]], c("matrix","data.frame"))) {
+    if (is.list(response) && inherits(response[[1]], c("matrix", "data.frame"))) {
       # response is a list of CWMs_orthonormal_traits and a weights list
       if (any(is.na(response[[1]]))) {
-        stop("The CWMs should not have missing entries")
+        stop("The CWMs should not have missing entries.\n")
       }
       # create a sufficient dc_CA_object object
       dc_CA_object <- response
@@ -236,13 +232,13 @@ dc_CA <- function(formulaEnv = NULL,
   if (is.null(dc_CA_object)) {
     #  check and amend: make sure there are no empty rows or columns 
     if (any(is.na(response))) {
-      stop("The response should not have missing entries")
+      stop("The response should not have missing entries.\n")
     }
     if (any(response < 0)) {
-      stop("The response should not have negative values")
+      stop("The response should not have negative values.\n")
     }
     if (is.null(dataTraits)) {
-      stop("dataTraits must be specified in dc_CA")
+      stop("dataTraits must be specified in dc_CA.\n")
     }
     if (!is.matrix(response)) {
       response <- as.matrix(response)
@@ -268,7 +264,7 @@ dc_CA <- function(formulaEnv = NULL,
       id[ii] <- sum(is.na(dataEnv[, ii])) == 0
       if (!id[[ii]]) { 
         warning("variable", names(dataEnv)[ii], 
-                "has missing values and is deleted from the environmental data")
+                "has missing values and is deleted from the environmental data.\n")
       }
     }
     dataEnv <- dataEnv[, id]
@@ -277,7 +273,7 @@ dc_CA <- function(formulaEnv = NULL,
       id[ii] <- sum(is.na(dataTraits[,ii])) == 0
       if (!id[[ii]]) {
         warning("variable", names(dataTraits)[ii], 
-                "has missing values and is deleted from trait data")
+                "has missing values and is deleted from trait data.\n")
       }
     }
     dataTraits <- dataTraits[, id]
@@ -292,7 +288,7 @@ dc_CA <- function(formulaEnv = NULL,
     rownames(dataEnv) <- rownames(response)
     rownames(dataTraits) <- colnames(response)
     # end of check 
-    if (divide.by.site.totals) {
+    if (divideBySiteTotals) {
       response <- response / (rowSums(response) %*% t(rep(1, ncol(response))))
     }
     TotR <- rowSums(response)
@@ -301,12 +297,12 @@ dc_CA <- function(formulaEnv = NULL,
     if (is.null(formulaTraits)) {
       formulaTraits <- 
         as.formula(paste("~", paste0(names(dataTraits), collapse = "+")))
-      warning("formulaTraits set to ~. in dc_CA")
+      warning("formulaTraits set to ~. in dc_CA.\n")
     }
     if (is.null(formulaEnv)) {
       formulaEnv <- 
         as.formula(paste("~", paste0(names(dataEnv), collapse = "+")))
-      warning("formulaEnv set to ~. in dc_CA")
+      warning("formulaEnv set to ~. in dc_CA.\n")
     }
     formulaTraits <- change_reponse(formulaTraits, "tY", dataTraits)
     environment(formulaTraits) <- environment()
@@ -315,7 +311,7 @@ dc_CA <- function(formulaEnv = NULL,
     n <- nrow(data$Y)
     CWMs_orthonormal_traits <- 
       scores(step1, display = "species", scaling = "species",
-             choices = seq_len(Rank_mod(step1))) * sqrt((n - 1) / n)
+             choices = seq_len(rank_mod(step1))) * sqrt((n - 1) / n)
     if (rownames(CWMs_orthonormal_traits)[1] == "col1") {
       rownames(CWMs_orthonormal_traits) <- paste0("Sam", seq_len((nrow(dataEnv))))
     }
@@ -332,7 +328,7 @@ dc_CA <- function(formulaEnv = NULL,
     if (!is.null(formulaEnv)) {
       dc_CA_object$formulaEnv <- formulaEnv 
     } else if (is.null(dc_CA_object$formulaEnv)) {
-      warning("formulaEnv set to ~. in dc_CA")
+      warning("formulaEnv set to ~. in dc_CA.\n")
       dc_CA_object$formulaEnv <- ~.
     }
     if (inherits(dc_CA_object, "dcca")) {
@@ -340,11 +336,11 @@ dc_CA <- function(formulaEnv = NULL,
                              "data", "call", "weights", "Nobs",
                              "CWMs_orthonormal_traits")]
     } else if (is.list(response) && 
-               inherits(response[[1]], c("matrix","data.frame"))) {
+               inherits(response[[1]], c("matrix", "data.frame"))) {
       out1 <- checkCWM2dc_CA(dc_CA_object, dataEnv, dataTraits, formulaTraits)
     } else{
       stop("The class of dc_CA_object should be dcca, whereas it is now:",
-           class(dc_CA_object)[1], class(dc_CA_object)[2])
+           class(dc_CA_object)[1], class(dc_CA_object)[2], ".\n")
     }
   }
   formulaEnv <- change_reponse(out1$formulaEnv, "out1$CWMs_orthonormal_traits", 
@@ -363,7 +359,7 @@ dc_CA <- function(formulaEnv = NULL,
   out$c_traits_normed0 <- try(f_canonical_coef_traits2(out))
   inertia <- try(f_inertia(out))
   if (inherits(inertia, "try-error")) {
-    warning("could not obtain inertias") 
+    warning("could not obtain inertias.\n") 
     print(inertia)
   }
   out$inertia <- inertia

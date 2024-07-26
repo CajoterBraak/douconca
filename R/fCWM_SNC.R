@@ -2,7 +2,7 @@
 #' double constrained correspondence analysis
 #'
 #' @description
-#' Double constained correspondence analysis (dc-CA) can be calculated directly 
+#' Double constrained correspondence analysis (dc-CA) can be calculated directly 
 #' from community weighted means (CWMs), with the trait data from which the 
 #' CWMs are calculated, and the environmental data and weights for species 
 #' and sites (the abundance totals for species and sites). Statistical testing
@@ -69,8 +69,9 @@
 #' vegan: Community Ecology Package. R package version 2.6-4.
 #' \url{https://CRAN.R-project.org/package=vegan}.
 #'
-#' @seealso \code{\link{dc_CA}}, \code{\link{plot_dcCA}}, \code{\link{scores.dcca}}, 
-#' \code{\link{print.dcca}} and \code{\link{anova.dcca}}
+#' @seealso \code{\link{dc_CA}}, \code{\link{plot.dcca}}, 
+#' \code{\link{scores.dcca}}, \code{\link{print.dcca}} and 
+#' \code{\link{anova.dcca}}
 #' 
 #' @example demo/dune_fCWMSNC.r
 #' @export
@@ -79,22 +80,29 @@ fCWM_SNC <- function(response = NULL,
                      dataTraits = NULL,
                      formulaEnv = NULL,
                      formulaTraits = NULL,
-                     divide.by.site.totals = TRUE,
-  #               dc_CA_object = NULL,
+                     divideBySiteTotals = TRUE,
+                     dc_CA_object = NULL,
                      minimal_output = TRUE,
                      verbose = TRUE) {
   # response matrix or data frame, dataEnv and dataTraits data frames in which 
   # formualaE and formulaT are evaluated
+  # dc_CA_object = result (value) of a previous run, can be used to save 
+  # computing time for runs that modify the formula for samples 
+  # (step2: RDAonEnv) only
+  # The step1 (CCAonTraits and the data and formulaTraits) are taken from 
+  # dc_CA_object into the new result.
+  # If set, formulaTraits, response, dataEnv, dataTraits are not used at all 
+  # and have no efffect on the result
   call <- match.call()
-  #  check and amend: make sure there are no empty rows or columns -----------------------------------------------------------------------
+  #  check and amend: make sure there are no empty rows or columns 
   if (any(is.na(response))) {
-    stop("The response should not have missing entries")
+    stop("The response should not have missing entries.\n")
   }
   if (any(response < 0)) {
-    stop("The response should not have negative values")
+    stop("The response should not have negative values.\n")
   }
   if (is.null(dataTraits)) {
-    stop("dataTraits must be specified in dc_CA")
+    stop("dataTraits must be specified in dc_CA.\n")
   }
   if (!is.matrix(response)) {
     response <- as.matrix(response)
@@ -120,7 +128,7 @@ fCWM_SNC <- function(response = NULL,
     id[ii] <- sum(is.na(dataEnv[, ii])) == 0
     if (!id[[ii]]) {
       warning("variable", names(dataEnv)[ii], 
-              "has missing values and is deleted from the environmental data")
+              "has missing values and is deleted from the environmental data.\n")
     }
   }
   dataEnv <- dataEnv[, id]
@@ -129,7 +137,7 @@ fCWM_SNC <- function(response = NULL,
     id[ii] <- sum(is.na(dataTraits[,ii])) == 0
     if (!id[[ii]]) {
       warning("variable", names(dataTraits)[ii], 
-              "has missing values and is deleted from trait data")
+              "has missing values and is deleted from trait data.\n")
     }
   }
   dataTraits <- dataTraits[, id]
@@ -144,7 +152,7 @@ fCWM_SNC <- function(response = NULL,
   rownames(dataEnv) <- rownames(response)
   rownames(dataTraits) <- colnames(response)
   # end of check
-  if (divide.by.site.totals) {
+  if (divideBySiteTotals) {
     response <- response / (TotR %*% t(rep(1, ncol(response))))
   }
   Y <- as.matrix(response) / sum(response)
@@ -155,12 +163,12 @@ fCWM_SNC <- function(response = NULL,
   if (is.null(formulaTraits)) {
     formulaTraits <- as.formula(paste("~", paste0(names(dataTraits),
                                                   collapse = "+")))
-    warning("formulaTraits set to ~. in fCWMSNC")
+    warning("formulaTraits set to ~. in fCWMSNC.\n")
   }
   if (is.null(formulaEnv)) {
     formulaEnv <- as.formula(paste("~", paste0(names(dataEnv),
                                                collapse = "+")))
-    warning("formulaEnv set to ~. in fCWMSNC")
+    warning("formulaEnv set to ~. in fCWMSNC.\n")
   }
   # CWM and CWM ortho
   # formula = formulaTraits; data = dataTraits; w = weights$columns
@@ -247,17 +255,17 @@ f_canonical_coef_traits2 <- function(out){
     if (inherits(out$CCAonTraits, "cca")) {
       B1_traitsN <- scores(out$CCAonTraits, display = "reg", 
                            scaling = "species", 
-                           choices = 1:Rank_mod(out$CCAonTraits))
+                           choices = 1:rank_mod(out$CCAonTraits))
     } else {
       return(ms$meansdvif)
     }
   }
   if (inherits(out$RDAonEnv, "wrda")) {
     B_star <- scores(out$RDAonEnv, display = "species", scaling = "sites", 
-                     choices = 1:Rank_mod(out$RDAonEnv))
+                     choices = 1:rank_mod(out$RDAonEnv))
   } else  {
     B_star <- scores(out$RDAonEnv, display = "species", 
-                     scaling = "sites", choices = 1:Rank_mod(out$RDAonEnv), 
+                     scaling = "sites", choices = 1:rank_mod(out$RDAonEnv), 
                      const = 1)
   }
   # End appendix 6.2 in ter Braak  et al 2018
@@ -310,7 +318,7 @@ checkCWM2dc_CA <- function(object,
   if (!is.null(formulaTraits)) {
     object$formulaTraits <- formulaTraits
   } else if (is.null(object$formulaTraits)) {
-    warning("formulaTraits set to ~. in checkCWM2dc_CA")
+    warning("formulaTraits set to ~. in checkCWM2dc_CA.\n")
     object$formulaTraits <- ~.
   }
   object$CWM <- as.matrix(object$CWM)
@@ -337,7 +345,7 @@ checkCWM2dc_CA <- function(object,
   }
   if (is.null(dataEnv)) {
     if (is.null(object$data$dataEnv)) {
-      stop("Supply environmental data to the dc_CA function.")
+      stop("Supply environmental data to the dc_CA function.\n")
     }
   } else {
     object$data$dataEnv <- as.data.frame(lapply(dataEnv, function(x){
@@ -349,12 +357,12 @@ checkCWM2dc_CA <- function(object,
     if (!is.null(object$dataTraits)) {
       object$data$dataTraits <- object$dataTraits 
     } else if (is.null(object$data$dataTraits)) {
-      warning("Supply trait data to the dc_CA function.")
+      warning("Supply trait data to the dc_CA function.\n")
     }
   } else { 
     warning("With CWM as first element in response in dc_CA, the trait data",
             "used to obtain the CWMs are best supplied as response$data$dataTraits.",
-            "Use the default dataTraits argument, which is NULL.")
+            "Use the default dataTraits argument, which is NULL.\n")
     object$data$dataTraits <- as.data.frame(lapply(dataTraits, function(x) {
       if (is.character(x)) x <- as.factor(x) else x
       return(x) 
@@ -365,18 +373,18 @@ checkCWM2dc_CA <- function(object,
       is.null(object$weights$rows)) {
     # try dataTraits and dataEnv
     if (!is.null(object$data$dataTraits$weight)) {
-      warning("species weights taken from dataTraits$weight")
+      warning("species weights taken from dataTraits$weight.\n")
       object$weights <- c(list(columns = object$data$dataTraits$weight),
                           object$weights)
     }
     if (!is.null(object$data$dataEnv$weight)) {
-      warning("site weights taken from dataEnv$weight")
+      warning("site weights taken from dataEnv$weight.\n")
       object$weights <- c(object$weights, 
                           list(rows = object$data$dataEnv$weight))
     }
   }
   if (is.null(object$weights)) {
-    warning("no weights supplied with response$CWM; weigths all set to 1")
+    warning("no weights supplied with response$CWM; weigths all set to 1.\n")
     object$weights <- list(rows = rep(1 / object$Nobs, object$Nobs),
                            columns = rep(1 / nrow(object$data$dataTraits),
                                          nrow(object$data$dataTraits)))
@@ -384,12 +392,12 @@ checkCWM2dc_CA <- function(object,
     ll <- length(object$weights)
     if (ll == object$Nobs) {
       warning("no species weights supplied with response$CWM; ",
-              "weigths all set to 1")
+              "weigths all set to 1.\n")
       object$weights <- list(rows = rep(1 / object$Nobs, object$Nobs),
                              columns = object$weights)
     } else if (ll == nrow(object$data$dataTraits)) {
       warning("no site weights supplied with response$CWM; ", 
-              "site weigths all set to 1")
+              "site weigths all set to 1.\n")
       object$weights <- list(rows = object$weights,
                              columns = rep(1 / nrow(object$data$dataTraits),
                                            nrow(object$data$dataTraits)))
@@ -397,12 +405,12 @@ checkCWM2dc_CA <- function(object,
   }
   if (is.null(object$weights$rows)) {
     warning("no site weights supplied with response$CWM; ", 
-            "site weigths all set to 1")
+            "site weigths all set to 1.\n")
     object$weights$rows <- rep(1 / object$Nobs, object$Nobs)
   }
   if (is.null(object$weights$columns)) {
     warning("no species weights supplied with response$CWM; ",
-            "species weigths all set to 1")
+            "species weigths all set to 1.\n")
     object$weights$columns <- rep(1 / nrow(object$data$dataTraits),
                                   nrow(object$data$dataTraits))
   }

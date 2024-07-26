@@ -19,8 +19,8 @@
 #' axes.
 #' @param display a character vector, one or more of \code{c("all", "species",
 #' "sites", "sp", "wa", "lc", "bp", "cor", "ic", "reg", "tval", "cn", 
-#' "lc_traits", "reg_traits","tval_traits", "cor_traits", "ic_traits", 
-#' "bp_traits","cn_traits")}. The most items are as in 
+#' "lc_traits", "reg_traits", "tval_traits", "cor_traits", "ic_traits", 
+#' "bp_traits", "cn_traits")}. The most items are as in 
 #' \code{\link[vegan]{scores.cca}}, except \code{"cor"} and \code{"ic"}, for
 #' inter-set and intra-set correlations, respectively, and \code{"tval"} for
 #' the (over-optimistic) t-values of the regression coefficients. The remaining
@@ -215,7 +215,7 @@ scores_dcca <- function(x,
     }
   } else {
     stop("The first argument must be of class 'dcca' or 'wrda', the result ", 
-         "of the function dc_CA or wrda.")
+         "of the function dc_CA or wrda.\n")
   }
   ## set "all" for tidy scores
   if ("sites" %in% display) {
@@ -257,9 +257,9 @@ scores_dcca <- function(x,
     }
   } else if (is.numeric(scaling)) {
     num_scaling <- abs(scaling)
-    scaling <- c("sites","species","symmetric")[num_scaling]
+    scaling <- c("sites", "species", "symmetric")[num_scaling]
   } else {
-    stop("scaling type not recognized")
+    stop("scaling type not recognized.\n")
   }
   slam <- sqrt(x$eigenvalues[choices])
   scal <- list(rep(1, length(slam)), slam, sqrt(slam))[[abs(num_scaling)]]
@@ -302,7 +302,7 @@ scores_dcca <- function(x,
   }
   if ("t_values" %in% take){
     sol$t_values <- 
-      site_axes$c_env_normed[, Rank_mod(x) + choices + 3, drop = FALSE]
+      site_axes$c_env_normed[, rank_mod(x) + choices + 3, drop = FALSE]
     attr(sol$t_values, which = "meaning") <-
       paste("t-values of the coefficients of the regression of the CWMs", 
             "of the trait composite on to the environmental variables")
@@ -415,7 +415,7 @@ scores_dcca <- function(x,
     }
     if ("t_values_traits" %in% take) {
       sol$t_values_traits <- 
-        species_axes$c_traits_normed[, Rank_mod(x) + choices + 3, drop = FALSE]
+        species_axes$c_traits_normed[, rank_mod(x) + choices + 3, drop = FALSE]
       attr(sol$t_values_traits, which = "meaning") <-
         paste("t-values of the coefficients of the regression of the SNCs", 
               "along a dc-CA axis on to the traits")
@@ -429,9 +429,9 @@ scores_dcca <- function(x,
         if (whichc[1] == "in model") {
           whichc <- get_Z_X_XZ_formula(x$formulaTraits)$focal_nams
         }
-        Cor_Trait_SNC <- f_trait_axes(x, which_cor = whichc)
+        corTraitSNC <- f_trait_axes(x, which_cor = whichc)
         sol$correlation_traits <- 
-          Cor_Trait_SNC$correlation[, choices, drop = FALSE]
+          corTraitSNC$correlation[, choices, drop = FALSE]
       }
       attr(sol$correlation_traits, which = "meaning") <-
         paste("inter set correlation, correlation between traits and the",
@@ -445,8 +445,8 @@ scores_dcca <- function(x,
         if (whichc[1] == "in model") {
           whichc <- get_Z_X_XZ_formula(x$formulaTraits)$focal_nams
         }
-        Cor_Trait_SNC <- f_trait_axes(x, which_cor = whichc)
-        e_rcor <- Cor_Trait_SNC$correlation[, choices, drop = FALSE]
+        corTraitSNC <- f_trait_axes(x, which_cor = whichc)
+        e_rcor <- corTraitSNC$correlation[, choices, drop = FALSE]
       }
       R <- sqrt(species_axes$R2_traits[choices])
       if (length(R) == 1) {

@@ -61,23 +61,23 @@ anova_species <- function(object,
                           by = NULL ){
   if (is.null(object$SNCs_orthonormal_env) && is.null(object$data$Y)) {
     warning("Species level anova requires abundance data or ", 
-            "species niche optima (SNCs)")
+            "species niche optima (SNCs).\n")
     return(list(eigenvalues = object$eigenvalues))
   }
   if (is.null(by)) by <- "omnibus"
-  if (is.na(pmatch(by, c("axis","omnibus")))) {
-    stop("Set argument 'by' to 'axis' or 'NULL'")
+  if (is.na(pmatch(by, c("axis", "omnibus")))) {
+    stop("Set argument 'by' to 'axis' or 'NULL'.\n")
   }
   N <- nrow(object$data$dataTraits) 
   if (inherits(permutations, c("numeric", "how", "matrix"))) {
     if (is.numeric(permutations) && !is.matrix(permutations)) {
       permutations <- permute::how(nperm = permutations[1])
     } else if (is.matrix(permutations) && ncol(permutations) != N) {
-      stop("Each row of permutations should have", N, "elements")
+      stop("Each row of permutations should have", N, "elements.\n")
     }
   } else {
     stop("Argument permutations should be integer, matrix ", 
-         "or specified by permute::how().")
+         "or specified by permute::how().\n")
   }
   if (is.null(object$SNCs_orthonormal_env)) {
     formulaEnv <- change_reponse(object$formulaEnv, "object$data$Y", 
@@ -86,7 +86,7 @@ anova_species <- function(object,
     step1_sp <- vegan::cca(formulaEnv, data = object$data$dataEnv)
     SNCs_orthonormal_env <- scores(step1_sp, display = "species", 
                                    scaling = "species", 
-                                   choices = 1:Rank_mod(step1_sp))
+                                   choices = 1:rank_mod(step1_sp))
     if (rownames(SNCs_orthonormal_env)[1]=="col1") {
       rownames(SNCs_orthonormal_env) <- 
         paste0("Species", seq_len(nrow(object$data$dataTraits)))
@@ -148,7 +148,7 @@ anova_species <- function(object,
   header <- paste0("Species-level permutation test using dc-CA\n",
                    object1,
                    "Residualized predictor permutation\n",
-                   howHead(attr(out_tes[[1]],"control")))
+                   howHead(attr(out_tes[[1]], "control")))
   f_species <- structure(axsig_dcCA_species, heading = header, 
                          control = attr(out_tes[[1]], "control"),
                          Random.seed = attr(out_tes[[1]], "seed"),
@@ -200,7 +200,7 @@ randperm_eX0sqrtw <- function(Y,
   if (is.matrix(permutations)) {
     # matrix: check that it *strictly* integer
     if (!is.integer(permutations) && !all(permutations == round(permutations))) {
-      stop("Permutation matrix must be strictly integers: use round()")
+      stop("Permutation matrix must be strictly integers: use round().\n")
     }
     perm.mat <- permutations
   } else if (inherits(permutations, "how")){
@@ -256,8 +256,6 @@ randperm_eX0sqrtw <- function(Y,
   }
   rss_perm <- sstot - ssX_perm
   Fval <- ssX_perm / rss_perm * df_cor
-  isna.r <- sum(is.na(Fval))
-  #pval <- (sum(Fval >= (F0 - EPS), na.rm = TRUE) + 1)  / (nrepet- isna.r  + 1)
   # ssX_perm is monotonic with Fval, so for numeric stability use:
   isna.r <- sum(is.na(ssX_perm))
   pval <- (sum(ssX_perm >= (ssX0 - EPS), na.rm = TRUE) + 1)  / (nrepet- isna.r  + 1)
@@ -269,7 +267,7 @@ randperm_eX0sqrtw <- function(Y,
     eig <- (eig[eig > EPS]) ^ 2
     res <- list(pval = pval, Fval = Fval, F0 = F0,
                 ss = c(Model = ssX0, Residual = sstot - ssX0),
-                df = c(Model = p_eX, Residual = nrow(eY) - qrZ$rank - p_eX ),
+                df = c(Model = p_eX, Residual = nrow(eY) - qrZ$rank - p_eX),
                 rank = rank, R2.perm = ssX_perm / sstot,
                 eig = eig, EigVector1 = EigVector1)
     if (is.matrix(permutations)) {
@@ -307,10 +305,10 @@ SVDfull <- function(Y) {
   return(list(d = svdY$d[id], u = u, v = v, rank = length(id)))
 }
 
-# end OLS versions -------------------------------------------------
+# end OLS versions 
 
 
-# code adapted from vegan 2.6-4 ---------------------------------------------------
+# code adapted from vegan 2.6-4 
 
 ### Make a compact summary of permutations. This copies Gav Simpson's
 ### permute:::print.how, but only displays non-default choices in how().

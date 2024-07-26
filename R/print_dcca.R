@@ -26,7 +26,7 @@ print_dcca <- function(x,
     x$c_env_normed <- x$site_axes$c_env_normed
   } else {
     stop("The argument must be of class 'dcca' or 'wrda', the result of ", 
-         "the function dc_CA or wrda.")
+         "the function dc_CA or wrda.\n")
   }
   choices <- 1:4
   if (inherits(x, "dcca")) {
@@ -38,14 +38,13 @@ print_dcca <- function(x,
     cat("Step 2: the RDA ordination of CWMs of the orthonormalized traits \n", 
         "       of step 1 with environmental constraints:\n")
     print(x$RDAonEnv)
-    c_t <- x$c_traits_normed[, c(choices, 4 + Rank_mod(x)), drop = FALSE]
+    c_t <- x$c_traits_normed[, c(choices, 4 + rank_mod(x)), drop = FALSE]
   } else {
     print.cca(x)
     c_t <- NULL
   }
-  if (inherits(x, "dccav", which = TRUE) ==1 ||
-      inherits(x, "wrda", which = TRUE) ==1) {
-    c_e <- x$c_env_normed[, c(choices, 4 + Rank_mod(x)), drop = FALSE]
+  if (any(inherits(x, c("dccav", "wrda"), which = TRUE) == 1)) {
+    c_e <- x$c_env_normed[, c(choices, 4 + rank_mod(x)), drop = FALSE]
     cat("mean, sd, VIF and canonical coefficients with their optimistic [!]", 
         "t-values:\n")
     print(round(c_e, 4))
