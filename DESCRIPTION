@@ -1,7 +1,7 @@
 Package: douconca
 Type: Package
-Title: Double Constrained Correspondence Analysis for Trait-Environment 
-    Analysis in Ecology
+Title: Double Constrained Correspondence Analysis for Trait-Environment
+        Analysis in Ecology
 Version: 1.1.5
 Authors@R: c(person(given = "Cajo J.F", 
                     family = "ter Braak", 
@@ -36,13 +36,14 @@ Depends: R (>= 3.5.0)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-Imports: 
-    ggplot2 (>= 3.5.0), 
-    ggrepel,
-    gridExtra, 
-    permute,
-    rlang,
-    stats,
-    vegan
-RoxygenNote: 7.3.1
+Imports: ggplot2 (>= 3.5.0), ggrepel, gridExtra, permute, rlang, stats,
+        vegan
+RoxygenNote: 7.3.2
 NeedsCompilation: no
+Suggests: knitr, rmarkdown, tinytest
+VignetteBuilder: knitr
+Packaged: 2024-07-27 07:48:22 UTC; braak008
+Author: Cajo J.F ter Braak [aut] (<https://orcid.org/0000-0002-0414-8745>),
+  Bart-Jan van Rossum [aut, cre]
+    (<https://orcid.org/0000-0002-8673-2514>)
+Maintainer: Bart-Jan van Rossum <bart-jan.vanrossum@wur.nl>

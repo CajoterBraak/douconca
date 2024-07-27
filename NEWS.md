@@ -4,6 +4,7 @@
 site weights only. For users of the previous version, the function 
 dc_CA_vegan has been replaced by the more general function dc_CA. Specify
 the argument divide.by.site.totals to obtain the same analysis.
+* The plot_dcCA function is now a method: plot.
 * General dc-CA required weighted redundancy analysis. For this, a new function
 wrda has been added, with methods for print, scores and anova.
 * A predict function has been added.
