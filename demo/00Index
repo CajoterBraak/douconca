@@ -1,0 +1,10 @@
+dune_dcCA	  Demo of double constrained correspondence analysis using the dune meadow data
+dune_plot_dcCA	  Demo of plotting a single dc-CA axis
+dune_plot_dcCA2	  Demo of plotting a single dc-CA axis (long version)
+plot_CWM_SNC      Demo of plotting CWMs and SNCs of a dc-CA axis against the axis
+dune_plot_gd      Demo of plotting the gradient description
+dune_select  	  Demo of how dc_CA_vegan can be used for manual forward selection of environmental variables
+dune_test	  Demo of the max test in dc-CA combining the community-level and the species-level test
+dune_wrda	  Demo of weighted redundancy analysis
+dune_fCWMSNC      Demo of dc-CA obtained from communitiy weighted means and, optionally, species-niche centroids
+dune_dcCA_predict Demo of prediction in dc-CA
