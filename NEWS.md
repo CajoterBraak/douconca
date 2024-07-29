@@ -1,9 +1,14 @@
+# douconca 1.1.6
+* An issue with collinear predictors in v1.1.5 has been resolved.
+
 # douconca 1.1.5
 
 * The package can now do general dc-CA, instead of the vegan-based version with equal
 site weights only. For users of the previous version, the function 
-dc_CA_vegan has been replaced by the more general function dc_CA. Specify
-the argument divide.by.site.totals to obtain the same analysis.
+dc_CA_vegan has been replaced by the more general function dc_CA. 
+The default gives the same analysis. By specifying
+the argument divideBySiteTotals=FALSE, obtain the origincal dc-CA analysis
+with unequal site weights.
 * The plot_dcCA function is now a method: plot.
 * General dc-CA required weighted redundancy analysis. For this, a new function
 wrda has been added, with methods for print, scores and anova.
