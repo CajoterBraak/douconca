@@ -229,7 +229,7 @@ scores_dcca <- function(x,
   }
   take <- tabula[display]
   if (inherits(x, "wrda", which = TRUE) == 1) {
-    site_axes <- f_env_axes(x)
+    if (any(take %in% tabula[1:8]))site_axes <- f_env_axes(x)
     species_axes <- x$species_axes
     formulaEnv <- x$formula
     dataEnv <- x$data
@@ -237,8 +237,8 @@ scores_dcca <- function(x,
     dataEnv <- x$data$dataEnv
     formulaEnv <- x$formulaEnv
     if (!"species_axes" %in% names(x)) {
-      site_axes <- f_env_axes(x)
-      species_axes <- f_trait_axes(x)
+      if (any(take %in% tabula[1:8])) site_axes <- f_env_axes(x)
+      if (!any(take %in% tabula[1:8])) species_axes <- f_trait_axes(x)
     } else {
       species_axes <- x$species_axes
       site_axes<- x$site_axes

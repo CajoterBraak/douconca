@@ -65,6 +65,9 @@ calculate_b_se_tval <- function(X_or_qr_decomp_of_X,
   }
   # Compute estimated regression coefficients
   beta_hat <- qr.coef(QR, y_weightedw)
+  if (any(is.na(beta_hat))) 
+     warning(paste("collinearity detected in ", name, "-model.", sep = ""))
+    
   # Calculate fitted values
   fitted_valuesw <- qr.fitted(QR, y_weightedw)
   # Calculate residuals
@@ -80,17 +83,26 @@ calculate_b_se_tval <- function(X_or_qr_decomp_of_X,
     p <- QR$rank
     sigma_hat_sq <- RSS / (n - p - 1 ) 
     # Calculate variance-covariance matrix of the estimated regression coefficients
-    diagXtX_inv <- diag(chol2inv(QR$qr, size = QR$rank))
-    if (nrow(beta_hat) - length(diagXtX_inv))
+    XtXinv <- chol2inv(QR$qr)
+   # colnames(QR$qr)
+   # qr.coef(QR, y = mod$data$dataEnv$Manure )
+    diagXtX_inv <- diag(chol2inv(QR$qr)) #, size = QR$rank))
+    names(diagXtX_inv) <- colnames(QR$qr)
+    diagXtX_inv <- diagXtX_inv[rownames(beta_hat)]
+    #diagXtX_inv <- diag(chol2inv(QR$qr, size = QR$rank))
+    #if (nrow(beta_hat) - length(diagXtX_inv))
       
-      warning(paste("overfitted model: more predictors than units in ", name, "-model", sep = ""))
-    diagXtX_inv <- c(diagXtX_inv, rep(NA, nrow(beta_hat) - length(diagXtX_inv)))
+    #  warning(paste("overfitted model: more predictors than units in ", name, "-model", sep = ""))
+    #diagXtX_inv <- c(diagXtX_inv, rep(NA, nrow(beta_hat) - length(diagXtX_inv)))
+    
     se <- matrix(nrow = nrow(beta_hat), ncol = length(sigma_hat_sq))
+    
     for (i in seq_along(sigma_hat_sq)) {
       var_covar_matrix <- diagXtX_inv * sigma_hat_sq[i]
       # Calculate standard errors
       se[, i] <- sqrt(var_covar_matrix)
     }
+    
     TSSfit <- colSums(fitted_valuesw ^ 2)
     if (scale2) {
       sqrtTSS <- sqrt(TSSfit / scale2)
