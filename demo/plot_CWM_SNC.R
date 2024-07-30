@@ -14,11 +14,3 @@ out <- dc_CA(formulaEnv = ~A1 + Moist + Use + Manure + Condition(Mag),
              verbose = FALSE)
 
 plot_dcCA_CWM_SNC(out, facet = FALSE)
-
-newnames_without_covariates <-
-  list(traits = c("SLA", "Height", "LDMC", "Seedmass", "annual", "perennial"),
-       env = c("A1 horizon", "Moisture", "Type of use",  "Manure"))
-
-plot_dcCA_CWM_SNC(out, newnames = newnames_without_covariates)
-
-CWM_SNC_env_trait_scores <- getPlotdata(out)
