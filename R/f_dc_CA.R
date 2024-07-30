@@ -65,9 +65,6 @@ calculate_b_se_tval <- function(X_or_qr_decomp_of_X,
   }
   # Compute estimated regression coefficients
   beta_hat <- qr.coef(QR, y_weightedw)
-  if (any(is.na(beta_hat))) 
-     warning(paste("collinearity detected in ", name, "-model.", sep = ""))
-    
   # Calculate fitted values
   fitted_valuesw <- qr.fitted(QR, y_weightedw)
   # Calculate residuals
@@ -76,6 +73,8 @@ calculate_b_se_tval <- function(X_or_qr_decomp_of_X,
   if (fitted_only) {
     out1 <- fitted_values
   } else {
+    if (any(is.na(beta_hat))) 
+      warning(paste("collinearity detected in ", name, "-model.", sep = ""))
     # Compute residual sum of squares (RSS)
     RSS <- colSums(residuals ^ 2)
     # Estimate variance of the errors
