@@ -69,6 +69,10 @@ getPlotdata <- function(x,
   # end of set env and traitfactor
   mod_scores <- scores(x, choices = axis, tidy = TRUE, 
                        scaling = "symmetric")
+  if (!"species" %in% levels(mod_scores$score)) {
+   # cannot do the species plot, can do CWM plot only
+    stop("no unconstrained species scores, make a CWM plot instead.")
+  }
   newNameList <- setnames(mod_scores, newnames = newnames)
   idTFc <- mod_scores$score %in% c("constraints_sites", "constraints_species", 
                                    "centroids", "centroids_traits")

@@ -48,7 +48,7 @@ f_trait_axes <- function(out,
                           data = out$data$dataTraits)[, -1, drop = FALSE]
         lc_trait_scores <- standardize_w(X) %*% regr
       } else  {
-        warning("Trait regression coefficients are not availabe.\n")
+        warning("Trait regression coefficients are not available.\n")
         lc_trait_scores <-NULL
       }
       return(
@@ -125,12 +125,11 @@ f_trait_axes <- function(out,
   # correlations of the dataTraits with the SNC wrt the axes
   if (which_cor[1] == "in model") {
     fX <- get_Z_X_XZ_formula(out$formulaTraits, out$data$dataTraits)$formula_X1
-    traits0 <- modelmatrixI(formula= fX , data= out$data$dataTraits, XZ = FALSE)
   } else {
     whichc <- which_cor
     fX <- as.formula(paste("~", paste0(whichc, collapse = "+")))
-    traits0 <- modelmatrixI(formula= fX , data= out$data$dataTraits, XZ = FALSE)
   }
+  traits0 <- modelmatrixI(formula= fX , data = out$data$dataTraits, XZ = FALSE)
   corTraitSNC <- wcor(traits0, SNC, w = out$weights$columns)
   colnames(corTraitSNC) <- paste0("SNC-ax", seq_len(ncol(corTraitSNC)))
   attr(corTraitSNC, which = "meaning") <- 

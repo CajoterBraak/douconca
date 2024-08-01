@@ -38,7 +38,9 @@ print_dcca <- function(x,
     cat("Step 2: the RDA ordination of CWMs of the orthonormalized traits \n", 
         "       of step 1 with environmental constraints:\n")
     print(x$RDAonEnv)
-    c_t <- x$c_traits_normed[, c(choices, 4 + rank_mod(x)), drop = FALSE]
+    cols <- c(choices, 4 + rank_mod(x))
+    cols <- cols[seq_len(min(c(ncol(x$c_traits_normed), length(cols))))]
+    c_t <- x$c_traits_normed[, cols, drop = FALSE]
   } else {
     print.cca(x)
     c_t <- NULL
