@@ -350,6 +350,7 @@ dc_CA <- function(formulaEnv = NULL,
                   weights = out1$weights$rows, data = out1$data$dataEnv)
     eigenvalues <-  step2$CCA$eig
   }
+  names(eigenvalues) <- paste("dcCA", seq_along(eigenvalues), sep = "")
   out <- c(out1, list(RDAonEnv = step2,
                       eigenvalues =  eigenvalues))
   out$c_traits_normed0 <- try(f_canonical_coef_traits2(out))

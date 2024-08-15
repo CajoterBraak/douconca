@@ -115,6 +115,9 @@ anova.dcca <- function(object,
       paste0("Community-level equi-weighted permutation test using vegan::rda\n",
              object1, howHead(attr(f_sites, "control")))
     names(f_sites)[2]<- "ChiSquare"
+    f_sites$R2 <- f_sites$ChiSquare/sum(f_sites$ChiSquare)
+    f_sites$R2[nrow(f_sites)] <-NA
+    f_sites <- f_sites[,c(1,2,5,3,4)]
   } else {
     f_sites0 <- anova_sites(object, by = by1, permutations = permutations[[2]])
     tab <- f_sites0$table
