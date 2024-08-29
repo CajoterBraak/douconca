@@ -27,6 +27,8 @@
 #' for the selection of species to be displayed. Default: \code{"Fratio1"}; 
 #' if \code{selectname} is not found in \code{species_scores}, set 
 #' to \code{scoresname}.
+#' @param speciesgroup name of the factor, the levels of which
+#' receive different colors in the vertical plot.
 #' @param expand amount of extension of the line plot (default 0.2).
 #' @param verbose logical for printing the number of species with names out of
 #' the total number (default: \code{TRUE}).
@@ -50,7 +52,8 @@ plot_species_scores_bk <- function(species_scores,
                                    y_lab_interval = 0.5,
                                    speciesname = NULL, 
                                    scoresname = "RDA1",
-                                   selectname = "Fratio1", 
+                                   selectname = "Fratio1",
+                                   speciesgroup = "species_group",
                                    expand = 0.2, 
                                    verbose = TRUE) {
   # species_scores is a matrix or dataframe  with rownames and a column with 
@@ -69,7 +72,7 @@ plot_species_scores_bk <- function(species_scores,
     namcols <- names(species_scores)
   }
   if (scoresname %in% namcols) {
-    scores <- species_scores[,scoresname] 
+    scores <- species_scores[, scoresname] 
   } else {
     stop("no score column found in plot_species_scores.\n")
   }
@@ -79,52 +82,57 @@ plot_species_scores_bk <- function(species_scores,
     selectcrit <- abs(scores)
     threshold <- threshold / 14
   }
+  if (!is.null(speciesgroup) && speciesgroup %in% namcols) {
+    species_groups <- factor(species_scores[, speciesgroup])
+  } else {
+    species_groups <- NA
+  }
   species <- data.frame(species = sppnames, scores = scores,
-                        selectcrit = selectcrit)
-  species.sub <- subset(species, abs(selectcrit) > threshold)
-  species.sub <- species.sub[order(species.sub$scores), ]
+                        selectcrit = selectcrit, species_groups = species_groups)
+  speciesSub <- subset(species, abs(selectcrit) > threshold)
+  speciesSub <- speciesSub[order(speciesSub$scores), ]
   ymin <- min(species$scores) * 1.1
   ymax <- max(species$scores) * 1.1
-  fbreaks <- function(ymax, y_interval) {
-    y_interval <- abs(y_interval)
+  fbreaks <- function(ymax, yInterval) {
+    yInterval <- abs(yInterval)
     if (ymax > 0) {
-      if (ymax > y_interval)  {
-        br <- seq(from = y_interval, to = ymax, by = y_interval)
+      if (ymax > yInterval)  {
+        br <- seq(from = yInterval, to = ymax, by = yInterval)
       } else {
-        br <- y_interval
+        br <- yInterval
       }
     } else { # ymax <= 0
-      if (ymax < -y_interval) {
-        br <- rev(seq(from = -y_interval, to = ymax, by = -y_interval))
+      if (ymax < -yInterval) {
+        br <- rev(seq(from = -yInterval, to = ymax, by = -yInterval))
       } else {
-        br <- -y_interval
+        br <- -yInterval
       }
     }
     return(br)
   }
   if (ymin * ymax < 0) { #ymin <0, ymax >0
-    bk_breaks <- round(c(fbreaks(ymin, y_lab_interval), 0, 
-                         fbreaks(ymax, y_lab_interval)), 1)
+    bkBreaks <- round(c(fbreaks(ymin, y_lab_interval), 0, 
+                        fbreaks(ymax, y_lab_interval)), 1)
   } else {
     if (ymin > 0) {
-      bk_breaks <- round(c(0, fbreaks(ymax, y_lab_interval)), 1) 
+      bkBreaks <- round(c(0, fbreaks(ymax, y_lab_interval)), 1) 
     } else {
-      bk_breaks <- round(c(fbreaks(ymin, y_lab_interval), 0), 1)
+      bkBreaks <- round(c(fbreaks(ymin, y_lab_interval), 0), 1)
     }
   }
-  species.sub$y.label.loc <- seq(from = ymin, to = ymax,
-                                 length.out = nrow(species.sub))
-  labelline.full <- data.frame(species = rep(rownames(species), each = 2),
-                               x.coor = rep(c(0.00, 0.02), nrow(species)),
-                               y.coor = rep(species$scores, each = 2))
+  speciesSub$y.label.loc <- seq(from = ymin, to = ymax,
+                                length.out = nrow(speciesSub))
+  labellineFull <- data.frame(species = rep(rownames(species), each = 2),
+                              x.coor = rep(c(0.00, 0.02), nrow(species)),
+                              y.coor = rep(species$scores, each = 2))
   p <- ggplot2::ggplot(data = species, 
                        ggplot2::aes(y = scores,
                                     group = .data[["species"]],
                                     x = 0)) +
     ggplot2::coord_cartesian(xlim = c(0, 1), 
-                             ylim = c(min(ymin, min(bk_breaks)) - expand,
-                                      max(ymax, bk_breaks) + expand)) +
-    ggplot2::geom_line(data = labelline.full,
+                             ylim = c(min(ymin, min(bkBreaks)) - expand,
+                                      max(ymax, bkBreaks) + expand)) +
+    ggplot2::geom_line(data = labellineFull,
                        ggplot2::aes(x = .data[["x.coor"]],
                                     y = .data[["y.coor"]],
                                     group = .data[["species"]]), 
@@ -141,30 +149,32 @@ plot_species_scores_bk <- function(species_scores,
       axis.title.x = ggplot2::element_blank(),
       axis.text.x = ggplot2::element_blank()
     ) +
-    ggplot2::scale_y_continuous(expand = c(0, 0), breaks = bk_breaks) +
+    ggplot2::scale_y_continuous(expand = c(0, 0), breaks = bkBreaks) +
     ggplot2::ylab(ylab)
-  if (nrow(species.sub)==0) {
+  if (nrow(speciesSub) == 0) {
     warning("After thresholding, no named species left to display in ", 
             "plot_species_scores_bk (perhaps from plotPRC).\n")
   } else {
     if (verbose) {
-      cat( nrow(species.sub), " species with names out of", 
+      cat( nrow(speciesSub), " species with names out of", 
            nrow(species), "species\n")
     }
-    labelline <- data.frame(species = rep(species.sub$species, each = 4),
+    labelline <- data.frame(species = rep(speciesSub$species, each = 4),
                             x.coor = rep(c(0, 0.04, 0.14, 0.16),
-                                         nrow(species.sub)),
-                            y.coor = rep(species.sub$scores, each = 4))
+                                         nrow(speciesSub)),
+                            y.coor = rep(speciesSub$scores, each = 4))
     labelline$y.coor[seq(from = 3, to = nrow(labelline), by = 4)] <-
-      species.sub$y.label.loc
+      speciesSub$y.label.loc
     labelline$y.coor[seq(from = 4, to = nrow(labelline), by = 4)] <-
-      species.sub$y.label.loc
-    p <- p + ggplot2::geom_text(data = species.sub,
+      speciesSub$y.label.loc
+    p <- p + ggplot2::geom_text(data = speciesSub,
                                 ggplot2::aes(label = .data[["species"]],
                                              x = 0.18, 
-                                             y = .data[["y.label.loc"]]),
+                                             y = .data[["y.label.loc"]],
+                                             color = .data[["species_groups"]]),
                                 hjust = 0,
                                 size = 7 * (5 / 14), fontface = "italic") +
+      ggplot2::guides(color = "none") +
       ggplot2::geom_line(data = labelline, 
                          ggplot2::aes(x = .data[["x.coor"]],
                                       y = .data[["y.coor"]],

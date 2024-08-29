@@ -27,8 +27,8 @@
 #' @param nspecies integer. Default \code{20} for including a vertical species 
 #' plot with at most \code{nspecies} that have the highest contribution.
 #' @param species_groups name of a variable in \code{dataTraits} of 
-#' \code{\link{dc_CA}}. Default \code{NULL} for no grouping. NOT yet 
-#' implemented.
+#' \code{\link{dc_CA}}. Default \code{NULL} for no grouping. 
+#' Species groups are colored differentially.  
 #' @param verbose logical. Default \code{TRUE} for plotting the result.
 #' @param widths relative widths of the CWM-SNC plot, the correlation/weight
 #' plot and the species plot. (see \code{\link[gridExtra]{grid.arrange}}). 
