@@ -12,8 +12,11 @@ mod <- dc_CA(formulaEnv = ~A1 + Moist + Mag + Use + Manure,
 
 env_scores <- scores(mod, display = "tval")
 
+env_scores <- data.frame(env_scores)
+env_scores$group <- c("quantitative", "category")[c(1,1,2,2,2,1,1)]
+
 plot_species_scores_bk(
   species_scores = env_scores,
   ylab = "optimistic t-values",  threshold = 0,  y_lab_interval = 1,
-  scoresname = "dcCA1", verbose = FALSE
+  scoresname = "dcCA1", speciesgroup = "group", verbose = FALSE
 )
