@@ -12,7 +12,7 @@ plot_species_scores_bk(
   speciesname = NULL,
   scoresname = "RDA1",
   selectname = "Fratio1",
-  speciesgroup = "species_group",
+  speciesgroup = NULL,
   expand = 0.2,
   verbose = TRUE
 )
