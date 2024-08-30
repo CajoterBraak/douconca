@@ -12,6 +12,7 @@ plot_species_scores_bk(
   speciesname = NULL,
   scoresname = "RDA1",
   selectname = "Fratio1",
+  speciesgroup = "species_group",
   expand = 0.2,
   verbose = TRUE
 )
@@ -46,6 +47,9 @@ scores to be plotted (default \code{"RDA1"}).}
 for the selection of species to be displayed. Default: \code{"Fratio1"}; 
 if \code{selectname} is not found in \code{species_scores}, set 
 to \code{scoresname}.}
+
+\item{speciesgroup}{name of the factor, the levels of which
+receive different colors in the vertical plot.}
 
 \item{expand}{amount of extension of the line plot (default 0.2).}
 
@@ -82,9 +86,11 @@ mod <- dc_CA(formulaEnv = ~A1 + Moist + Mag + Use + Manure,
 
 env_scores <- scores(mod, display = "tval")
 
+env_scores <- data.frame(env_scores)
+env_scores$group <- c("quantitative", "category")[c(1, 1, 2, 2, 2, 1, 1)]									
 plot_species_scores_bk(
   species_scores = env_scores,
   ylab = "optimistic t-values",  threshold = 0,  y_lab_interval = 1,
-  scoresname = "dcCA1", verbose = FALSE
+  scoresname = "dcCA1", speciesgroup = "group", verbose = FALSE
 )
 }

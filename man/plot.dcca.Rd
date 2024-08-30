@@ -33,10 +33,10 @@ and environmental gradient, respectively specifying what to plot in the
 vertical line plots to describe the dc-CA axis (trait and environmental 
 gradients). Default: \code{correlation} for intra-set correlations of both 
 sets of variables with their dc-CA axis. Other values are: 
-\code{c("regression", "weights", "tvalues", "inter_set_correlation")} for 
-regression weights, t-values and (other) namely inter-set correlation, 
+\code{c("weights", "tvalues", "inter_set_correlation")} for 
+regression weights, t-values and inter-set correlation, 
 being the correlation of the SNCs and CWMs with the traits and environmental
-variables, respectively.}
+variables, respectively. \code{"regression"} is an alias for \code{"weights"}.}
 
 \item{envfactor}{name of row factor to display as color and lines in the CWM
 plot (default \code{NULL}). The default extracts the factor from the 
@@ -55,8 +55,8 @@ variable in the \code{CWM_SNC} data frame of the return value/in the plot.}
 plot with at most \code{nspecies} that have the highest contribution.}
 
 \item{species_groups}{name of a variable in \code{dataTraits} of 
-\code{\link{dc_CA}}. Default \code{NULL} for no grouping. NOT yet 
-implemented.}
+\code{\link{dc_CA}}. Default \code{NULL} for no grouping. 
+Species groups are colored differentially.}
 
 \item{widths}{relative widths of the CWM-SNC plot, the correlation/weight
 plot and the species plot. (see \code{\link[gridExtra]{grid.arrange}}). 
@@ -120,5 +120,5 @@ names(dat)
 names(dat$CWM_SNC)
 levels(dat$CWM_SNC$groups)
 
-plot(out, verbose = FALSE)
+plot(out)
 }
