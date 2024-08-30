@@ -349,6 +349,10 @@ range(coef(lmLDMC)[-1] / coefs_LDMC_dcCA)
 ```
 
 The result shows that the two sets of coefficients are equal
-up to a constant of proportionality, here 154.4359.
-
+up to a constant of proportionality, here 154.4359. 
+The t-values are also equal:
+```{r}
+cbind(summary(lmLDMC)$coefficients[-1,"t value", drop= FALSE],
+scores(mod_LDMC, display = "tval"))
+```
 # References
