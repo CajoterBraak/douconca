@@ -53,7 +53,7 @@ plot_species_scores_bk <- function(species_scores,
                                    speciesname = NULL, 
                                    scoresname = "RDA1",
                                    selectname = "Fratio1",
-                                   speciesgroup = "species_group",
+                                   speciesgroup = NULL,
                                    expand = 0.2, 
                                    verbose = TRUE) {
   # species_scores is a matrix or dataframe  with rownames and a column with 
