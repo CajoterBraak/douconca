@@ -110,7 +110,7 @@ anova.dcca <- function(object,
   if (by == "axis") by1 <- by else by1 <-NULL
   if (inherits(object, "dccav")){
     f_sites <- anova(object$RDAonEnv, by = by1, permutations = permutations[[2]])
-    rownames(f_sites) <- paste0("dcCA", seq_len(nrow(f_sites)))
+    rownames(f_sites) <- c(paste0("dcCA", seq_len(nrow(f_sites)-1)),"Residual")
     attr(f_sites, "heading") <- 
       paste0("Community-level equi-weighted permutation test using vegan::rda\n",
              object1, howHead(attr(f_sites, "control")))
