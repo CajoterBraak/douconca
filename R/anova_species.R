@@ -227,7 +227,7 @@ randperm_eX0sqrtw <- function(Y,
   p_eX <- qr(eX)$rank
   df_cor <- (nrow(eY)- qrZ$rank - p_eX) / p_eX  #(N-nz-nx-1)/nx
   F0 <- ssX0 / (sstot - ssX0) * df_cor
-  F0_eig1 <- ssX_eig1 / (sstot -  ssX_eig1) * df_cor
+  F0_eig1 <- ssX_eig1 / (sstot -  ssX0) * (nrow(eY)- qrZ$rank - p_eX)
   # end preparations and data value
   ssX_perm <- ssX_eig1_perm <- numeric(nrepet)
   for (i in seq_len(nrepet)) {
