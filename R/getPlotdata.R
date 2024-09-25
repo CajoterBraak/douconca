@@ -1,5 +1,5 @@
 #' Utility function: extracting data from a \code{\link{dc_CA}} object for 
-#' plotting  a single axis by your own code or \code{\link{plot.dcca}}.
+#' plotting a single axis by your own code or \code{\link{plot.dcca}}.
 #' 
 #' @description
 #' \code{getPlotdata} extracts data from a \code{\link{dc_CA}} object for 
@@ -27,6 +27,13 @@
 #' @param facet logical. Default \code{TRUE} for CWMs and SNCs plots in 
 #' separate panels. If \code{FALSE}, this parameter changes the position of 
 #' the environmental centroid names (from left to right).
+#' 
+#' @return A list with three components
+#' \describe{
+#' \item{CWM_SNC}{a data.frame containing plot data}
+#' \item{trait_env_scores}{a vector of scores per trait/environment}
+#' \item{newNameList}{a vector of new names to be used in the plot}
+#' }
 #' 
 #' @example demo/dune_plot_dcCA.R
 #' 
@@ -70,7 +77,7 @@ getPlotdata <- function(x,
   mod_scores <- scores(x, choices = axis, tidy = TRUE, 
                        scaling = "symmetric")
   if (!"species" %in% levels(mod_scores$score)) {
-   # cannot do the species plot, can do CWM plot only
+    # cannot do the species plot, can do CWM plot only
     stop("no unconstrained species scores, make a CWM plot instead.")
   }
   newNameList <- setnames(mod_scores, newnames = newnames)

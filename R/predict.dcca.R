@@ -41,8 +41,12 @@
 #' Regression coefficients obtained with \code{type = "reg_env"} or  
 #' \code{type = "reg_traits"} are for standardized traits and environmental
 #' variables.
+#' 
+#' @return a matrix with the predictions. The exact content of the matrix 
+#' depends on the \code{type} of predictions that are being made.
 #'
 #' @example demo/dune_dcCA_predict.R
+#' 
 #' @export
 predict.dcca <- function(object,
                          ...,

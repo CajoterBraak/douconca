@@ -7,6 +7,8 @@
 #' \code{x <- print(x)} is more efficient for \code{\link{scores.dcca}} than 
 #' just \code{print(x)} if \code{\link{dc_CA}} is called with 
 #' \code{verbose = FALSE}).
+#' 
+#' @return No return value, results are printed to console.
 #'
 #' @example demo/dune_dcCA.r
 #'

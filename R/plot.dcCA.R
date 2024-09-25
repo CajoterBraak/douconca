@@ -47,8 +47,11 @@
 #' If the \code{plot.dcca} returns the error \code{"Error in grid.Call"}, 
 #' enlarge the plotting area or use \code{verbose = FALSE} and assign the 
 #' result.
+#' 
+#' @return a ggplot object
 #'
 #' @example demo/dune_plot_dcCA.R
+#' 
 #' @export
 plot.dcca <- function(x, 
                       ...,
