@@ -38,7 +38,10 @@
 #' 
 #' @details
 #' The current implementation does not distinguish groups of points, if there
-#' are two or more factors specified in the model. 
+#' are two or more factors specified in the model.
+#' If you want to label one trait factor, specify 
+#' \code{traitfactor="yourfactor"} and similarly
+#' specify \code{envfactor="yourfactor"} for your environmental factor.
 #' 
 #' No lines are plotted if a single factor defines a model. 
 #' 
