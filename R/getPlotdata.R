@@ -23,7 +23,7 @@
 #' result of \code{\link{scores.dcca}} with \code{tidy = TRUE}.
 #' @param remove_centroids logical to remove any centroids from the plot data 
 #' (default \code{FALSE}). Can be a two-vector, \emph{e.g.} 
-#' \code{c(TRUE, FALSE)} to remove only the environmental centroids.
+#' \code{c(TRUE, FALSE)} to remove only the trait centroids.
 #' @param facet logical. Default \code{TRUE} for CWMs and SNCs plots in 
 #' separate panels. If \code{FALSE}, this parameter changes the position of 
 #' the environmental centroid names (from left to right).
@@ -34,6 +34,15 @@
 #' \item{trait_env_scores}{a vector of scores per trait/environment}
 #' \item{newNameList}{a vector of new names to be used in the plot}
 #' }
+#' 
+#' 
+#' @details
+#' The current implementation sets the \code{traitfactor} to
+#' \code{NA} if the trait model
+#'  contains more than a single trait factor 
+#'  and the \code{envfactor}  to 
+#'  \code{NA} if the environmental model
+#'  contains more than a single environmental factor. 
 #' 
 #' @example demo/dune_plot_dcCA.R
 #' 
@@ -51,18 +60,21 @@ getPlotdata <- function(x,
     remove_centroids <- c(remove_centroids, remove_centroids)
   }
   traitINcondition <- envINcondition <- FALSE
+  ff <- get_Z_X_XZ_formula(x$formulaEnv, x$data$dataEnv)
   if (is.null(envfactor)) {
-    ff <- get_Z_X_XZ_formula(x$formulaEnv, x$data$dataEnv)
     if (ff$formula_Z == ~1) {
-      envfactor <- ff$focal_factor[1] 
+      envfactor <- ff$focal_factor[1]
       envINcondition <- FALSE 
     } else {
       envfactor <- ff$Condi_factor[1]
       envINcondition <- TRUE
     }
+    if(length(ff$focal_factor)+ length(ff$Condi_factor)>1) envfactor <- NA
+  } else if(!is.na(envfactor)){
+    if(length(ff$focal_factor)+ length(ff$Condi_factor)>1) remove_centroids[2] <- TRUE
   }
+  ff <- get_Z_X_XZ_formula(x$formulaTraits, x$data$dataTraits)
   if (is.null(traitfactor)) {
-    ff <- get_Z_X_XZ_formula(x$formulaTraits, x$data$dataTraits)
     if (ff$formula_Z == ~1) {
       traitfactor <- ff$focal_factor[1]
       traitINcondition <- FALSE
@@ -70,6 +82,9 @@ getPlotdata <- function(x,
       traitfactor <- ff$Condi_factor[1]
       traitINcondition <- TRUE
     }
+    if(length(ff$focal_factor)+ length(ff$Condi_factor)>1) traitfactor <- NA
+  } else if(!is.na(envfactor)){
+    if(length(ff$focal_factor)+ length(ff$Condi_factor)>1) remove_centroids[1] <- TRUE
   }
   if (is.null(traitfactor)) traitfactor <- NA
   if (is.null(envfactor)) envfactor <- NA
@@ -209,8 +224,10 @@ getPlotdata <- function(x,
     }
     traitfactor1 <- factor(rep("species", nrow(x$data$dataTraits)))
   }
+  
   scorepair$groups <- factor(c(envlevels1[envfactor1], 
-                               envlevels0,traitlevels1[traitfactor1], 
+                               envlevels0,
+                               traitlevels1[traitfactor1], 
                                traitlevels0),
                              levels = c(envlevels, traitlevels, 
                                         envlevels2, traitlevels2))

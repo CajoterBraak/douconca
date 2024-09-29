@@ -30,7 +30,8 @@ predict_traits <- function(object,
   reg[is.na(reg)] <- 0
   pred_scaled <- fpred_scaled(newdata1, reg)
   gg <- get_Z_X_XZ_formula(object$formulaTraits)
-  traits0 <- modelmatrixI(formula= gg$formula_X1 , data= object$data$dataTraits, XZ = FALSE)
+  traits0 <- modelmatrixI(formula = gg$formula_X1, 
+                          data = object$data$dataTraits, XZ = FALSE)
   msd <- mean_sd_w(traits0, w = object$weights$columns)
   pred <- backscale_data(pred_scaled, msd)
   return(pred)
@@ -100,7 +101,7 @@ check_newdata <- function(object,
   }
   dat0 <- model.matrix(ff$formula_XZ, constrasts = FALSE, 
                        data = newdata1)[, -1, drop = FALSE]
-  newdata1 <- scale_data(dat0, mean_sd = c_normed[, c(1, 2)])
+  newdata1 <- scale_data(dat0, mean_sd = c_normed[, c(1, 2), drop = FALSE])
   return(newdata1)
 }
 
@@ -114,7 +115,8 @@ predict_env <- function(object,
   reg[is.na(reg)] <- 0
   pred_scaled <- fpred_scaled(newdata1, reg)
   gg <- get_Z_X_XZ_formula(object$formulaEnv)
-  env0 <- modelmatrixI(formula= gg$formula_X1 , data= object$data$dataEnv, XZ = FALSE)
+  env0 <- modelmatrixI(formula = gg$formula_X1, data = object$data$dataEnv, 
+                       XZ = FALSE)
   msd <- mean_sd_w(env0, w = object$weights$rows)
   pred <- backscale_data(pred_scaled, msd)
   return(pred)

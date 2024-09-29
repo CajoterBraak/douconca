@@ -81,10 +81,10 @@ anova.wrda <- function(object,
   ss <- c(sapply(out_tes, function(x) x$ss[1]), out_tes[[length(out_tes)]]$ss[2])
   if (by == "axis") {
     df <- c(rep(1, length(ss) - 1), out_tes[[length(out_tes)]]$df[2])
-    names(df) <- c(paste0("dcCA", seq_along(out_tes)), "Residual")
+    names(df) <- c(paste0("wRDA", seq_along(out_tes)), "Residual")
   } else {
     df <- out_tes[[length(out_tes)]]$df
-    names(df) <- c("dcCA", "Residual")
+    names(df) <- c("wRDA", "Residual")
   }
   fraqExplained <- c(sapply(out_tes, function(x)x$ss[1]) / sum(out_tes[[1]]$ss), NA)
   F0 <- c(sapply(out_tes, function(x)x$F0[1]), NA)

@@ -22,8 +22,10 @@
 #' names (from left to right for the environmental centroids). If 
 #' \code{facet = FALSE} and \code{with_lines = TRUE}, the line fits ignore 
 #' groups of species and of sites.
-#' @param with_lines logical. Default \code{TRUE} for straight lines through
-#' groups of points.
+#' @param with_lines integer values (0,1,2). Default \code{2} for straight lines 
+#' through groups of points, with confidence intervals around the lines. 
+#' \code{with_lines=1} drops the confidence intervals and
+#' \code{with_lines=0} suppresses the lines.
 #' @param nspecies integer. Default \code{20} for including a vertical species 
 #' plot with at most \code{nspecies} that have the highest contribution.
 #' @param species_groups name of a variable in \code{dataTraits} of 
@@ -35,6 +37,11 @@
 #' Default \code{c(5, 1, 1)}.
 #' 
 #' @details
+#' The current implementation does not distinguish groups of points, if there
+#' are two or more factors specified in the model. 
+#' 
+#' No lines are plotted if a single factor defines a model. 
+#' 
 #' If you want to set new names, look at the names with all arguments default, 
 #' i.e. \code{myplot <- plot(x)}, and then consult 
 #' \code{myplot$nameList$newnames} for the order of the names of traits and
@@ -65,7 +72,7 @@ plot.dcca <- function(x,
                       newnames = NULL, 
                       facet = TRUE, 
                       remove_centroids = FALSE, 
-                      with_lines = TRUE, 
+                      with_lines = 2, 
                       verbose = TRUE) {
   if (!inherits(x, "dcca")) {
     stop("x should be of class dcca.\n")

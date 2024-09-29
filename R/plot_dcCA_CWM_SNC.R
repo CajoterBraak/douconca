@@ -12,9 +12,10 @@
 #' (from left to right for the environmental centroids). If \code{facet = TRUE}
 #' and \code{with_lines = TRUE}, the line fits ignore groups of species and 
 #' of sites.
-#' @param with_lines logical. Default \code{TRUE} for straight lines through 
-#' groups of points. \code{traitfactor = NA} and \code{envfactor = NA}. 
-#' Centroids are not displayed in this case.
+#' @param with_lines integer values (0,1,2). Default \code{2} for straight lines 
+#' through groups of points, with confidence intervals around the lines. 
+#' \code{with_lines=1} drops the confidence intervals and
+#' \code{with_lines=0} suppresses the lines.
 #' @param getPlotdata2plotdCCA the results of an \code{\link{getPlotdata}}. 
 #' Default \code{NULL}.
 #' 
@@ -25,6 +26,10 @@
 #' variables: \code{dcCA}\emph{k} with axis number \emph{k} and
 #' \code{"CWM-SNC", "groups", "points", "sizeweight"} for the y-axis, coloring, 
 #' shape and size of items, respectively.
+#' 
+#' The current implementation does not distinguish groups of points, if there
+#' are two or more factors specified in the model. 
+#' No lines are plotted if  a single factor defines a model.
 #' 
 #' The function is used in \code{\link{plot.dcca}}.
 #' 
@@ -56,7 +61,7 @@ plot_dcCA_CWM_SNC <- function(x,
                               facet = TRUE,
                               newnames = NULL,
                               remove_centroids = FALSE,
-                              with_lines = TRUE,
+                              with_lines = 2,
                               getPlotdata2plotdCCA = NULL) {
   if (is.null(getPlotdata2plotdCCA)) {
     scorepair<- getPlotdata(x, axis = axis, envfactor = envfactor, 
@@ -89,13 +94,14 @@ plot_dcCA_CWM_SNC <- function(x,
       ggplot2::ylab("CWM and SNC")
   }
   if (with_lines) {
+    if (with_lines==2) se = TRUE else se = FALSE
     if (facet) {
       p <- p +
         ggplot2::geom_smooth(ggplot2::aes(x = .data[["xforsmooth"]],
                                           y = .data[["CWM-SNC"]],
                                           group = .data[["groups"]],
                                           weight = .data[["weight"]]),
-                             linewidth = 1, method = "lm", formula = y ~ x,
+                             linewidth = 1, method = "lm", se = se, formula = y ~ x,
                              na.rm = TRUE, inherit.aes = FALSE)
     } else {
       p <- p +
@@ -103,7 +109,7 @@ plot_dcCA_CWM_SNC <- function(x,
                                           y = .data[["CWM-SNC"]],
                                           group = .data[["type"]],
                                           weight = .data[["weight"]]),
-                             linewidth = 1, method = "lm", formula = y ~ x,
+                             linewidth = 1, method = "lm", se= FALSE ,formula = y ~ x,
                              na.rm = TRUE, inherit.aes = FALSE)
     }
   }
