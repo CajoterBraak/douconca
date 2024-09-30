@@ -132,6 +132,7 @@ fpred_scaled <- function(newdata1,
   # reg may not have the covariates (e.g. when dc-CA was started from CWM) and
   # newdata1 may not have all predictors
   nams <- intersect(colnames(newdata1), rownames(reg))
+  reg[is.na(reg)] <- 0
   pred_scaled <- newdata1[, nams, drop = FALSE] %*% reg[nams, , drop = FALSE]
   return(pred_scaled)
 }
