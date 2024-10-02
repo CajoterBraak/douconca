@@ -5,7 +5,7 @@
 #' \code{\link[vegan]{scores}} function, in particular 
 #' \code{\link[vegan]{scores.cca}}, with the additional results such as 
 #' regression coefficients and linear combinations of traits 
-#' \code{('regr_traits','lc_traits')}. All scores from CA obey the so called
+#' \code{('reg_traits', 'lc_traits')}. All scores from CA obey the so called
 #' transition formulas and so do the scores of CCA and dc-CA. The differences
 #' are, for CCA, that the linear combinations of environmental variables (the 
 #' \emph{constrained} site scores) replace the usual (\emph{unconstrained}) 
@@ -229,6 +229,7 @@ scores_dcca <- function(x,
   }
   take <- tabula[display]
   if (inherits(x, "wrda", which = TRUE) == 1) {
+    methd <- "wRDA"
     if (any(take %in% tabula[1:8])) {
       site_axes <- f_env_axes(x)
     }
@@ -236,15 +237,18 @@ scores_dcca <- function(x,
     formulaEnv <- x$formula
     dataEnv <- x$data
   } else { # dcca
+    methd <- "dcCA"
     dataEnv <- x$data$dataEnv
     formulaEnv <- x$formulaEnv
     if (!"species_axes" %in% names(x)) {
       if (any(take %in% tabula[1:8])) {
         site_axes <- f_env_axes(x)
-      } 
+      }
       if (any(take %in% tabula[9:16])) {
         species_axes <- f_trait_axes(x)
-      } else {species_axes <- list(species_scores = NULL)}
+      } else {
+        species_axes <- list(species_scores = NULL)
+      }
     } else {
       species_axes <- x$species_axes
       site_axes<- x$site_axes
@@ -302,7 +306,7 @@ scores_dcca <- function(x,
     } else {
       sol$regression <- cbind(site_axes$c_env_normed[, 1:3, drop = FALSE], regr)
     }
-    attr(sol$regression, which = "meaning")<-
+    attr(sol$regression, which = "meaning") <-
       paste0("mean, sd, VIF, standardized regression coefficients.")
   }
   if ("t_values" %in% take){
@@ -348,7 +352,7 @@ scores_dcca <- function(x,
     colnames(sol$intra_set_correlation) <- paste0("dcCA", choices)
     attr(sol$intra_set_correlation,  which = "meaning") <-
       paste("intra set correlation, correlation between environmental", 
-            "variables and the dc-ca axis (constrained sites scores)")
+            "variables and each axis (constrained sites scores)")
   }
   if ("biplot" %in% take) {
     e_rcor <- site_axes$correlation[, choices, drop = FALSE]
@@ -386,7 +390,6 @@ scores_dcca <- function(x,
     sol$centroids <-  cn
   }
   # Species stats
-  
   if ("species" %in% take && !is.null(species_axes$species_scores[[1]])) {
     sol$species <- 
       species_axes$species_scores[[1]][, choices, drop = FALSE] %*% diag_scal_species
@@ -394,7 +397,8 @@ scores_dcca <- function(x,
       f_meaning("species", scaling, 
                 "SNC on the environmental axes (constraints sites)")
   }
-  if (inherits(x, "wrda", which = TRUE) != 1 && !is.null(species_axes$species_scores[[1]])){
+  if (inherits(x, "wrda", which = TRUE) != 1 && 
+      !is.null(species_axes$species_scores[[1]])) {
     # dcca
     if ("constraints_species" %in% take) {
       sol$constraints_species <- 
@@ -423,7 +427,7 @@ scores_dcca <- function(x,
         species_axes$c_traits_normed[, rank_mod(x) + choices + 3, drop = FALSE]
       attr(sol$t_values_traits, which = "meaning") <-
         paste("t-values of the coefficients of the regression of the SNCs", 
-              "along a dc-CA axis on to the traits")
+              "along each axis on to the traits")
     }
     if ("correlation_traits" %in% take) {
       if (!is.list(which_cor)) {
@@ -463,8 +467,8 @@ scores_dcca <- function(x,
       colnames(sol$intra_set_correlation_traits) <- 
         paste0("dcCA", choices)
       attr(sol$intra_set_correlation_traits, which = "meaning") <-
-        paste("intra set correlation, correlation between traits and the", 
-              "dc-ca axis (constrained species scores)")
+        paste0("intra set correlation, correlation between traits and ", 
+              "each axis (constrained species scores)")
     }
     if ("biplot_traits" %in% take) {
       t_rcor <- species_axes$correlation[, choices, drop = FALSE]
@@ -505,11 +509,10 @@ scores_dcca <- function(x,
   # end of types of scores
   for (nam in names(sol)){
     if(!is.null(sol[[nam]])) {
-      if (!nam %in% c("regression", "regression_traits", "correlation", 
-                      "correlation_traits")) {
-        colnames(sol[[nam]]) <- paste0("dcCA", choices) 
+      if (!nam %in% c("regression", "regression_traits")) {
+        colnames(sol[[nam]]) <- paste0(methd, choices) 
       } else if (nam %in% c("regression", "regression_traits")) {
-        colnames(sol[[nam]])[-c(1, 2, 3)] <- paste0("dcCA", choices)
+        colnames(sol[[nam]])[-c(1, 2, 3)] <- paste0(methd, choices)
       }
     }
   }
@@ -574,10 +577,11 @@ scores_dcca <- function(x,
     sol$score <- as.factor(group)
     sol$label <- label
     sol$weight <- w
-    names(sol)[seq_along(choices)] <- paste0("dcCA", choices)
+    names(sol)[seq_along(choices)] <- paste0(methd, choices)
     attr(sol, which = "scaling") <- scaling
     attr(sol, which = "meaning") <- meaning
   }
+    
   ## return NULL instead of list(), and matrix instead of a list of
   ## one matrix
   return(switch(min(2, length(sol)), sol[[1]], sol))

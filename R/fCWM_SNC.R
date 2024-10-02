@@ -342,14 +342,29 @@ checkCWM2dc_CA <- function(object,
   if (is.null(object[["data"]])) {
     object[["data"]] <- list()
   }
+  print(names(object))
   if ("dataTraits" %in% names(object)) {
     if (is.null(dataTraits)) {
-      object[["data"]]$dataTraits <- object$dataTraits
+      print(rownames(object$dataTraits))
+      dataTraits<- object$dataTraits
+      dataTraits <- as.data.frame(lapply(dataTraits, function(x) {
+        if (is.character(x)) x<- as.factor(x) else x
+        return(x)
+      }))
+      rownames(dataTraits) <- rownames(object$dataTraits)
+      object[["data"]]$dataTraits <- dataTraits
+      
     }
     object$dataTraits <- NULL
   }
   if ("dataEnv" %in% names(object)) {
     if (is.null(dataEnv)) {
+      dataEnv<- object$dataEnv
+      dataEnv <- as.data.frame(lapply(dataEnv, function(x) {
+        if (is.character(x)) x<- as.factor(x) else x
+        return(x) 
+      }))
+      rownames(dataEnv) <- rownames(object$dataEnv)
       object[["data"]]$dataEnv <- object$dataEnv
     }
     object$dataEnv<-NULL
