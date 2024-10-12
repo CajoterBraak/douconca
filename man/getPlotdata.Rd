@@ -3,7 +3,7 @@
 \name{getPlotdata}
 \alias{getPlotdata}
 \title{Utility function: extracting data from a \code{\link{dc_CA}} object for 
-plotting  a single axis by your own code or \code{\link{plot.dcca}}.}
+plotting a single axis by your own code or \code{\link{plot.dcca}}.}
 \usage{
 getPlotdata(
   x,
@@ -43,11 +43,27 @@ the environmental centroid names (from left to right).}
 
 \item{remove_centroids}{logical to remove any centroids from the plot data 
 (default \code{FALSE}). Can be a two-vector, \emph{e.g.} 
-\code{c(TRUE, FALSE)} to remove only the environmental centroids.}
+\code{c(TRUE, FALSE)} to remove only the trait centroids.}
+}
+\value{
+A list with three components
+\describe{
+\item{CWM_SNC}{a data.frame containing plot data}
+\item{trait_env_scores}{a vector of scores per trait/environment}
+\item{newNameList}{a vector of new names to be used in the plot}
+}
 }
 \description{
 \code{getPlotdata} extracts data from a \code{\link{dc_CA}} object for 
 plotting the CWMs and SNCs of a single axis.
+}
+\details{
+The current implementation sets the \code{traitfactor} to
+\code{NA} if the trait model
+ contains more than a single trait factor 
+ and the \code{envfactor}  to 
+ \code{NA} if the environmental model
+ contains more than a single environmental factor.
 }
 \examples{
 data("dune_trait_env")
@@ -69,5 +85,5 @@ names(dat)
 names(dat$CWM_SNC)
 levels(dat$CWM_SNC$groups)
 
-plot(out, verbose = FALSE)
+plot(out)
 }

@@ -12,7 +12,7 @@ plot_dcCA_CWM_SNC(
   facet = TRUE,
   newnames = NULL,
   remove_centroids = FALSE,
-  with_lines = TRUE,
+  with_lines = 2,
   getPlotdata2plotdCCA = NULL
 )
 }
@@ -46,14 +46,18 @@ result of \code{\link{scores.dcca}} with \code{tidy = TRUE}.}
 
 \item{remove_centroids}{logical to remove any centroids from the plot data 
 (default \code{FALSE}). Can be a two-vector, \emph{e.g.} 
-\code{c(TRUE, FALSE)} to remove only the environmental centroids.}
+\code{c(TRUE, FALSE)} to remove only the trait centroids.}
 
-\item{with_lines}{logical. Default \code{TRUE} for straight lines through 
-groups of points. \code{traitfactor = NA} and \code{envfactor = NA}. 
-Centroids are not displayed in this case.}
+\item{with_lines}{integer values (0,1,2). Default \code{2} for straight lines 
+through groups of points, with confidence intervals around the lines. 
+\code{with_lines=1} drops the confidence intervals and
+\code{with_lines=0} suppresses the lines.}
 
 \item{getPlotdata2plotdCCA}{the results of an \code{\link{getPlotdata}}. 
 Default \code{NULL}.}
+}
+\value{
+a ggplot object
 }
 \description{
 \code{plot_dcCA_CWM_SNC} plots the CWMs and SNCs of a dc-CA axis against 
@@ -68,6 +72,10 @@ variables: \code{dcCA}\emph{k} with axis number \emph{k} and
 \code{"CWM-SNC", "groups", "points", "sizeweight"} for the y-axis, coloring, 
 shape and size of items, respectively.
 
+The current implementation does not distinguish groups of points, if there
+are two or more factors specified in the model. 
+No lines are plotted if  a single factor defines a model.
+
 The function is used in \code{\link{plot.dcca}}.
 }
 \examples{
@@ -79,16 +87,13 @@ rownames(dune_trait_env$comm) <- dune_trait_env$comm$Sites
 # must delete "Sites" from response matrix or data frame
 Y <- dune_trait_env$comm[, -1] # must delete "Sites"
 
-out <- dc_CA(formulaEnv = ~ A1 + Moist + Use + Manure + Mag,
-                   formulaTraits = ~ SLA + Height + LDMC + Seedmass + Lifespan,
-                   response = Y,
-                   dataEnv = dune_trait_env$envir,
-                   dataTraits = dune_trait_env$traits,
-                   verbose = FALSE)
-dat <- getPlotdata(out)
-names(dat)
-names(dat$CWM_SNC)
-levels(dat$CWM_SNC$groups)
+out <- dc_CA(formulaEnv = ~ A1 + Moist + Use + Manure + Condition(Mag),
+             formulaTraits = ~ SLA + Height + LDMC + Seedmass + Lifespan,
+             response = Y,
+             dataEnv = dune_trait_env$envir,
+             dataTraits = dune_trait_env$traits,
+             verbose = FALSE)
 
-plot(out, verbose = FALSE)
+plot_dcCA_CWM_SNC(out, facet = FALSE)
+
 }

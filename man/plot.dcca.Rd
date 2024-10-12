@@ -17,7 +17,7 @@
   newnames = NULL,
   facet = TRUE,
   remove_centroids = FALSE,
-  with_lines = TRUE,
+  with_lines = 2,
   verbose = TRUE
 )
 }
@@ -74,12 +74,17 @@ groups of species and of sites.}
 
 \item{remove_centroids}{logical to remove any centroids from the plot data 
 (default \code{FALSE}). Can be a two-vector, \emph{e.g.} 
-\code{c(TRUE, FALSE)} to remove only the environmental centroids.}
+\code{c(TRUE, FALSE)} to remove only the trait centroids.}
 
-\item{with_lines}{logical. Default \code{TRUE} for straight lines through
-groups of points.}
+\item{with_lines}{integer values (0,1,2). Default \code{2} for straight lines 
+through groups of points, with confidence intervals around the lines. 
+\code{with_lines=1} drops the confidence intervals and
+\code{with_lines=0} suppresses the lines.}
 
 \item{verbose}{logical. Default \code{TRUE} for plotting the result.}
+}
+\value{
+a ggplot object
 }
 \description{
 \code{plot.dcca} plots the CWMs and SNCs of a dc-CA axis against this axis,
@@ -87,6 +92,14 @@ with optional centroids and colors for groups of sites and/or species if
 available in the data.
 }
 \details{
+The current implementation does not distinguish groups of points, if there
+are two or more factors specified in the model.
+If you want to label one trait factor, specify 
+\code{traitfactor="yourfactor"} and similarly
+specify \code{envfactor="yourfactor"} for your environmental factor.
+
+No lines are plotted if a single factor defines a model. 
+
 If you want to set new names, look at the names with all arguments default, 
 i.e. \code{myplot <- plot(x)}, and then consult 
 \code{myplot$nameList$newnames} for the order of the names of traits and
