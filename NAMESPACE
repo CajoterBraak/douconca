@@ -2,6 +2,8 @@
 
 S3method(anova,dcca)
 S3method(anova,wrda)
+S3method(coef,dcca)
+S3method(fitted,dcca)
 S3method(plot,dcca)
 S3method(predict,dcca)
 S3method(print,dcca)
