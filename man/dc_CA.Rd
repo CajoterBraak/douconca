@@ -67,8 +67,8 @@ A list of \code{class} \code{dcca}; that is a list with elements
 after removing empty rows and columns in \code{response} and after closure if 
 \code{divideBySiteTotals = TRUE} and with the corresponding rows in 
 \code{dataEnv} and \code{dataTraits} removed.}
-\item{weights}{a list of unit-sum weights of row and columns. The names of 
-the list are \code{c("row", "columns")}, in that order.}
+\item{weights}{a list of unit-sum weights of columns and rows. The names of 
+the list are \code{c("columns","row")}, in that order, .}
 \item{Nobs}{number of sites (rows).}
 \item{CWMs_orthonormal_traits}{Community weighted means w.r.t. 
 orthonormalized traits.}
@@ -201,12 +201,11 @@ data("dune_trait_env")
 rownames(dune_trait_env$comm) <- dune_trait_env$comm$Sites
 
 mod <- dc_CA(formulaEnv = ~A1 + Moist + Mag + Use + Manure,
-             formulaTraits = ~.,
+             formulaTraits = ~ SLA + Height + LDMC + Seedmass + Lifespan,
              response = dune_trait_env$comm[, -1],  # must delete "Sites"
              dataEnv = dune_trait_env$envir,
-             # delete "Species", "Species_abbr" from traits and
-             # use all remaining variables due to formulaTraits = ~. (the default)
-             dataTraits = dune_trait_env$traits[, -c(1, 2)])
+             dataTraits = dune_trait_env$traits)
+
 anova(mod, by = "axis")
 # For more demo on testing, see demo dune_test.r
 

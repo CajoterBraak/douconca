@@ -7,9 +7,10 @@
 \method{predict}{dcca}(
   object,
   ...,
-  type = c("env", "traits", "response", "reg_env", "reg_traits"),
+  type = c("envFromTraits", "traitsFromEnv", "response"),
   rank = "full",
-  newdata = NULL
+  newdata = NULL,
+  weights = NULL
 )
 }
 \arguments{
@@ -17,31 +18,37 @@
 
 \item{...}{Other arguments passed to the function (currently ignored).}
 
-\item{type}{type of prediction, \code{c("env", "traits", "response", 
-"reg_env", "reg_trait")} for environmental values, values of traits, 
-response (expected abundance), regression coefficients for environmental 
-and trait predictors.}
+\item{type}{type of prediction, \code{c("envFromTraits", "traitsFromEnv", "response")} 
+for environmental values, values of traits, 
+response (expected abundance).}
 
 \item{rank}{rank or number of axes to use. Default "full" for all axes 
 (no rank-reduction).}
 
 \item{newdata}{Data in which to look for variables with which to predict.
-For \code{type = "reg_env" or "reg_trait"} newdata is ignored. For 
-\code{type = "env" or "trait"}, \code{newdata} is a data frame of trait and 
-environmental values, respectively, which are used for the prediction. If 
-omitted, fitted values are generated.
+For \code{type = "envFromTraits" or "traitsFromEnv"},
+\code{newdata} is a data frame of trait and environmental values, respectively, 
+which are used for the prediction. 
+If omitted, fitted values are generated (use \code{\link{fitted.dcca}} instead).
 For \code{type = "response"}, newdata is a list of two data frames with 
 trait and environmental values in this order, \emph{e.g.} 
 \code{list(traits = dataTraits, env = dataEnv)}.}
+
+\item{weights}{list of weights of species and of sites in \code{newdata} when
+\code{type = "response"}, else ignored (default NULL
+yielding equal species and site weights, both summing to 1). 
+Example: weights = list(species = c(100,1,1), sites = c(1,1,1,1)), in that
+order, with traits of three new species in newdata[[1]] and 
+environmental values (and levels of factors) of four new sites in newdata[[2]]. 
+Species weights are scaled to a sum of one.}
+}
+\value{
+a matrix with the predictions. The exact content of the matrix 
+depends on the \code{type} of predictions that are being made.
 }
 \description{
 Prediction of traits from environment, environment from traits and response 
 from trait and environment data.
-
-With \code{type = "traits"} and \code{newdata = NULL}, predict gives the 
-fitted mean traits, \emph{i.e.} the fitted community weighted means.
-With \code{type = "env"} and \code{newdata = NULL}, predict gives the 
-fitted mean environment, \emph{i.e.} the fitted species niche centroids.
 }
 \details{
 Variables that are in the model but not in \code{newdata} are set to their 
@@ -50,14 +57,16 @@ mean of the quantitative variables not included. Predictions with
 not-included factors are at the weighted mean (none of the factor effects 
 are included).
 
-For \code{type = "response"} and non-null newdata, the species weights of 
+For \code{type = "response"} and non-null \code{newdata}, the species weights of 
 the training are used; the site weights are taken equal. Many of the 
 predicted values may be negative, indicating expected absences (0) or small
 expected response values.
 
-Regression coefficients obtained with \code{type = "reg_env"} or  
-\code{type = "reg_traits"} are for standardized traits and environmental
-variables.
+With \code{type = "traitsFromEnv"} and \code{newdata = NULL}, predict gives the 
+fitted mean traits, \emph{i.e.} the fitted community weighted means.
+With \code{type = "envFromTraits"} and \code{newdata = NULL}, predict gives the 
+fitted mean environment, \emph{i.e.} the fitted species niche centroids
+(see \code{\link{fitted.dcca}}). See \code{fitted.dcca}.
 }
 \examples{
 data("dune_trait_env")
@@ -69,32 +78,27 @@ mod <- dc_CA(formulaEnv = ~ A1 + Moist + Mag + Use + Condition(Manure),
              formulaTraits = ~ SLA + Height + LDMC + Condition(Seedmass) + Lifespan,
              response = dune_trait_env$comm[, -1],  # must delete "Sites"
              dataEnv = dune_trait_env$envir,
-             dataTraits = dune_trait_env$traits)
+             dataTraits = dune_trait_env$traits, verbose = FALSE)
 
-# regression coefficients
-predict(mod, type = "reg_env")
-predict(mod, type = "reg_traits")
-
-# fit the mean traits at each site (20x6),
-# that is CWM at each site
-pred.traits <- predict(mod, type = "traits")
+# Ten 'new' sites with a subset of the variables in mod 
+# X_lot will be ignored as it is not part of the model
+newEnv <- dune_trait_env$envir[1:10,c("A1", "Mag", "Manure", "X_lot")]
+newEnv[2,"A1"] <- 3.0; rownames(newEnv) <- paste0("NewSite", 1:10)
+pred.traits <- predict(mod, type = "traitsFromEnv", newdata = newEnv)
 head(pred.traits)
 
-# fit the mean environment for each species (28x8)
-# that is SNC of each species
-pred.env <- predict(mod, type = "env")
+# Eight 'new' species with a subset of traits that are included in the model 
+# Variable "L" will be ignored as it is not in the model 
+newTraits <- dune_trait_env$traits[1:8,c("Species","SLA", "LDMC", "L")]
+newTraits[3,"SLA"]<- 18; 
+rownames(newTraits) <- paste("Species",LETTERS[1:8] )# or another meaningful name...
+pred.env <- predict(mod, type = "envFromTraits", newdata = newTraits)
 head(pred.env)
 
-pred.resp <- predict(mod, type = "response")
-# pred has negative values and dc_CA cannot have negatives in the response
-# so, modify pred.resp,
-#whichgives about similar eigenvalues as the original data
-pred.resp[pred.resp < 0] <- 0
-mod3 <- dc_CA(formulaEnv = mod$formulaEnv,
-              formulaTraits = mod$formulaTraits,
-              response = pred.resp, 
-              dataEnv = dune_trait_env$envir,
-              dataTraits = dune_trait_env$traits)
-mod3$eigenvalues / mod$eigenvalues
+pred.resp <- predict(mod, type = "response", newdata= list(newTraits,newEnv),
+        weights= list(species = rep(c(1,2),4) , sites = rep(1,10)) )
+colSums(pred.resp) # about alternating 0.8 and 1.6 (reflecting the new species weights)
+rowSums(pred.resp) # about equal rowsums
+
 
 }
