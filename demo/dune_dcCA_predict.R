@@ -7,31 +7,26 @@ mod <- dc_CA(formulaEnv = ~ A1 + Moist + Mag + Use + Condition(Manure),
              formulaTraits = ~ SLA + Height + LDMC + Condition(Seedmass) + Lifespan,
              response = dune_trait_env$comm[, -1],  # must delete "Sites"
              dataEnv = dune_trait_env$envir,
-             dataTraits = dune_trait_env$traits)
+             dataTraits = dune_trait_env$traits, verbose = FALSE)
 
-# regression coefficients
-predict(mod, type = "reg_env")
-predict(mod, type = "reg_traits")
-
-# fit the mean traits at each site (20x6),
-# that is CWM at each site
-pred.traits <- predict(mod, type = "traits")
+# Ten 'new' sites with a subset of the variables in mod 
+# X_lot will be ignored as it is not part of the model
+newEnv <- dune_trait_env$envir[1:10,c("A1", "Mag", "Manure", "X_lot")]
+newEnv[2,"A1"] <- 3.0; rownames(newEnv) <- paste0("NewSite", 1:10)
+pred.traits <- predict(mod, type = "traitsFromEnv", newdata = newEnv)
 head(pred.traits)
 
-# fit the mean environment for each species (28x8)
-# that is SNC of each species
-pred.env <- predict(mod, type = "env")
+# Eight 'new' species with a subset of traits that are included in the model 
+# Variable "L" will be ignored as it is not in the model 
+newTraits <- dune_trait_env$traits[1:8,c("Species","SLA", "LDMC", "L")]
+newTraits[3,"SLA"]<- 18; 
+rownames(newTraits) <- paste("Species",LETTERS[1:8] )# or another meaningful name...
+pred.env <- predict(mod, type = "envFromTraits", newdata = newTraits)
 head(pred.env)
 
-pred.resp <- predict(mod, type = "response")
-# pred has negative values and dc_CA cannot have negatives in the response
-# so, modify pred.resp,
-#whichgives about similar eigenvalues as the original data
-pred.resp[pred.resp < 0] <- 0
-mod3 <- dc_CA(formulaEnv = mod$formulaEnv,
-              formulaTraits = mod$formulaTraits,
-              response = pred.resp, 
-              dataEnv = dune_trait_env$envir,
-              dataTraits = dune_trait_env$traits)
-mod3$eigenvalues / mod$eigenvalues
+pred.resp <- predict(mod, type = "response", newdata= list(newTraits,newEnv),
+        weights= list(species = rep(c(1,2),4) , sites = rep(1,10)) )
+colSums(pred.resp) # about alternating 0.8 and 1.6 (reflecting the new species weights)
+rowSums(pred.resp) # about equal rowsums
+
 
