@@ -102,6 +102,7 @@ anova_species <- function(object,
                  object$weights$columns)
   Zw <- msqr$Zw
   Xw <- msqr$Xw
+  dfpartial = msqr$qrZ$rank
   # residual predictor permutation
   out_tes <- list()
   out_tes[[1]]  <- randperm_eX0sqrtw(Yw, Xw, Zw, sWn = sWn, 
@@ -115,47 +116,9 @@ anova_species <- function(object,
                           by = by, return = "all")
     }
   }
-  # what the env. variables explain of the trait-structured variation
-  ss <- c(sapply(out_tes, function(x)x$ss[1]), out_tes[[length(out_tes)]]$ss[2])
-  
-  if (by == "axis") {
-    df <- c(rep(1, length(ss) - 1), out_tes[[length(out_tes)]]$df[2])
-    names(df) <- c(paste0("dcCA", seq_along(out_tes)), "Residual")
-  } else {
-    df <- out_tes[[length(out_tes)]]$df
-    names(df) <- c("dcCA", "Residual")
-  }
-  fraqExplained <- 
-    c(sapply(out_tes, function(x)x$ss[1]) / sum(out_tes[[1]]$ss), NA)
-  F0 <- c(sapply(out_tes, function(x)x$F0[1]), NA)
-  F.perm <- out_tes[[1]]$Fval
-  R2.perm <- out_tes[[1]]$R2.perm
-  if (length(out_tes) > 1) {
-    for (k in seq_along(out_tes)[-1]) {
-      F.perm <- cbind(F.perm, out_tes[[k]]$Fval)
-      R2.perm <- cbind(R2.perm, out_tes[[k]]$R2.perm)
-    }
-  }
-  p_val_axes1 <- c(cummax(sapply(out_tes, function(x) {
-    x$pval[1]
-  })), NA)
-  eig <- out_tes[[1]]$eig
-  names(eig) <- paste0("dcCA", seq_along(eig))
-  axsig_dcCA_species <- data.frame(df = df, ChiSquare = ss, R2 = fraqExplained,
-                                   F = F0, `Pr(>F)` = p_val_axes1, 
-                                   check.names = FALSE)
-  object1 <- paste("Model:", c(object$call), "\n")
-  header <- paste0("Species-level permutation test using dc-CA\n",
-                   object1,
-                   "Residualized predictor permutation\n",
-                   howHead(attr(out_tes[[1]], "control")))
-  f_species <- structure(axsig_dcCA_species, heading = header, 
-                         control = attr(out_tes[[1]], "control"),
-                         Random.seed = attr(out_tes[[1]], "seed"),
-                         F.perm = F.perm,
-                         R2.perm = R2.perm,
-                         class = c("anova.cca", "anova", "data.frame"))
-  result <- list(table = f_species, eigenvalues = eig)
+  f_species <- fanovatable(out_tes, Nobs = N, dfpartial= dfpartial, type= "col", 
+                           calltext = c(object$call))  
+  result <- list(table = f_species, eigenvalues = attr(f_species, "eig"))
   return(result)
 }
 
@@ -247,13 +210,14 @@ randperm_eX0sqrtw <- function(Y,
     #Yfit_permX <- unweighted_lm_pq_fit(eY,eX_perm_orth_to_Z) #
     Yfit_permX <- qr.fitted(qr(eX_perm_orth_to_Z), eY)
     ssX_perm[i] <- sum(Yfit_permX ^ 2)
-    ssX_eig1_perm[i] <- mysvd(Yfit_permX)$d[1] ^ 2
+    ssX_eig1_perm[i] <- mysvd(Yfit_permX)$d[1]
   }
+  ssX_eig1_perm <- ssX_eig1_perm ^ 2
   if (by == "axis")  {
     ssX_perm <- ssX_eig1_perm
     ssX0 <- ssX_eig1
     F0 <- F0_eig1
-  }
+  } else ssX_eig1_perm <- NA
   rss_perm <- sstot - ssX_perm
   Fval <- ssX_perm / rss_perm * df_cor
   # ssX_perm is monotonic with Fval, so for numeric stability use:
@@ -269,6 +233,7 @@ randperm_eX0sqrtw <- function(Y,
                 ss = c(Model = ssX0, Residual = sstot - ssX0),
                 df = c(Model = p_eX, Residual = nrow(eY) - qrZ$rank - p_eX),
                 rank = rank, R2.perm = ssX_perm / sstot,
+                eig1.perm = ssX_eig1_perm,
                 eig = eig, EigVector1 = EigVector1)
     if (is.matrix(permutations)) {
       attr(perm.mat, "control") <- 
@@ -308,6 +273,8 @@ SVDfull <- function(Y) {
 # end OLS versions 
 
 
+#' @noRd
+#' @keywords internal
 # code adapted from vegan 2.6-4 
 
 ### Make a compact summary of permutations. This copies Gav Simpson's
@@ -366,3 +333,60 @@ howHead <- function(x,
   paste0(header, "\nNumber of permutations: ", permute::getNperm(x), "\n")
 }
 
+#' @noRd
+#' @keywords internal
+fanovatable <- function(out_tes, Nobs, dfpartial, type= "dcCA", calltext, eig)  {
+  # type = "cca" ,"wrda",  "row", "col" 
+  
+  if (type == "wrda")  methd <- "wRDA" else if (type == "cca") methd <- "cca" else methd <- "dcCA"
+  ss <- c(sapply(out_tes, function(x) {
+    x$ss[1]
+  }), out_tes[[length(out_tes)]]$ss[2])
+  
+  fraqExplained <- 
+    c(sapply(out_tes, function(x) x$ss[1]) / sum(out_tes[[1]]$ss), NA)
+  F0 <- c(sapply(out_tes, function(x)x$F0[1]), NA)
+  F.perm <- out_tes[[1]]$Fval
+  R2.perm <- out_tes[[1]]$R2.perm
+  eig1.perm = out_tes[[1]]$eig1.perm
+  if (length(out_tes) > 1) {
+    df <- c(rep(1, length(ss) - 1), 
+            out_tes[[length(out_tes)]]$df[2])
+    names(df) <- c(paste0(methd, seq_along(out_tes)), "Residual")
+    for (k in seq_along(out_tes)[-1]) {
+      F.perm <- cbind(F.perm, out_tes[[k]]$Fval)
+      R2.perm <- cbind(R2.perm, out_tes[[k]]$R2.perm)
+      eig1.perm <- cbind(eig1.perm, out_tes[[k]]$eig1.perm)
+    }
+  } else {   
+    df <- out_tes[[length(out_tes)]]$df
+    names(df) <- c(methd, "Residual")
+  }
+  p_val_axes1 <- c(cummax(sapply(out_tes, function(x) x$pval[1])), NA)
+  eig <- out_tes[[1]]$eig
+  names(eig) <- paste0(methd, seq_along(eig))
+  axsig_dcCA_sites <- data.frame(df = df, ChiSquare = ss, R2 = fraqExplained,
+                                 F = F0, `Pr(>F)` = p_val_axes1, 
+                                 check.names = FALSE)
+  object1 <- paste("Model:", calltext, "\n")
+  if (type == "row")txt <- "Community-level permutation test using dc-CA\n" 
+  else if (type== "col") txt <- "Species-level permutation test using dc-CA\n"
+  else if(type == "wrda") {
+    txt <- "Permutation test for weighted reduncancy analysis\n"
+    names(axsig_dcCA_sites)[2] <- "Variance"
+  }
+  else if (type == "cca") txt <- "Permutation test for canonical correspondence analysis\n"
+  header <- paste0(txt,
+                   object1,
+                   "Residualized predictor permutation\n",
+                   howHead(attr(out_tes[[1]], "control")))
+  f_sites <- structure(axsig_dcCA_sites, heading = header, 
+                       control = attr(out_tes[[1]], "control"),
+                       Random.seed = attr(out_tes[[1]], "seed"),
+                       F.perm = F.perm,
+                       R2.perm = R2.perm,
+                       eig1.perm = eig1.perm,
+                       eig =eig,
+                       class = c("anova.cca", "anova", "data.frame"))
+  return(f_sites)
+}

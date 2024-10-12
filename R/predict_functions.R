@@ -6,6 +6,8 @@ predict_regr_env <- function(object,
   B_env_regr <- sc$regression
   C_trait_bip <- sc$biplot_traits
   reg <- B_env_regr[, -c(1, 2, 3), drop = FALSE] %*% t(C_trait_bip)
+  attr(reg, which = "meaning") <-
+    "regression coefficients to predict traits from environment."
   return(reg)
 }
 
@@ -17,6 +19,8 @@ predict_regr_traits <- function(object,
   B_traits_regr <-sc$regression_traits
   C_env_bip <- sc$biplot
   reg <- B_traits_regr[, -c(1, 2, 3), drop = FALSE] %*% t(C_env_bip)
+  attr(reg, which = "meaning") <-
+    "regression coefficients to predict environmental values from traits."
   return(reg)
 }
 
@@ -71,22 +75,22 @@ check_newdata <- function(object,
   # BEWARE,
   # type is "traits" or "env"
   # where check_newdata gives environmental data and trait data respectively
-  if (type == "traits") {
+  if (type == "traitsFromEnv") {
     wmff <- msdvif(object$formulaEnv, object$data$dataEnv, object$weights$rows,
                    XZ = TRUE, novif = TRUE)
-    wm <- wmff$msd$mean
-    ff <- wmff$ff_get
-    c_normed <- cbind(Avg = c(wmff$msd$mean), SDS = c(wmff$msd$sd))
-    rownames(c_normed) <- colnames(wmff$msd$mean)
+    
     if (is.null(newdata)) newdata1 <- object$data$dataEnv
-  } else if (type == "env") { # "env", "reg_traits"
-    ff <- get_Z_X_XZ_formula(object$formulaTraits)
-    wm <- t(object$c_traits_normed0[, "Avg", drop = FALSE])
-    c_normed <- object$c_traits_normed0
+  } else if (type == "envFromTraits") { # "env", "reg_traits"
+    wmff <- msdvif(object$formulaTraits, object$data$dataTraits, object$weights$columns,
+                   XZ = TRUE, novif = TRUE)
     if (is.null(newdata)) {
       newdata1 <- object$data$dataTraits
     }
   }
+  wm <- wmff$msd$mean
+  ff <- wmff$ff_get
+  AvgSDS <- cbind(Avg = c(wmff$msd$mean), SDS = c(wmff$msd$sd))
+  rownames(AvgSDS) <- colnames(wmff$msd$mean)
   if (!is.null(newdata)) {
     newdata1 <- newdata
     nams <- !ff$all_nams %in% names(newdata1)
@@ -101,7 +105,7 @@ check_newdata <- function(object,
   }
   dat0 <- model.matrix(ff$formula_XZ, constrasts = FALSE, 
                        data = newdata1)[, -1, drop = FALSE]
-  newdata1 <- scale_data(dat0, mean_sd = c_normed[, c(1, 2), drop = FALSE])
+  newdata1 <- scale_data(dat0, mean_sd = AvgSDS[, c(1, 2), drop = FALSE])
   return(newdata1)
 }
 
@@ -126,9 +130,6 @@ predict_env <- function(object,
 #' @keywords internal
 fpred_scaled <- function(newdata1, 
                          reg) {
-  nms <- rownames(reg)
-  # still needed for missing factors; see predict.dcca.r
-  nms <- nms[nms %in% colnames(newdata1)] 
   # reg may not have the covariates (e.g. when dc-CA was started from CWM) and
   # newdata1 may not have all predictors
   nams <- intersect(colnames(newdata1), rownames(reg))
@@ -141,18 +142,43 @@ fpred_scaled <- function(newdata1,
 #' @keywords internal
 predict_response <- function(object, 
                              newdata1,
-                             rank) {
+                             rank, weights = object$weights) {
   # newdata1 must be a list two dataframes, element 1: trait and  element 2 env data
-  B_traits_regr <- scores(object, choices = seq_len(rank), 
-                          display = "reg_traits", scaling  = "sites")
+  sc <- scores(object, 
+        choices = seq_len(rank), display = c("reg", "reg_traits"), scaling = "sym")
+  B_traits_regr <- sc[["regression_traits"]][, -c(1, 2, 3), drop = FALSE]
+  B_traits_regr[is.na(B_traits_regr)]<-0
   pred_scaled_species <- 
-    fpred_scaled(newdata1[[1]], B_traits_regr[, -c(1, 2, 3), drop = FALSE])
-  B_env_regr <- scores(object, choices = seq_len(rank), display = "reg", 
-                       scaling = "sites")
-  pred_scaled_sites <- fpred_scaled(newdata1[[2]], 
-                                    B_env_regr[, -c(1, 2, 3), drop = FALSE])
+    fpred_scaled(newdata1[[1]], B_traits_regr)
+  B_env_regr <- sc[["regression"]][, -c(1, 2, 3), drop = FALSE]
+  B_env_regr[is.na(B_env_regr)]<-0
+  pred_scaled_sites <- fpred_scaled(newdata1[[2]], B_env_regr)
   interact <- pred_scaled_sites %*% t(pred_scaled_species)
   pred <- (1 + interact) * 
-    rep(1, rep(nrow(interact))) %*% t(object$weights$columns)
+    rep(1, rep(nrow(interact))) %*% t(weights[[1]]/sum(weights[[1]])) * weights[[2]]
   return(pred)
+}
+#' @noRd
+#' @keywords internal
+predict_regr_all <- function(object, 
+                             rank) {
+  # regresion coefficient of transformed response on env and trait predictors
+  # value is env by trait
+  sc <- scores(object, choices = seq_len(rank), display = c("reg", "reg_traits"))
+  reg <-sc[["regression_traits"]][,-c(1,2,3), drop = FALSE]%*% 
+    t(sc[["regression"]][,-c(1,2,3), drop = FALSE])
+  attr(reg, which = "meaning") <-
+  "regression coefficients for traits and environment to predict the response."
+  return(reg)
+}
+#' @noRd
+#' @keywords internal
+predict_fc <- function(object, 
+                                   rank) {
+  # fourth-corner coefficients of transformed response on env and trait predictors
+  # value is env by trait
+  sc <- scores(object, choices = seq_len(rank), display = c("bp", "bp_traits"))
+  fc <- sc[["biplot_traits"]] %*% t(sc[["biplot"]])
+  attr(fc, which = "meaning") <- "fourth-corner correlation"
+  return(fc)
 }

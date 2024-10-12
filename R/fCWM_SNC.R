@@ -101,9 +101,12 @@ fCWM_SNC <- function(response = NULL,
   if (any(response < 0)) {
     stop("The response should not have negative values.\n")
   }
+  if (is.null(dataEnv)) {
+    stop("dataEnv must be specified in dc_CA.\n")
+  } else  dataEnv <- as.data.frame(dataEnv)
   if (is.null(dataTraits)) {
     stop("dataTraits must be specified in dc_CA.\n")
-  }
+  } else  dataTraits <- as.data.frame(dataTraits)
   if (!is.matrix(response)) {
     response <- as.matrix(response)
   }
@@ -158,7 +161,7 @@ fCWM_SNC <- function(response = NULL,
   Y <- as.matrix(response) / sum(response)
   TotR <- rowSums(Y)
   TotC <- colSums(Y)
-  weights <- list(rows = TotR, columns = TotC) # unite sums
+  weights <- list(columns = TotC, rows = TotR) # unit sums
   Nobs <- nrow(Y)
   if (is.null(formulaTraits)) {
     formulaTraits <- as.formula(paste("~", paste0(names(dataTraits),
@@ -342,11 +345,9 @@ checkCWM2dc_CA <- function(object,
   if (is.null(object[["data"]])) {
     object[["data"]] <- list()
   }
-  print(names(object))
   if ("dataTraits" %in% names(object)) {
     if (is.null(dataTraits)) {
-      print(rownames(object$dataTraits))
-      dataTraits<- object$dataTraits
+      dataTraits<- as.data.frame(object$dataTraits)
       dataTraits <- as.data.frame(lapply(dataTraits, function(x) {
         if (is.character(x)) x<- as.factor(x) else x
         return(x)
@@ -359,7 +360,7 @@ checkCWM2dc_CA <- function(object,
   }
   if ("dataEnv" %in% names(object)) {
     if (is.null(dataEnv)) {
-      dataEnv<- object$dataEnv
+      dataEnv<- as.data.frame(object$dataEnv)
       dataEnv <- as.data.frame(lapply(dataEnv, function(x) {
         if (is.character(x)) x<- as.factor(x) else x
         return(x) 
@@ -387,8 +388,8 @@ checkCWM2dc_CA <- function(object,
     }
   } else { 
     warning("With CWM as first element in response in dc_CA, the trait data",
-            "used to obtain the CWMs are best supplied as response$data$dataTraits.",
-            "Use the default dataTraits argument, which is NULL.\n")
+            " used to obtain the CWMs are best supplied as response$data$dataTraits.",
+            " Use the default dataTraits argument, which is NULL.\n")
     object$data$dataTraits <- as.data.frame(lapply(dataTraits, function(x) {
       if (is.character(x)) x <- as.factor(x) else x
       return(x) 
@@ -411,22 +412,26 @@ checkCWM2dc_CA <- function(object,
   }
   if (is.null(object$weights)) {
     warning("no weights supplied with response$CWM; weigths all set to 1.\n")
-    object$weights <- list(rows = rep(1 / object$Nobs, object$Nobs),
-                           columns = rep(1 / nrow(object$data$dataTraits),
-                                         nrow(object$data$dataTraits)))
+    object$weights <- list(columns = rep(1 / nrow(object$data$dataTraits),
+                                         nrow(object$data$dataTraits)),
+                           rows = rep(1 / object$Nobs, object$Nobs)
+                           )
   } else if (!is.list(object$weights)) {
     ll <- length(object$weights)
     if (ll == object$Nobs) {
       warning("no species weights supplied with response$CWM; ",
               "weigths all set to 1.\n")
-      object$weights <- list(rows = rep(1 / object$Nobs, object$Nobs),
-                             columns = object$weights)
+      object$weights <- list(columns = object$weights,
+                        rows = rep(1 / object$Nobs, object$Nobs)
+                             )
     } else if (ll == nrow(object$data$dataTraits)) {
       warning("no site weights supplied with response$CWM; ", 
               "site weigths all set to 1.\n")
-      object$weights <- list(rows = object$weights,
-                             columns = rep(1 / nrow(object$data$dataTraits),
-                                           nrow(object$data$dataTraits)))
+      object$weights <- list(
+        columns = rep(1 / nrow(object$data$dataTraits),
+                                          nrow(object$data$dataTraits)),
+        rows = object$weights
+                             )
     }
   }
   if (is.null(object$weights$rows)) {
@@ -440,6 +445,8 @@ checkCWM2dc_CA <- function(object,
     object$weights$columns <- rep(1 / nrow(object$data$dataTraits),
                                   nrow(object$data$dataTraits))
   }
+  # make sure columns isthe first in the list...
+  object$weights <- list(columns = object$weights$columns, rows = object$weights$rows)
   # change ~. to names
   formulaTraits <- change_reponse(object$formulaTraits, "Y", 
                                   object$data$dataTraits)

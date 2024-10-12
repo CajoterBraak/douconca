@@ -94,8 +94,8 @@
 #' after removing empty rows and columns in \code{response} and after closure if 
 #' \code{divideBySiteTotals = TRUE} and with the corresponding rows in 
 #' \code{dataEnv} and \code{dataTraits} removed.}
-#' \item{weights}{a list of unit-sum weights of row and columns. The names of 
-#' the list are \code{c("row", "columns")}, in that order.}
+#' \item{weights}{a list of unit-sum weights of columns and rows. The names of 
+#' the list are \code{c("columns","row")}, in that order, .}
 #' \item{Nobs}{number of sites (rows).}
 #' \item{CWMs_orthonormal_traits}{Community weighted means w.r.t. 
 #' orthonormalized traits.}
@@ -232,9 +232,12 @@ dc_CA <- function(formulaEnv = NULL,
     if (any(response < 0)) {
       stop("The response should not have negative values.\n")
     }
+    if (is.null(dataEnv)) {
+      stop("dataEnv must be specified in dc_CA.\n")
+    } else dataEnv <- as.data.frame(dataEnv)
     if (is.null(dataTraits)) {
       stop("dataTraits must be specified in dc_CA.\n")
-    }
+    } else dataTraits <- as.data.frame(dataTraits)
     if (!is.matrix(response)) {
       response <- as.matrix(response)
     } 
@@ -315,8 +318,8 @@ dc_CA <- function(formulaEnv = NULL,
                  formulaEnv = formulaEnv,
                  data = list(Y = response, dataEnv = dataEnv, dataTraits = dataTraits),
                  call = call,
-                 weights = list(rows = TotR / sum(TotR), 
-                                columns = TotC / sum(TotC)),
+                 weights = list(columns = TotC / sum(TotC),
+                                rows = TotR / sum(TotR)),
                  Nobs = n,
                  CWMs_orthonormal_traits = CWMs_orthonormal_traits)
   } else {
@@ -350,7 +353,7 @@ dc_CA <- function(formulaEnv = NULL,
                   weights = out1$weights$rows, data = out1$data$dataEnv)
     eigenvalues <-  step2$CCA$eig
   }
-  names(eigenvalues) <- paste("dcCA", seq_along(eigenvalues), sep = "")
+  names(eigenvalues) <- paste0("dcCA", seq_along(eigenvalues))
   out <- c(out1, list(RDAonEnv = step2,
                       eigenvalues =  eigenvalues))
   out$c_traits_normed0 <- try(f_canonical_coef_traits2(out))
