@@ -69,7 +69,7 @@ backscale_data <- function(pred_scaled,
 #' @noRd
 #' @keywords internal
 check_newdata <- function(object, 
-                          newdata,
+                          newdata=NULL,
                           type) {
   # check for 1 data frame (either env or traits)
   # BEWARE,
