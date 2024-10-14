@@ -48,7 +48,7 @@ fitted.dcca <- function(object,
     )
   } else if (type %in% c("CWM", "SNC")) {
     if (type== "CWM") type1 = "traitsFromEnv" else type1 = "envFromTraits"
-    newdata1 <- check_newdata(object, newdata, type1)
+    newdata1 <- check_newdata(object, newdata=NULL, type1)
   }
   ret <- switch(type,
                 SNC      = predict_env(object, newdata1, rank),
