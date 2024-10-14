@@ -8,8 +8,7 @@
   object,
   ...,
   type = c("fourth_corner", "all_reg", "env2traits_reg", "traits2env_reg"),
-  rank = "full",
-  newdata = NULL
+  rank = "full"
 )
 }
 \arguments{
@@ -23,6 +22,9 @@ fourth-corner coefficients and regression coefficients for
 all trait x environmental predictors, environmental predictors only 
 and trait predictors only for prediction of the (transformed)
 response, traits and environmental values, respectively.}
+
+\item{rank}{rank or number of axes to use. Default "full" for all axes 
+(no rank-reduction).}
 }
 \value{
 a matrix with coefficients. The exact content of the matrix 
