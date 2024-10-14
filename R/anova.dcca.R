@@ -152,7 +152,8 @@ anova.dcca <- function(object,
                howHead(attr(f_species, "control")))
     } else { 
       id <- f_sites$`Pr(>F)` > f_species$`Pr(>F)`
-      id <- id[-length(id)]
+      #id <- id[-length(id)]
+      id[is.na(id)] <- length(id)
       f_max <- f_species
       f_max$R2 <- NULL
       f_max$F[id] <- f_sites$F[id]
