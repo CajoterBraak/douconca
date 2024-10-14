@@ -13,6 +13,8 @@
 #' all trait x environmental predictors, environmental predictors only 
 #' and trait predictors only for prediction of the (transformed)
 #' response, traits and environmental values, respectively.
+#' @param rank rank or number of axes to use. Default "full" for all axes 
+#' (no rank-reduction).
 #' 
 #' @details
 #' 
@@ -43,8 +45,8 @@
 coef.dcca <- function(object,
                          ...,
                          type = c("fourth_corner", "all_reg", "env2traits_reg", "traits2env_reg"),
-                         rank = "full",
-                         newdata = NULL) {
+                         rank = "full"
+                         ) {
   type <- match.arg(type)
   if (rank == "full") {
     rank <- length(object$eigenvalues)
