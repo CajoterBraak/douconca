@@ -4,12 +4,12 @@ data("dune_trait_env")
 rownames(dune_trait_env$comm) <- dune_trait_env$comm$Sites
 
 mod <- dc_CA(formulaEnv = ~A1 + Moist + Mag + Use + Manure,
-             formulaTraits = ~.,
+             formulaTraits = ~ SLA + Height + LDMC + Seedmass + Lifespan,
              response = dune_trait_env$comm[, -1],  # must delete "Sites"
              dataEnv = dune_trait_env$envir,
-             # delete "Species", "Species_abbr" from traits and
-             # use all remaining variables due to formulaTraits = ~. (the default)
-             dataTraits = dune_trait_env$traits[, -c(1, 2)])
+             dataTraits = dune_trait_env$traits, verbose = FALSE)
+
+print(mod) # same output as with verbose = TRUE (the default of verbose).
 anova(mod, by = "axis")
 # For more demo on testing, see demo dune_test.r
 
