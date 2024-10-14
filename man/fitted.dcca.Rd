@@ -4,13 +4,7 @@
 \alias{fitted.dcca}
 \title{Fitted values of double-constrained correspondence analysis (dc-CA)}
 \usage{
-\method{fitted}{dcca}(
-  object,
-  ...,
-  type = c("CWM", "SNC", "response"),
-  rank = "full",
-  newdata = NULL
-)
+\method{fitted}{dcca}(object, ..., type = c("CWM", "SNC", "response"), rank = "full")
 }
 \arguments{
 \item{object}{return value of \code{\link{dc_CA}}.}
@@ -63,7 +57,7 @@ SNC.env <- fitted(mod, type = "SNC")
 head(SNC.env)
 
 fit.resp <- fitted(mod, type = "response")
-# pred has negative values and dc_CA cannot have negatives in the response
+# fitted often gives negative values and dc_CA cannot have negatives in the response
 # so, modify fit.resp,
 #whichgives about similar eigenvalues as the original data
 fit.resp[fit.resp < 0] <- 0
