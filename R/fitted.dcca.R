@@ -32,21 +32,17 @@
 fitted.dcca <- function(object,
                          ...,
                          type = c("CWM","SNC", "response"),
-                         rank = "full",
-                         newdata = NULL) {
+                         rank = "full") {
   type <- match.arg(type)
   if (rank == "full") {
     rank <- length(object$eigenvalues)
   }
   if (type == "response") {
-    if (is.null(newdata)) {
-      newdata <- list(NULL, NULL)
-    }
-    newdata1 <- list(
+      newdata1 <- list(
       # env prediction requires trait data
-      traits = check_newdata(object, newdata[[1]], "envFromTraits"), 
+      traits = check_newdata(object, newdata=NULL, "envFromTraits"), 
       # trait prediction requires env data
-      env = check_newdata(object, newdata[[2]], "traitsFromEnv") 
+      env = check_newdata(object, newdata=NULL, "traitsFromEnv") 
     )
   } else if (type %in% c("CWM", "SNC")) {
     if (type== "CWM") type1 = "traitsFromEnv" else type1 = "envFromTraits"
