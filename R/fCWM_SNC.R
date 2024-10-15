@@ -301,7 +301,7 @@ f2_orth <- function(CWM,
   CWM2CWM_ortho <- solve(qr.R(msqr$qrX))
   colnames(CWM2CWM_ortho) <- rownames(CWM2CWM_ortho)
   if (all(rownames(CWM2CWM_ortho) %in% colnames(CWM))) {
-    CWM <- as.matrix(CWM[, rownames(CWM2CWM_ortho)])
+    CWM <- as.matrix(CWM[, rownames(CWM2CWM_ortho), drop = FALSE])
   } else {
     if (name == "CWM") {
       fname <- "formulaTraits"
