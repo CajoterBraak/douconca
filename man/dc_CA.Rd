@@ -177,10 +177,11 @@ A dc-CA can be carried out on, what statisticians call, the sufficient
 statistics of the method. This is useful, when the abundance data are not 
 available or could not be made public in a paper attempting reproducible 
 research. In this case, \code{response} should be a list
-with as first element community weighted means (CWMs) with respect to the 
-traits, and the trait data, and, optionally, further elements, for functions
+with as first element community weighted means 
+(e.g. \code{list(CWM = CWMs)}) with respect to the 
+traits, and the trait data, and, optionally, further list elements, for functions
 related to \code{dc_CA}. The minimum is a 
-\code{list(CWM, weight = list(columns = species_weights))} with CWM a matrix
+\code{list(CWM= CWMs, weight = list(columns = species_weights))} with CWM a matrix
 or data.frame, but then \code{formulaEnv}, \code{formulaTraits}, 
 \code{dataEnv}, \code{dataTraits} must be specified in the call to 
 \code{dc_CA}. The function \code{\link{fCWM_SNC}} and its example
@@ -204,8 +205,9 @@ mod <- dc_CA(formulaEnv = ~A1 + Moist + Mag + Use + Manure,
              formulaTraits = ~ SLA + Height + LDMC + Seedmass + Lifespan,
              response = dune_trait_env$comm[, -1],  # must delete "Sites"
              dataEnv = dune_trait_env$envir,
-             dataTraits = dune_trait_env$traits)
+             dataTraits = dune_trait_env$traits, verbose = FALSE)
 
+print(mod) # same output as with verbose = TRUE (the default of verbose).
 anova(mod, by = "axis")
 # For more demo on testing, see demo dune_test.r
 
