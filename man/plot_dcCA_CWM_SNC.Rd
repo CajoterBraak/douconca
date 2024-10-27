@@ -13,6 +13,7 @@ plot_dcCA_CWM_SNC(
   newnames = NULL,
   remove_centroids = FALSE,
   with_lines = 2,
+  formula = y ~ x,
   getPlotdata2plotdCCA = NULL
 )
 }
@@ -52,6 +53,8 @@ result of \code{\link{scores.dcca}} with \code{tidy = TRUE}.}
 through groups of points, with confidence intervals around the lines. 
 \code{with_lines=1} drops the confidence intervals and
 \code{with_lines=0} suppresses the lines.}
+
+\item{formula}{formula to use by ggplot geom_smooth (default y~x).}
 
 \item{getPlotdata2plotdCCA}{the results of an \code{\link{getPlotdata}}. 
 Default \code{NULL}.}

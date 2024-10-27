@@ -18,6 +18,9 @@
   facet = TRUE,
   remove_centroids = FALSE,
   with_lines = 2,
+  flip_axis = FALSE,
+  expand = 0.2,
+  formula = y ~ x,
   verbose = TRUE
 )
 }
@@ -80,6 +83,12 @@ groups of species and of sites.}
 through groups of points, with confidence intervals around the lines. 
 \code{with_lines=1} drops the confidence intervals and
 \code{with_lines=0} suppresses the lines.}
+
+\item{flip_axis}{flip the direction of the axis? (default FALSE).}
+
+\item{expand}{amount of extension of the line plot (default 0.2).}
+
+\item{formula}{formula to use by ggplot geom_smooth (default y~x).}
 
 \item{verbose}{logical. Default \code{TRUE} for plotting the result.}
 }
