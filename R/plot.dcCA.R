@@ -35,6 +35,9 @@
 #' @param widths relative widths of the CWM-SNC plot, the correlation/weight
 #' plot and the species plot. (see \code{\link[gridExtra]{grid.arrange}}). 
 #' Default \code{c(5, 1, 1)}.
+#' @param flip_axis flip the direction of the axis? (default FALSE).
+#' @param expand amount of extension of the line plot (default 0.2).
+#' @param formula formula to use by ggplot geom_smooth (default y~x).
 #' 
 #' @details
 #' The current implementation does not distinguish groups of points, if there
@@ -75,7 +78,10 @@ plot.dcca <- function(x,
                       newnames = NULL, 
                       facet = TRUE, 
                       remove_centroids = FALSE, 
-                      with_lines = 2, 
+                      with_lines = 2,
+                      flip_axis = FALSE,
+                      expand = 0.2,
+                      formula = y~x,
                       verbose = TRUE) {
   if (!inherits(x, "dcca")) {
     stop("x should be of class dcca.\n")
@@ -98,10 +104,16 @@ plot.dcca <- function(x,
   pd <- getPlotdata(x, axis = axis, envfactor = envfactor, 
                     traitfactor = traitfactor, facet = facet, 
                     newnames = newnames, remove_centroids = remove_centroids)
+if (flip_axis) {
+  pd$trait_env_scores[,1] <- -pd$trait_env_scores[,1]
+  pd$CWM_SNC[,c(1,4,10)]<- -pd$CWM_SNC[,c(1,4,10)]
+  
+}
   CWM_SNC <- plot_dcCA_CWM_SNC(x, axis = axis, envfactor = envfactor, 
                                traitfactor = traitfactor, facet = facet,
                                remove_centroids = remove_centroids, 
                                with_lines = with_lines, 
+                               formula = formula,
                                getPlotdata2plotdCCA = pd)
   trait_env_scores <- pd$trait_env_scores
   trait_env_scores$score <- factor(trait_env_scores$score)
@@ -201,7 +213,7 @@ plot.dcca <- function(x,
     speciesname = "label",
     scoresname = namaxis,
     selectname = "Fratio1",
-    verbose = FALSE) + 
+    verbose = FALSE, expand = expand) + 
     ggplot2::ggtitle(trait_title)
   plot_env <- plot_species_scores_bk(
     species_scores = env_scores,
@@ -211,7 +223,7 @@ plot.dcca <- function(x,
     speciesname = "label",
     scoresname = namaxis,
     selectname = "Fratio1",
-    verbose = FALSE) + 
+    verbose = FALSE, expand = expand) + 
     ggplot2::ggtitle(env_title)
   # species vertical plot
   plot_species <- fplot_species(pd, x, nspecies = nspecies, 

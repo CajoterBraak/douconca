@@ -16,6 +16,7 @@
 #' through groups of points, with confidence intervals around the lines. 
 #' \code{with_lines=1} drops the confidence intervals and
 #' \code{with_lines=0} suppresses the lines.
+#' @param formula formula to use by ggplot geom_smooth (default y~x).
 #' @param getPlotdata2plotdCCA the results of an \code{\link{getPlotdata}}. 
 #' Default \code{NULL}.
 #' 
@@ -62,6 +63,7 @@ plot_dcCA_CWM_SNC <- function(x,
                               newnames = NULL,
                               remove_centroids = FALSE,
                               with_lines = 2,
+                              formula = y~ x,
                               getPlotdata2plotdCCA = NULL) {
   if (is.null(getPlotdata2plotdCCA)) {
     scorepair<- getPlotdata(x, axis = axis, envfactor = envfactor, 
@@ -101,7 +103,7 @@ plot_dcCA_CWM_SNC <- function(x,
                                           y = .data[["CWM-SNC"]],
                                           group = .data[["groups"]],
                                           weight = .data[["weight"]]),
-                             linewidth = 1, method = "lm", se = se, formula = y ~ x,
+                             linewidth = 1, method = "lm", se = se, formula = formula,
                              na.rm = TRUE, inherit.aes = FALSE)
     } else {
       p <- p +
@@ -109,7 +111,7 @@ plot_dcCA_CWM_SNC <- function(x,
                                           y = .data[["CWM-SNC"]],
                                           group = .data[["type"]],
                                           weight = .data[["weight"]]),
-                             linewidth = 1, method = "lm", se= FALSE ,formula = y ~ x,
+                             linewidth = 1, method = "lm", se= FALSE ,formula = formula,
                              na.rm = TRUE, inherit.aes = FALSE)
     }
   }
