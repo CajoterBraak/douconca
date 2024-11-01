@@ -4,15 +4,25 @@ f_inertia <- function(object) {
   # function f_inertia uses vegan 2.6-4 internal structure
   # object: a dccav object, results of dc_CA
   # value:  a matrix (currently with 1 column) with in first column the inertias
-  env_explain <- NULL
+  # if (is.null(object$data$Y)) {
+  #   object$env_explain <- object$inertia["env_explain"]
+  # } else {
+  #   ms <- f_wmean(object$formulaTraits, tY = object$data$Y, object$data$dataTraits,
+  #                 weights=object$weights, name= "CWM")
+  #   object$env_explain <- ms$explained
+  # }
   if (is.null(object$CCAonTraits)) {
     total <- object$tot.chi
     conditionT <- object$conditionT
-    env_explain <- object$env_explain
+    env_explain <- object$inertia["env_explain"]
   } else {
     total <- object$CCAonTraits$tot.chi
     conditionT <- object$CCAonTraits$pCCA$tot.chi
+    mt <- f_wmean(object$formulaEnv, tY = t(object$data$Y)/sum(object$data$Y), object$data$dataEnv,
+                  weights=object$weights, name= "SNC")
+    env_explain <- mt$explained
   }
+  names(env_explain) <- NULL
   inertia <- cbind(c(total = total,
                      conditionT = conditionT,
                      traits_explain = object$RDAonEnv$tot.chi,

@@ -69,7 +69,7 @@
 #' (e.g. \code{list(CWM = CWMs)}) with respect to the 
 #' traits, and the trait data, and, optionally, further list elements, for functions
 #' related to \code{dc_CA}. The minimum is a 
-#' \code{list(CWM= CWMs, weight = list(columns = species_weights))} with CWM a matrix
+#' \code{list(CWM = CWMs, weight = list(columns = species_weights))} with CWM a matrix
 #' or data.frame, but then \code{formulaEnv}, \code{formulaTraits}, 
 #' \code{dataEnv}, \code{dataTraits} must be specified in the call to 
 #' \code{dc_CA}. The function \code{\link{fCWM_SNC}} and its example
@@ -263,7 +263,7 @@ dc_CA <- function(formulaEnv = NULL,
       id[ii] <- sum(is.na(dataEnv[, ii])) == 0
       if (!id[[ii]]) { 
         warning("variable", names(dataEnv)[ii], 
-                "has missing values and is deleted from the environmental data.\n")
+                " has missing values and is deleted from the environmental data.\n")
       }
     }
     dataEnv <- dataEnv[, id]
@@ -272,7 +272,7 @@ dc_CA <- function(formulaEnv = NULL,
       id[ii] <- sum(is.na(dataTraits[,ii])) == 0
       if (!id[[ii]]) {
         warning("variable", names(dataTraits)[ii], 
-                "has missing values and is deleted from trait data.\n")
+                " has missing values and is deleted from trait data.\n")
       }
     }
     dataTraits <- dataTraits[, id]

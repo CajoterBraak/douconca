@@ -110,14 +110,14 @@ anova.dcca <- function(object,
   if (by == "axis") by1 <- by else by1 <-NULL
   if (inherits(object, "dccav")){
     f_sites <- anova(object$RDAonEnv, by = by1, permutations = permutations[[2]])
-    rownames(f_sites) <- c(paste0("dcCA", seq_len(nrow(f_sites)-1)),"Residual")
+    rownames(f_sites) <- c(paste0("dcCA", seq_len(nrow(f_sites) - 1)), "Residual")
     attr(f_sites, "heading") <- 
       paste0("Community-level equi-weighted permutation test using vegan::rda\n",
              object1, howHead(attr(f_sites, "control")))
     names(f_sites)[2]<- "ChiSquare"
-    f_sites$R2 <- f_sites$ChiSquare/sum(f_sites$ChiSquare)
-    f_sites$R2[nrow(f_sites)] <-NA
-    f_sites <- f_sites[,c(1,2,5,3,4)]
+	f_sites$R2 <- f_sites$ChiSquare / sum(f_sites$ChiSquare)
+    f_sites$R2[nrow(f_sites)] <- NA
+    f_sites <- f_sites[, c(1, 2, 5, 3, 4)]
   } else {
     f_sites0 <- anova_sites(object, by = by1, permutations = permutations[[2]])
     tab <- f_sites0$table
@@ -152,7 +152,6 @@ anova.dcca <- function(object,
                howHead(attr(f_species, "control")))
     } else { 
       id <- f_sites$`Pr(>F)` > f_species$`Pr(>F)`
-      #id <- id[-length(id)]
       id[is.na(id)] <- length(id)
       f_max <- f_species
       f_max$R2 <- NULL
