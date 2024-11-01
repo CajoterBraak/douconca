@@ -61,9 +61,11 @@ value as \code{response} in a call to \code{\link{dc_CA}}.}
 \item{verbose}{logical for printing a simple summary (default: TRUE)}
 }
 \value{
-The default returns a list of CWMs, SNCs, weights, \code{formulaTraits} and
+The default returns a list of CWM, SNC, weights, \code{formulaTraits} and
+inertia (weighted variance explained by
+the traits and by the environmental variable)
 a list of data with elements \code{dataEnv} and \code{dataTraits}. When 
-\code{minimal_output = FALSE}, many more statistics are given that are 
+\code{minimal_output = FALSE}, some more statistics are given that are 
 mainly technical or recomputed when the return value is used as 
 \code{response} in a call to \code{\link{dc_CA}}.
 }

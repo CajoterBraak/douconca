@@ -181,7 +181,7 @@ with as first element community weighted means
 (e.g. \code{list(CWM = CWMs)}) with respect to the 
 traits, and the trait data, and, optionally, further list elements, for functions
 related to \code{dc_CA}. The minimum is a 
-\code{list(CWM= CWMs, weight = list(columns = species_weights))} with CWM a matrix
+\code{list(CWM = CWMs, weight = list(columns = species_weights))} with CWM a matrix
 or data.frame, but then \code{formulaEnv}, \code{formulaTraits}, 
 \code{dataEnv}, \code{dataTraits} must be specified in the call to 
 \code{dc_CA}. The function \code{\link{fCWM_SNC}} and its example
