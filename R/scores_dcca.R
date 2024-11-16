@@ -118,6 +118,7 @@ scores_dcca <- function(x,
                         display = "all", 
                         scaling = "sym", 
                         which_cor = "in model", 
+                        normed = TRUE,
                         tidy = FALSE,
                         ...) {
   # internal function
@@ -297,13 +298,18 @@ scores_dcca <- function(x,
   if ("regression" %in% take) {
     regr <- 
       site_axes$c_env_normed[, choices + 3, drop = FALSE] %*% diag_scal_sites
+    if(!normed) { 
+      regr <-  regr / site_axes$c_env_normed[, "SDS"]
+      standardized = " "
+    } else standardized = " standardized "
     if (tidy) {
       sol$regression <- regr 
     } else {
       sol$regression <- cbind(site_axes$c_env_normed[, 1:3, drop = FALSE], regr)
     }
     attr(sol$regression, which = "meaning") <-
-      paste0("mean, sd, VIF, standardized regression coefficients.")
+      paste0("mean, sd, VIF,", standardized,"regression coefficients.")
+  
   }
   if ("t_values" %in% take){
     sol$t_values <- 
@@ -352,6 +358,9 @@ scores_dcca <- function(x,
   }
   if ("biplot" %in% take) {
     e_rcor <- site_axes$correlation[, choices, drop = FALSE]
+    if (!normed){
+      e_rcor <- e_rcor * site_axes$msd$sd[1,]
+    }
     R <- sqrt(site_axes$R2_env[choices])
     if (length(R) == 1) {
       sR <- matrix(slam / R)
@@ -360,10 +369,18 @@ scores_dcca <- function(x,
     }
     sol$biplot <- e_rcor %*% sR %*% diag_scal_sites
     colnames(sol$biplot) <- paste0("dcCA", choices)
-    attr(sol$biplot, which = "meaning") <- 
+    attr(sol$biplot, which = "mean" ) <- site_axes$msd$mean[1,]
+    if(!normed) { 
+      attr(sol$biplot, which = "meaning") <- 
+        f_meaning("biplot", scaling,
+                  paste("unstandardized biplot scores",
+                        " of environmental variables for display", 
+                        "with biplot-traits for fourth-corner covariance"))
+    } else   attr(sol$biplot, which = "meaning") <- 
       f_meaning("biplot", scaling,
                 paste("biplot scores of environmental variables for display", 
                       "with biplot-traits for fourth-corner correlations"))
+    
   }
   if ("centroids" %in% take) {
     if (!is.list(which_cor)) {
@@ -409,6 +426,11 @@ scores_dcca <- function(x,
     if ("regression_traits" %in% take) {
       regr <- 
         species_axes$c_traits_normed[, choices + 3, drop = FALSE] %*% diag_scal_species
+      if(!normed) { 
+        regr <- regr / species_axes$c_traits_normed[, "SDS"]
+        standardized = " "
+      } else standardized = " standardized "
+
       if (tidy) {
         sol$regression_traits <- regr 
       } else {
@@ -416,7 +438,8 @@ scores_dcca <- function(x,
           cbind(species_axes$c_traits_normed[, 1:3, drop = FALSE], regr)  
       }
       attr(sol$regression_traits, which = "meaning") <-
-        paste0("mean, sd, VIF, standardized regression coefficients.")
+        paste0("mean, sd, VIF,", standardized, "regression coefficients.")
+    #  if(!normed) attr(sol$regression_traits, which = "mean" ) <- species_axes$c_traits_normed[, "Avg"]
     }
     if ("t_values_traits" %in% take) {
       sol$t_values_traits <- 
@@ -468,6 +491,9 @@ scores_dcca <- function(x,
     }
     if ("biplot_traits" %in% take) {
       t_rcor <- species_axes$correlation[, choices, drop = FALSE]
+      if (!normed){
+        t_rcor <- t_rcor * species_axes$msd$sd[1,]
+      }
       R <- sqrt(species_axes$R2_traits[choices])
       if (length(R) == 1) {
         sR <- diag_scal_species / R 
@@ -476,10 +502,16 @@ scores_dcca <- function(x,
       }
       sol$biplot_traits <- t_rcor %*% sR
       colnames(sol$biplot_traits) <- paste0("dcCA", choices)
-      attr(sol$biplot_traits, which = "meaning") <-
+      attr(sol$biplot_traits, which = "mean" ) <- species_axes$msd$mean[1,]
+      
+      if(normed)attr(sol$biplot_traits, which = "meaning") <-
         f_meaning("biplot", scaling, 
                   paste("biplot scores of traits for display with biplot", 
-                        "scores for fourth-corner correlation"))
+                        "scores for fourth-corner correlation")) else
+        attr(sol$biplot_traits, which = "meaning") <-
+        f_meaning("biplot", scaling, 
+          paste("unstandardized biplot scores of traits for display with biplot", 
+                                          "scores for fourth-corner covariance"))                
     }
     if ("centroids_traits" %in%take) {
       if (!is.list(which_cor)) {

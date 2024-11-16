@@ -8,7 +8,9 @@
 #' @param ...  Other arguments passed to the function (currently ignored).
 #' @param type type of prediction, \code{c("envFromTraits", "traitsFromEnv", "response")} 
 #' for environmental values, values of traits, 
-#' response (expected abundance).
+#' response (expected abundance). 
+#' \code{"SNC"} is equivalent with \code{c("envFromTraits")}.
+#' \code{"CWM"} is equivalent with \code{c("traitsFromEnv")}.
 #' @param newdata Data in which to look for variables with which to predict.
 #' For \code{type = "envFromTraits" or "traitsFromEnv"},
 #' \code{newdata} is a data frame of trait and environmental values, respectively, 
@@ -17,7 +19,7 @@
 #' For \code{type = "response"}, newdata is a list of two data frames with 
 #' trait and environmental values in this order, \emph{e.g.} 
 #' \code{list(traits = dataTraits, env = dataEnv)}.
-#' @param rank rank or number of axes to use. Default "full" for all axes 
+#' @param rank rank (number of axes to use). Default "full" for all axes 
 #' (no rank-reduction).
 #' @param weights list of weights of species and of sites in \code{newdata} when
 #' \code{type = "response"}, else ignored (default NULL
@@ -31,8 +33,7 @@
 #' Variables that are in the model but not in \code{newdata} are set to their 
 #' weighted means in the training data. Predictions are thus at the (weighted)
 #' mean of the quantitative variables not included. Predictions with 
-#' not-included factors are at the weighted mean (none of the factor effects 
-#' are included).
+#' not-included factors are at the reference level (the first level of the factor).
 #'
 #' For \code{type = "response"} and non-null \code{newdata}, the species weights of 
 #' the training are used; the site weights are taken equal. Many of the 
@@ -53,27 +54,25 @@
 #' @export
 predict.dcca <- function(object,
                          ...,
-                         type = c("envFromTraits", "traitsFromEnv", "response"),
+                         type = c("envFromTraits", "traitsFromEnv", "response", 
+                                  "SNC", "CWM"),
                          rank = "full",
                          newdata = NULL, weights = NULL) {
   type <- match.arg(type)
-  if (rank == "full") {
-    rank <- length(object$eigenvalues)
-  }
+  if (rank == "full") rank <- length(object$eigenvalues)
   if (type == "response") {
     if (is.null(newdata)) {
-      newdata <- list(NULL, NULL)
-    }
-    newdata1 <- list(
+      newdata <- list(traits = object$data$dataTraits, env = object$data$dataEnv)
+      weights <- object$weights
+    } else {
+      if (is.list(newdata)&& length(newdata)==2) {
+        newdata <- list(
       # env prediction requires trait data
-      traits = check_newdata(object, newdata[[1]], "envFromTraits"), 
+        traits = newdata[[1]], 
       # trait prediction requires env data
-      env = check_newdata(object, newdata[[2]], "traitsFromEnv") 
-    )
-  } else if (type %in% c("envFromTraits", "traitsFromEnv")) {
-    newdata1 <- check_newdata(object, newdata, type)
-  }
-  if (type == "response"){
+        env =  newdata[[2]])
+      } else stop("For prediction of response," ,
+              " newdata must be a list of trait and env data")
       if (is.null(weights)) weights = list(species = NULL, sites = NULL)
       if (is.null(weights[[1]])) weights$species <- 
           rep(1/nrow(newdata1[["traits"]]), nrow(newdata1[["traits"]]))
@@ -91,11 +90,18 @@ predict.dcca <- function(object,
         warning("length of weights for sites does not match new environment data. ",
                 "Site weights reset to equal weights.\n")
       }
+    }
+  } else {
+    if (is.null(newdata)) {
+      if (type %in% c("traitsFromEnv","SNC") )newdata <- object$data$dataEnv else
+        newdata <- object$data$dataTraits
+    }
   }
+  
   ret <- switch(type,
-                envFromTraits = predict_env(object, newdata1, rank),
-                traitsFromEnv = predict_traits(object, newdata1, rank),
-                response = predict_response(object, newdata1, rank, weights)
+                envFromTraits = predict_env(object, newdata, rank),
+                traitsFromEnv = predict_traits(object, newdata, rank),
+                response = predict_response(object, newdata, rank, weights)
   )
   return(ret)
 }

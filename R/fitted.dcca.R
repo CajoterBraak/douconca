@@ -11,7 +11,7 @@
 #' @param type type of prediction, \code{c( "CWM","SNC", "response")} 
 #' for environmental values, values of traits, 
 #' response (expected abundance).
-#' @param rank rank or number of axes to use. Default "full" for all axes 
+#' @param rank rank (number of axes to use). Default "full" for all axes 
 #' (no rank-reduction).
 #' 
 #' @details
@@ -35,24 +35,18 @@ fitted.dcca <- function(object,
                          rank = "full") {
   newdata <- NULL
   type <- match.arg(type)
-  if (rank == "full") {
-    rank <- length(object$eigenvalues)
-  }
+  if (rank == "full") rank <- length(object$eigenvalues)
   if (type == "response") {
-
       newdata1 <- list(
       # env prediction requires trait data
-      traits = check_newdata(object, newdata, "envFromTraits"), 
+      traits = object$data$dataTraits, 
       # trait prediction requires env data
-      env = check_newdata(object, newdata, "traitsFromEnv") 
-    )
-  } else if (type %in% c("CWM", "SNC")) {
-    if (type== "CWM") type1 = "traitsFromEnv" else type1 = "envFromTraits"
-    newdata1 <- check_newdata(object, newdata=NULL, type1)
-  }
+      env = object$data$dataEnv) 
+  } 
+
   ret <- switch(type,
-                SNC      = predict_env(object, newdata1, rank),
-                CWM      = predict_traits(object, newdata1, rank),
+                SNC      = predict_env(object,  object$data$dataTraits, rank),
+                CWM      = predict_traits(object, object$data$dataEnv, rank),
                 response = predict_response(object, newdata1, rank, object$weights)
   )
   if (type =="response"){
