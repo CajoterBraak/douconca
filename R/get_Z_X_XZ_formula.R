@@ -32,9 +32,10 @@ get_Z_X_XZ_formula <- function(formula,
   # get formulas and focal and conditioning_factors from a formula
   # with optional data to determine which variables are factors
   trms <- delete.response(terms(formula, specials = "Condition", 
-                        data=data, keep.order = TRUE))
-  trmLabs <- rownames(attr(trms, "factors"))
-  condId <- attr(trms, "specials")$Condition
+                                data = data, keep.order = TRUE))
+  trmLabs <- colnames(attr(trms, "factors"))
+  condLabs <- rownames(attr(trms, "factors"))[attr(trms, "specials")$Condition]
+  condId <- which(trmLabs %in% condLabs)
   if (!length(condId)) {
     condTrms <- NULL
     formula_Z <- ~1
@@ -44,13 +45,13 @@ get_Z_X_XZ_formula <- function(formula,
     condTrms <- attr(terms(formula_Z), "term.labels")
     trmLabs <- trmLabs[-condId]
   }
-  formula_X0 <- reformulate(trmLabs, intercept = FALSE)
+  #formula_X0 <- reformulate(trmLabs, intercept = FALSE)
   formula_X1 <- reformulate(trmLabs, intercept = TRUE)
-  formula_XZ <- reformulate(c(condTrms, trmLabs), intercept = TRUE)
-  focal_nams <- all.vars(formula_X0)
+  formula_XZ <- reformulate(unique(c(condTrms, trmLabs)), intercept = TRUE)
+  focal_nams <- all.vars(formula_X1)
   condi_nams <- all.vars(formula_Z) 
   if (!is.null(data)) {
-    mff <- model.frame(formula_X0, data = data)
+    mff <- model.frame(formula_X1, data = data)
     trmsf <- attr(mff, "terms")
     focal_factor <- all.vars(trmsf)[attr(trmsf, "dataClasses") == "factor"]
     mfc <- model.frame(formula_Z, data = data)
