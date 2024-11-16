@@ -7,7 +7,7 @@
 \method{predict}{dcca}(
   object,
   ...,
-  type = c("envFromTraits", "traitsFromEnv", "response"),
+  type = c("envFromTraits", "traitsFromEnv", "response", "SNC", "CWM"),
   rank = "full",
   newdata = NULL,
   weights = NULL
@@ -20,9 +20,11 @@
 
 \item{type}{type of prediction, \code{c("envFromTraits", "traitsFromEnv", "response")} 
 for environmental values, values of traits, 
-response (expected abundance).}
+response (expected abundance). 
+\code{"SNC"} is equivalent with \code{c("envFromTraits")}.
+\code{"CWM"} is equivalent with \code{c("traitsFromEnv")}.}
 
-\item{rank}{rank or number of axes to use. Default "full" for all axes 
+\item{rank}{rank (number of axes to use). Default "full" for all axes 
 (no rank-reduction).}
 
 \item{newdata}{Data in which to look for variables with which to predict.
@@ -54,8 +56,7 @@ from trait and environment data.
 Variables that are in the model but not in \code{newdata} are set to their 
 weighted means in the training data. Predictions are thus at the (weighted)
 mean of the quantitative variables not included. Predictions with 
-not-included factors are at the weighted mean (none of the factor effects 
-are included).
+not-included factors are at the reference level (the first level of the factor).
 
 For \code{type = "response"} and non-null \code{newdata}, the species weights of 
 the training are used; the site weights are taken equal. Many of the 
