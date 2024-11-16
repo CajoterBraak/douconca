@@ -42,19 +42,31 @@ f_env_axes <- function(out,
   QR <- get_QR(out)
   res <- calculate_b_se_tval(QR, y = CWM, w = w, scale2 = 0, name = "CWM")
   c_env_normed <- res$coef_normed
+  # NB: if vegan::rda, then SDS is a factor sqrt(Nobs) too large
+  if (diff(range(w)) < 1.0e-4 / length(w)) 
+    c_env_normed[, 2] <-c_env_normed[, 2]/sqrt(length(w))
   attr(c_env_normed, which = "warning") <-
     "The t-values are optimistic, i.e. an underestimate of their true absolute value"
+  # NB: the
+  #fX <- get_Z_X_XZ_formula(formulaEnv, dataEnv)$formula_XZ
+  #envXZ <- model.matrix(formula = fX, data = dataEnv)
+  #msdXZ <- mean_sd_w(envXZ, w = w)
+  #if (abs(c_env_normed[, 2] - msdXZ$sd[1,]>0.0006)) stop("SDS wrong")
+  ###NB end
+
+      
+  
   # correlations of the dataEnv with the CWMs wrt the  axes
   if (which_cor[1] == "in model"){
     fX <- get_Z_X_XZ_formula(formulaEnv, dataEnv)$formula_X1
-    #env0 <- model.matrix(fX, data = dataEnv)
-    env0 <- modelmatrixI(formula= fX , data= dataEnv, XZ = FALSE)
   } else {
     whichc <- which_cor
-    #env0 <- model.matrix(~.-1, data = dataEnv[, whichc, drop = FALSE])
     fX <- as.formula(paste("~", paste0(whichc, collapse = "+")))
-    env0 <- modelmatrixI(formula= fX , data= dataEnv, XZ = FALSE)
   }
+  env0 <- modelmatrixI(formula = fX, data = dataEnv, XZ = FALSE)
+  msd <- mean_sd_w(env0, w = w)
+  #nams <- intersect(rownames(c_env_normed), colnames(msd$sd))
+  #c_env_normed[nams,"SDS"] <- msd$sd[1, nams]
   Cor_Env_CWM <- wcor(env0, CWM, w = w)
   colnames(Cor_Env_CWM) <- paste0("CWM-ax", seq_len(ncol(Cor_Env_CWM)))
   attr(Cor_Env_CWM, which = "meaning") <- 
@@ -62,7 +74,7 @@ f_env_axes <- function(out,
   out2 <- list(site_scores = list(site_scores_unconstrained = res$y,
                                   lc_env_scores = res$fitted), 
                c_env_normed = c_env_normed, 
-               b_se = res$b_se, 
+               b_se = res$b_se, msd = msd,
                R2_env = res$R2, 
                correlation = Cor_Env_CWM)
   return(out2)
