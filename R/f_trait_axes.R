@@ -130,6 +130,7 @@ f_trait_axes <- function(out,
     fX <- as.formula(paste("~", paste0(whichc, collapse = "+")))
   }
   traits0 <- modelmatrixI(formula= fX , data = out$data$dataTraits, XZ = FALSE)
+  msd <- mean_sd_w(traits0, w = out$weights$columns)
   corTraitSNC <- wcor(traits0, SNC, w = out$weights$columns)
   colnames(corTraitSNC) <- paste0("SNC-ax", seq_len(ncol(corTraitSNC)))
   attr(corTraitSNC, which = "meaning") <- 
@@ -138,7 +139,7 @@ f_trait_axes <- function(out,
                                      lc_traits_scores = res$fitted), 
                correlation = corTraitSNC, 
                c_traits_normed = c_traits_normed, 
-               b_se = res$b_se, 
+               b_se = res$b_se, msd = msd,
                R2_traits = res$R2, 
                step2 = step2)
   return(out2)
