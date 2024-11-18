@@ -75,18 +75,18 @@ predict.dcca <- function(object,
               " newdata must be a list of trait and env data")
       if (is.null(weights)) weights = list(species = NULL, sites = NULL)
       if (is.null(weights[[1]])) weights$species <- 
-          rep(1/nrow(newdata1[["traits"]]), nrow(newdata1[["traits"]]))
+          rep(1/nrow(newdata[["traits"]]), nrow(newdata[["traits"]]))
       if (is.null(weights[[2]])) weights$sites  <- 
-          rep(1/nrow(newdata1[["env"]]),nrow(newdata1[["env"]]))
-      if (!length(weights[[1]])== nrow(newdata1[["traits"]])){
+          rep(1/nrow(newdata[["env"]]),nrow(newdata[["env"]]))
+      if (!length(weights[[1]])== nrow(newdata[["traits"]])){
         weights[[1]] <- 
-          rep(1/nrow(newdata1[["traits"]]), nrow(newdata1[["traits"]]))
+          rep(1/nrow(newdata[["traits"]]), nrow(newdata[["traits"]]))
         warning("length of weights for species does not match new trait data. ",
                 "Species weights reset to equal weights.\n")
       }
-      if (!length(weights[[2]])== nrow(newdata1[["env"]])){
+      if (!length(weights[[2]])== nrow(newdata[["env"]])){
         weights[[2]] <- 
-          rep(1/nrow(newdata1[["env"]]), nrow(newdata1[["env"]]))
+          rep(1/nrow(newdata[["env"]]), nrow(newdata[["env"]]))
         warning("length of weights for sites does not match new environment data. ",
                 "Site weights reset to equal weights.\n")
       }
