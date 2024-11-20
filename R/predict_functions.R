@@ -90,7 +90,7 @@ set_newdata <- function(object,newdata, type, means_mis) {
     ff_get <- get_Z_X_XZ_formula(object$formulaTraits, object$data$dataTraits)
     #if (is.null(newdata))   newdata1 <- object$data$dataTraits else newdata1 <-newdata
     trainingData <- object$data$dataTraits
-  }
+  } else stop("type misspecified")
   missing_names <- !ff_get$all_nams %in% names(newdata)
   if (any(missing_names)){
     missing_names <- ff_get$all_nams[missing_names]
@@ -176,14 +176,16 @@ predict_response <- function(object,
 #' @noRd
 #' @keywords internal
 predict_regr_all <- function(object, 
-                             rank) {
+                             rank, normed = TRUE) {
   # regresion coefficient of transformed response on env and trait predictors
   # value is env by trait
-  sc <- scores(object, choices = seq_len(rank), display = c("reg", "reg_traits"))
+  sc <- scores(object, choices = seq_len(rank), display = c("reg", "reg_traits"),
+               normed = normed)
   reg <-sc[["regression_traits"]][,-c(1,2,3), drop = FALSE]%*% 
     t(sc[["regression"]][,-c(1,2,3), drop = FALSE])
-  attr(reg, which = "meaning") <-
-  "regression coefficients for traits and environment to predict the response."
+  if (normed)standardized <- "standardized " else standardized <- ""
+  attr(reg, which = "meaning") <-paste0(standardized,
+  "regression coefficients for traits and environment to predict the response.")
   return(reg)
 }
 #' @noRd
@@ -196,4 +198,38 @@ predict_fc <- function(object,
   fc <- sc[["biplot_traits"]] %*% t(sc[["biplot"]])
   attr(fc, which = "meaning") <- "fourth-corner correlation"
   return(fc)
+}
+predict_lc_traits <- function(object, 
+                              newdata1,
+                              rank, scaling = "sym") {
+  # newdata1 must be a list two dataframes, element 1: trait and  element 2 env data
+  sc <- scores_dcca(object, 
+                    choices = seq_len(rank), display = c("reg_traits", 
+                    "lc_traits"), scaling = scaling,    normed = FALSE)
+  B_traits_regr <- sc[["regression_traits"]][, -c(1, 2, 3), drop = FALSE] 
+  B_traits_regr[is.na(B_traits_regr)]<-0
+  newdata2 <- set_newdata( object,newdata1,type = "envFromTraits", 
+                           means_mis = sc[["regression_traits"]][,"Avg"])
+  pred_scaled_species <- subtract_mean(newdata2,
+                                       mean0 = sc[["regression_traits"]][,"Avg"])
+  pred_scaled_species <- 
+    pred_scaled_species %*% B_traits_regr
+  return(pred_scaled_species)
+}
+
+predict_lc <- function(object, 
+                       newdata1,
+                       rank, scaling = "sym") {
+  # newdata1 must be a list two dataframes, element 1: trait and  element 2 env data
+  sc <- scores_dcca(object, 
+                    choices = seq_len(rank), display = c("reg", "lc"), scaling = scaling,
+                    normed = FALSE)
+  B_env_regr <- sc[["regression"]][, -c(1, 2, 3), drop = FALSE]
+  B_env_regr[is.na(B_env_regr)]<-0
+  newdata2 <- set_newdata( object,newdata1,type = "traitsFromEnv", 
+                           means_mis = sc[["regression"]][,"Avg"])
+  pred_scaled_sites <- subtract_mean(newdata2, 
+                                     mean0 = sc[["regression"]][,"Avg"])
+  pred_scaled_sites <- pred_scaled_sites%*% B_env_regr
+  return(pred_scaled_sites)
 }

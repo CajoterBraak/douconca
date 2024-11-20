@@ -6,7 +6,7 @@
 #' \code{\link[vegan]{scores}} function, in particular 
 #' \code{\link[vegan]{scores.cca}}, with the additional results such as 
 #' regression coefficients and linear combinations of traits 
-#' \code{('regr_traits','lc_traits')}. All scores from CA obey the so called
+#' \code{('reg_traits', 'lc_traits')}. All scores from CA obey the so called
 #' transition formulas and so do the scores of CCA and dc-CA. The differences
 #' are, for CCA, that the linear combinations of environmental variables (the 
 #' \emph{constrained} site scores) replace the usual (\emph{unconstrained}) 
@@ -36,6 +36,9 @@
 #' unit weighted mean square or with 3 both are scaled symmetrically 
 #' to weighted mean squares equal to the square root of eigenvalues. Negative 
 #' values are treated as the corresponding positive ones by \code{abs(scaling)}.
+#' @param normed logical (default \code{TRUE}) giving standardized regression
+#' coefficients and biplot scores. When \code{FALSE}, (regular)
+#' regression coefficients and (unstandardized) biplot scores. 
 #' @param tidy Return scores that are compatible with \code{ggplot2}: all 
 #' scores are in a single data.frame, score type is identified by factor 
 #' variable \code{score}, the names by variable \code{label}, and species 
@@ -122,7 +125,8 @@ scores.dcca <- function(x,
                         display = "all", 
                         scaling = "sym", 
                         which_cor = "in model", 
+                        normed = TRUE,
                         tidy = FALSE) {
  scores_dcca(x, choices = choices, display = display, scaling = scaling, 
-             which_cor = which_cor, tidy = tidy, ...)
+             which_cor = which_cor, normed = normed, tidy = tidy, ...)
 }

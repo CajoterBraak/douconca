@@ -26,6 +26,9 @@
 #' unit weighted mean square or with 3 both are scaled symmetrically 
 #' to weighted mean squares equal to the square root of eigenvalues. Negative 
 #' values are treated as the corresponding positive ones by \code{abs(scaling)}.
+#' @param normed logical (default \code{TRUE}) giving standardized regression
+#' coefficients and biplot scores. When \code{FALSE}, (regular)
+#' regression coefficients and (unstandardized) biplot scores. 
 #' @param tidy Return scores that are compatible with \code{ggplot2}: all 
 #' variable \code{score}, the names by variable \code{label}. See
 #' weights (in \code{\link{dc_CA}} are in variable \code{weight}. See 
@@ -87,7 +90,8 @@ scores.wrda <- function(x,
                         display = "all", 
                         scaling = "sym", 
                         which_cor = "in model", 
+                        normed = TRUE,                        
                         tidy = FALSE) {
   scores_dcca(x, choices = choices, display = display, scaling = scaling,
-              which_cor = which_cor, tidy = tidy, ...)
+              which_cor = which_cor, normed = normed, tidy = tidy, ...)
 }

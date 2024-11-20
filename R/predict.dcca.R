@@ -6,15 +6,18 @@
 #'
 #' @param object return value of \code{\link{dc_CA}}.
 #' @param ...  Other arguments passed to the function (currently ignored).
-#' @param type type of prediction, \code{c("envFromTraits", "traitsFromEnv", "response")} 
+#' @param type type of prediction, \code{c("envFromTraits", "traitsFromEnv",
+#' "response", "lc", "lc_traits")} 
 #' for environmental values, values of traits, 
-#' response (expected abundance). 
+#' response (expected abundance) and constrained scores for sites and species. 
 #' \code{"SNC"} is equivalent with \code{c("envFromTraits")}.
 #' \code{"CWM"} is equivalent with \code{c("traitsFromEnv")}.
+
 #' @param newdata Data in which to look for variables with which to predict.
-#' For \code{type = "envFromTraits" or "traitsFromEnv"},
+#' For \code{type = "envFromTraits" or "traitsFromEnv"} or 
+#'  \code{type = "lc_traits" or "lc"},
 #' \code{newdata} is a data frame of trait and environmental values, respectively, 
-#' which are used for the prediction. 
+#' which are used for the prediction or the calculation of scores. 
 #' If omitted, fitted values are generated (use \code{\link{fitted.dcca}} instead).
 #' For \code{type = "response"}, newdata is a list of two data frames with 
 #' trait and environmental values in this order, \emph{e.g.} 
@@ -28,7 +31,8 @@
 #' order, with traits of three new species in newdata[[1]] and 
 #' environmental values (and levels of factors) of four new sites in newdata[[2]]. 
 #' Species weights are scaled to a sum of one.
-#'
+#' @inheritParams scores.dcca
+#' 
 #' @details
 #' Variables that are in the model but not in \code{newdata} are set to their 
 #' weighted means in the training data. Predictions are thus at the (weighted)
@@ -55,9 +59,11 @@
 predict.dcca <- function(object,
                          ...,
                          type = c("envFromTraits", "traitsFromEnv", "response", 
-                                  "SNC", "CWM"),
+                                  "SNC", "CWM","lc","lc_traits"),
                          rank = "full",
-                         newdata = NULL, weights = NULL) {
+                         newdata = NULL, weights = NULL,
+                         scaling = "symmetric"
+                         ) {
   type <- match.arg(type)
   if (rank == "full") rank <- length(object$eigenvalues)
   if (type == "response") {
@@ -97,11 +103,16 @@ predict.dcca <- function(object,
         newdata <- object$data$dataTraits
     }
   }
-  
+
   ret <- switch(type,
                 envFromTraits = predict_env(object, newdata, rank),
                 traitsFromEnv = predict_traits(object, newdata, rank),
-                response = predict_response(object, newdata, rank, weights)
+                SNC = predict_env(object, newdata, rank),
+                CWM = predict_traits(object, newdata, rank),
+                response = predict_response(object, newdata, rank, weights),
+                lc = predict_lc(object, newdata, rank, scaling = scaling),
+                lc_traits = predict_lc_traits(object, newdata, rank, 
+                                              scaling = scaling)
   )
   return(ret)
 }
