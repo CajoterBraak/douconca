@@ -11,6 +11,7 @@
   display = "all",
   scaling = "sym",
   which_cor = "in model",
+  normed = TRUE,
   tidy = FALSE
 )
 }
@@ -41,6 +42,10 @@ values are treated as the corresponding positive ones by \code{abs(scaling)}.}
 frames for which inter-set correlations must calculated. Default: a 
 character ("in_model") for all predictors in the model, including collinear 
 variables and levels.}
+
+\item{normed}{logical (default \code{TRUE}) giving standardized regression
+coefficients and biplot scores. When \code{FALSE}, (regular)
+regression coefficients and (unstandardized) biplot scores.}
 
 \item{tidy}{Return scores that are compatible with \code{ggplot2}: all 
 variable \code{score}, the names by variable \code{label}. See

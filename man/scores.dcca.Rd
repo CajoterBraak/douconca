@@ -12,6 +12,7 @@
   display = "all",
   scaling = "sym",
   which_cor = "in model",
+  normed = TRUE,
   tidy = FALSE
 )
 }
@@ -44,6 +45,10 @@ values are treated as the corresponding positive ones by \code{abs(scaling)}.}
 names (in this order) in the data frames for which inter-set correlations 
 must calculated. Default: a character ("in_model") for all traits and 
 variables in the model, including collinear variables and levels.}
+
+\item{normed}{logical (default \code{TRUE}) giving standardized regression
+coefficients and biplot scores. When \code{FALSE}, (regular)
+regression coefficients and (unstandardized) biplot scores.}
 
 \item{tidy}{Return scores that are compatible with \code{ggplot2}: all 
 scores are in a single data.frame, score type is identified by factor 
@@ -118,7 +123,7 @@ This function works very much like the \code{vegan}
 \code{\link[vegan]{scores}} function, in particular 
 \code{\link[vegan]{scores.cca}}, with the additional results such as 
 regression coefficients and linear combinations of traits 
-\code{('regr_traits','lc_traits')}. All scores from CA obey the so called
+\code{('reg_traits', 'lc_traits')}. All scores from CA obey the so called
 transition formulas and so do the scores of CCA and dc-CA. The differences
 are, for CCA, that the linear combinations of environmental variables (the 
 \emph{constrained} site scores) replace the usual (\emph{unconstrained}) 
@@ -142,12 +147,12 @@ data("dune_trait_env")
 rownames(dune_trait_env$comm) <- dune_trait_env$comm$Sites
 
 mod <- dc_CA(formulaEnv = ~A1 + Moist + Mag + Use + Manure,
-             formulaTraits = ~.,
+             formulaTraits = ~ SLA + Height + LDMC + Seedmass + Lifespan,
              response = dune_trait_env$comm[, -1],  # must delete "Sites"
              dataEnv = dune_trait_env$envir,
-             # delete "Species", "Species_abbr" from traits and
-             # use all remaining variables due to formulaTraits = ~. (the default)
-             dataTraits = dune_trait_env$traits[, -c(1, 2)])
+             dataTraits = dune_trait_env$traits, verbose = FALSE)
+
+print(mod) # same output as with verbose = TRUE (the default of verbose).
 anova(mod, by = "axis")
 # For more demo on testing, see demo dune_test.r
 

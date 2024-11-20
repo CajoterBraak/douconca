@@ -8,7 +8,8 @@
   object,
   ...,
   type = c("fourth_corner", "all_reg", "env2traits_reg", "traits2env_reg"),
-  rank = "full"
+  rank = "full",
+  normed = TRUE
 )
 }
 \arguments{
@@ -23,8 +24,12 @@ all trait x environmental predictors, environmental predictors only
 and trait predictors only for prediction of the (transformed)
 response, traits and environmental values, respectively.}
 
-\item{rank}{rank or number of axes to use. Default "full" for all axes 
+\item{rank}{rank (number of axes to use). Default "full" for all axes 
 (no rank-reduction).}
+
+\item{normed}{logical (default \code{TRUE}) giving standardized regression
+coefficients and biplot scores. When \code{FALSE}, (regular)
+regression coefficients and (unstandardized) biplot scores.}
 }
 \value{
 a matrix with coefficients. The exact content of the matrix 
