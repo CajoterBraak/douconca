@@ -203,9 +203,12 @@ predict_lc_traits <- function(object,
                               newdata1,
                               rank, scaling = "sym") {
   # newdata1 must be a list two dataframes, element 1: trait and  element 2 env data
+  #
+  # tval_traits in scores_dcca has not other function then
+  # to make sure sc is a list with regression_traits having means (Avg).
   sc <- scores_dcca(object, 
                     choices = seq_len(rank), display = c("reg_traits", 
-                    "lc_traits"), scaling = scaling,    normed = FALSE)
+                    "tval_traits"), scaling = scaling,    normed = FALSE)
   B_traits_regr <- sc[["regression_traits"]][, -c(1, 2, 3), drop = FALSE] 
   B_traits_regr[is.na(B_traits_regr)]<-0
   newdata2 <- set_newdata( object,newdata1,type = "envFromTraits", 
@@ -221,8 +224,11 @@ predict_lc <- function(object,
                        newdata1,
                        rank, scaling = "sym") {
   # newdata1 must be a list two dataframes, element 1: trait and  element 2 env data
+  #
+  # tval in scores_dcca has not other function then
+  # to make sure sc is a list with regression having means (Avg).
   sc <- scores_dcca(object, 
-                    choices = seq_len(rank), display = c("reg", "lc"), scaling = scaling,
+                    choices = seq_len(rank), display = c("reg", "tval"), scaling = scaling,
                     normed = FALSE)
   B_env_regr <- sc[["regression"]][, -c(1, 2, 3), drop = FALSE]
   B_env_regr[is.na(B_env_regr)]<-0

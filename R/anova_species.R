@@ -59,6 +59,7 @@
 anova_species <- function(object, 
                           permutations = 999, 
                           by = NULL ){
+  rpp = TRUE
   if (is.null(object$SNCs_orthonormal_env) && is.null(object$data$Y)) {
     warning("Species level anova requires abundance data or ", 
             "species niche optima (SNCs).\n")
@@ -81,7 +82,7 @@ anova_species <- function(object,
   }
   if (is.null(object$SNCs_orthonormal_env)) {
     formulaEnv <- change_reponse(object$formulaEnv, "object$data$Y", 
-                                 object$data$dataEnv)
+                                            object$data$dataEnv)
     environment(formulaEnv) <- environment()
     step1_sp <- vegan::cca(formulaEnv, data = object$data$dataEnv)
     SNCs_orthonormal_env <- scores(step1_sp, display = "species", 
@@ -99,25 +100,31 @@ anova_species <- function(object,
   sWn <- sqrt(object$weights$columns)
   Yw <- SNCs_orthonormal_env * sWn
   msqr <- msdvif(object$formulaTraits, object$data$dataTraits, 
-                 object$weights$columns)
+                            object$weights$columns)
   Zw <- msqr$Zw
   Xw <- msqr$Xw
   dfpartial = msqr$qrZ$rank
-  # residual predictor permutation
+  if (rpp){
+    randperm <- randperm_eX0sqrtw
+    perm_meth <- "Residualized predictor permutation\n"
+  } else {
+    randperm <- randperm_eY2
+    perm_meth <-  "Residualized response permutation\n"
+  }
   out_tes <- list()
-  out_tes[[1]]  <- randperm_eX0sqrtw(Yw, Xw, Zw, sWn = sWn, 
-                                     permutations = permutations, by = by,
-                                     return = "all")
+  out_tes[[1]]  <- randperm(Yw, Xw, Zw, sWn = sWn, 
+                                permutations = permutations, by = by,
+                                return = "all")
   if (by == "axis") {
     while (out_tes[[1]]$rank > length(out_tes)) {
       Zw <- cbind(Zw, out_tes[[length(out_tes)]]$EigVector1)
       out_tes[[length(out_tes) + 1]] <- 
-        randperm_eX0sqrtw(Yw, Xw, Zw, sWn = sWn, permutations = permutations,
-                          by = by, return = "all")
+        randperm(Yw, Xw, Zw, sWn = sWn, permutations = permutations,
+                     by = by, return = "all")
     }
   }
   f_species <- fanovatable(out_tes, Nobs = N, dfpartial= dfpartial, type= "col", 
-                           calltext = c(object$call))  
+                                      calltext = c(object$call), perm_meth = perm_meth)  
   result <- list(table = f_species, eigenvalues = attr(f_species, "eig"))
   return(result)
 }
@@ -246,7 +253,126 @@ randperm_eX0sqrtw <- function(Y,
   }
   return(res)
 }
-
+#' @noRd
+#' @keywords internal
+#permutation.type = Y = Y2
+randperm_eY2 <- function(Y,
+                         X, 
+                         Z = matrix(1, nrow = nrow(Y), ncol = 1), 
+                         by = NULL,
+                         sWn = rep(1, nrow(Y)), 
+                         permutations = permute::how(nperm = 999),
+                         return = "pval") {
+  # for getting weighted Y-permutation (residualized response permutation), 
+  #    permuting the weighted Y-residuals of the original weighted analysis, 
+  #    in the calling function
+  # Y X Z should have been transformed to LS in the calling function by
+  #  by multiplication by sWn = sqrt(w/sum(w)) inc. intercept!
+  #  so that this function does not need weights.
+  #
+  # Note that the first column of Z (Z_intercept) is
+  #         1 in an unweighted analysis and 
+  #   sqrt(w) in a    weighted analysis.
+  #
+  # This version gives  the correct rrp p value 
+  # pval     :: rss_perm <-   sstot_eY                - ssZ_perm - ssX_perm
+  #
+  # preparations and data value
+  
+  EPS <- sqrt(.Machine$double.eps) # for permutation P-values
+  # preparations and data value
+  if (by =="axis") mysvd <- svd else mysvd <- dummysvd
+  N <- nrow(Y)
+  if (is.matrix(permutations)) {
+    # matrix: check that it *strictly* integer
+    if (!is.integer(permutations) && !all(permutations == round(permutations))) {
+      stop("Permutation matrix must be strictly integers: use round().\n")
+    }
+    perm.mat <- permutations
+  } else if (inherits(permutations, "how")){
+    #perm.mat creation
+    perm.mat <- permute::shuffleSet(N, control = permutations)
+  }
+  nrepet <- nrow(perm.mat)
+  
+  qrZ <- qr(Z)
+  # Y-residuals from Y~Z under null model
+  eY <- qr.resid(qrZ, Y)
+  sstot_eY <- sum(eY^2)
+  # orthogonalize X with respect to Z giving eX
+  # eX = X_orth = residuals of X from X~Z
+  # eX <- unweighted_lm_Orthnorm(X, Z_orth)
+  eX <- qr.resid(qrZ, X)
+  qreX <- qr(eX)
+  Yfit_X <- qr.fitted(qreX, eY)
+  ssX0 <- sum(Yfit_X ^ 2)
+  svd_Yfit_X <- svd(Yfit_X)
+  ssX_eig1 <- svd_Yfit_X$d[1] ^ 2
+  EigVector1 <- svd_Yfit_X$u[, 1, drop = FALSE]
+  rank <- sum(svd_Yfit_X$d / sum(svd_Yfit_X$d) > 1.e-3)
+  sstot <- sum(eY ^ 2)
+  p_eX <- qr(eX)$rank
+  df_cor <- (nrow(eY)- qrZ$rank - p_eX) / p_eX  #(N-nz-nx-1)/nx
+  F0 <- ssX0 / (sstot - ssX0) * df_cor
+  F0_eig1 <- ssX_eig1 / (sstot -  ssX0) * (nrow(eY)- qrZ$rank - p_eX)
+  ss_int_perm <- ssX_perm <- ssX_eig1_perm <-  ssZ_perm <-numeric(nrepet)
+  #
+  for (i in seq_len(nrepet)){
+    # permute residual Y
+    i_perm  <- perm.mat[i,]
+    eY_perm <-    eY[i_perm,, drop = FALSE]
+    #eYfit_permInt <- unweighted_lm_Orthnorm_fit(eY_perm,Z_intercept)
+    #eYfit_permZ <- unweighted_lm_Orthnorm_fit(eY_perm,Z_orth)
+    eYfit_permZ <- qr.fitted(qrZ, eY_perm)
+    # note that eX and Z stay orthogonal
+    #eYfit_permX <- unweighted_lm_Orthnorm_fit(eY_perm,eX)
+    eYfit_permX <- qr.fitted(qreX, eY_perm)
+    # ss_int_perm[i] <- sum(eYfit_permInt^2)
+    ssZ_perm[i] <- sum(eYfit_permZ^2)
+    ssX_perm[i] <- sum(eYfit_permX^2)
+    ssX_eig1_perm[i] <- mysvd(eYfit_permX)$d[1]
+  }
+  ssX_eig1_perm <- ssX_eig1_perm ^ 2
+  if (by == "axis")  {
+    ssX_perm <- ssX_eig1_perm
+    ssX0 <- ssX_eig1
+    F0 <- F0_eig1
+  } else ssX_eig1_perm <- NA
+  rss_perm <-    sstot_eY  - ssZ_perm - ssX_perm 
+  Fval <- ssX_perm/rss_perm * df_cor
+  isna.r <-  sum(is.na(Fval))
+  pval <- (sum(Fval >= (F0 - EPS), na.rm = TRUE) + 1)  / (nrepet- isna.r  + 1)
+  #  parts <- cbind(Fval, sstot_perm=sstot_eY, ss_int_perm, rss_perm, 
+  #                ssX_perm, ssZ_perm, ssX_eig1_perm, rss_eig1_perm,Fval_eig1)
+  # return(list(pval = c(pval_eig1= pval_eig1, pval = pval,pval_Can3=pval3),
+  #             Fvals = cbind(Fval_eig1,Fval, Fval3), F0 = c(F0_eig1,F0),
+  #             eX= eX, ssX = c(eig1 = ssX_eig1,trace = ssX),ssGz = sstot_eY,
+  #             ssZ = ssZ, ssInt=ssInt, sstot = sstot, rank = rank, eig = svd_Yfit$d^2,
+  #             parts = parts,EigVector1 = EigVector1))
+  # 
+  attr(pval, "test") <- by
+  if (return == "pval") {
+    res <- pval
+  } else {
+    eig <- svd_Yfit_X$d
+    eig <- (eig[eig > EPS]) ^ 2
+    res <- list(pval = pval, Fval = Fval, F0 = F0,
+                ss = c(Model = ssX0, Residual = sstot - ssX0),
+                df = c(Model = p_eX, Residual = nrow(eY) - qrZ$rank - p_eX),
+                rank = rank, R2.perm = ssX_perm / sstot,
+                eig1.perm = ssX_eig1_perm,
+                eig = eig, EigVector1 = EigVector1)
+    if (is.matrix(permutations)) {
+      attr(perm.mat, "control") <- 
+        structure(list(within = list(type = "supplied matrix"),
+                       nperm = nrow(perm.mat)), 
+                  class = "how")
+    }
+    attr(res, "seed") <- attr(perm.mat, "seed")
+    attr(res, "control") <-  attr(perm.mat, "control")
+  }
+  return(res)
+}
 #' @noRd
 #' @keywords internal
 unweighted_lm_Orthnorm <- function(Y, 
@@ -335,7 +461,8 @@ howHead <- function(x,
 
 #' @noRd
 #' @keywords internal
-fanovatable <- function(out_tes, Nobs, dfpartial, type= "dcCA", calltext, eig)  {
+fanovatable <- function(out_tes, Nobs, dfpartial, type= "dcCA", calltext,  
+                        perm_meth = "Residualized predictor permutation\n")  {
   # type = "cca" ,"wrda",  "row", "col" 
   
   if (type == "wrda")  methd <- "wRDA" else if (type == "cca") methd <- "cca" else methd <- "dcCA"
@@ -378,7 +505,7 @@ fanovatable <- function(out_tes, Nobs, dfpartial, type= "dcCA", calltext, eig)  
   else if (type == "cca") txt <- "Permutation test for canonical correspondence analysis\n"
   header <- paste0(txt,
                    object1,
-                   "Residualized predictor permutation\n",
+                   perm_meth,
                    howHead(attr(out_tes[[1]], "control")))
   f_sites <- structure(axsig_dcCA_sites, heading = header, 
                        control = attr(out_tes[[1]], "control"),

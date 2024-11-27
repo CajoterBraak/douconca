@@ -99,11 +99,17 @@ fCWM_SNC <- function(response = NULL,
   out <- check_data_dc_CA(formulaEnv, formulaTraits,
                           response, dataEnv, dataTraits, divideBySiteTotals, call)
   # CWM and CWM ortho
-  ms <- f_wmean(out$formulaTraits, tY = out$data$Y, out$data$dataTraits,
-                weights=out$weights, name= "CWM")
+  ms <- try(f_wmean(out$formulaTraits, tY = out$data$Y, out$data$dataTraits,
+                weights=out$weights, name= "CWM"))
+  if (inherits(ms, "try-error")) {
+    stop("singular trait data. No CWMs generated.\n") 
+  }   
   # SNC and SNC ortho
-  mt <- f_wmean(out$formulaEnv, tY = t(out$data$Y), out$data$dataEnv,
-                weights=out$weights, name= "SNC")
+  mt <- try(f_wmean(out$formulaEnv, tY = t(out$data$Y), out$data$dataEnv,
+                weights=out$weights, name= "SNC"))
+  if (inherits(mt, "try-error")) {
+    stop("singular environment data. No SNCs generated\n") 
+  } 
   out <- list(
     CWM = ms$wmean,
     SNC = mt$wmean,
@@ -333,7 +339,7 @@ checkCWM2dc_CA <- function(object,
                                     nrow(object$data$dataTraits))
     }
   }
-  # make sure columns isthe first in the list...
+  # make sure columns is the first in the list...
   object$weights <- list(columns = object$weights$columns, rows = object$weights$rows)
   object$weights <- lapply(object$weights, function(x)x/sum(x))
   # change ~. to names
@@ -359,19 +365,22 @@ checkCWM2dc_CA <- function(object,
 f_wmean <- function(formulaEnv, tY, dataEnv, weights, name = "SNC"){
   # SNC and SNC ortho or 
   # CWM and CWM ortho if name = "CwM" from formulaTraits, Y and dataTraits
-  # Beware: sum(tY) should be 1.
+  tot <- sum(tY)
   formulaEnv <- change_reponse(formulaEnv, "Y", dataEnv)
   if (name == "SNC")  w <- weights$rows else w <- weights$columns
   msqr <- msdvif(formulaEnv, dataEnv, w, XZ = FALSE)
   sWn <- sqrt(w)
   X <- msqr$Xw / sWn 
   msd <- msqr$meansdvif
-  env2T_ortho <- qr.R(msqr$qrX)
   E_ortho <- qr.Q(msqr$qrX) / sWn
-  SNC2SNC_ortho <- solve(qr.R(msqr$qrX))
   # so Q represents the orthonormalized predictors
   if (name == "SNC")  w <- weights$columns else w <- weights$rows
-  SNC <- diag(1 / w) %*% as.matrix(tY) %*% X
+  SNC <- diag(1 /( tot * w)) %*% as.matrix(tY) %*% X
+  SNC2SNC_ortho <- try(solve(qr.R(msqr$qrX)))
+  if (inherits(SNC2SNC_ortho, "try-error")) {
+    warning("singular environment data. Env_explain not available.\n") 
+    SNC2SNC_ortho <- matrix(NA,nrow = ncol(SNC), ncol= 1)
+  }
   SNCs_orthonormal_env <- SNC %*% SNC2SNC_ortho
   env_explain <- sum(SNCs_orthonormal_env ^ 2 * w)
   SNC <- SNC + rep(1, nrow(SNC)) %*% matrix(msd[, 1], nrow = 1)
@@ -446,14 +455,16 @@ check_data_dc_CA <- function(formulaEnv, formulaTraits,
   rownames(dataEnv) <- rownames(response)
   rownames(dataTraits) <- colnames(response)
   # end of check
+  TotR <- rowSums(response)
   if (divideBySiteTotals) {
     response <- response / (TotR %*% t(rep(1, ncol(response))))
+    TotR <- rep(1, length(TotR))
   }
-  Y <- as.matrix(response) / sum(response)
-  TotR <- rowSums(Y)
-  TotC <- colSums(Y)
+  TotC <- colSums(response)
+  TotR <- TotR /sum(TotR)
+  TotC <- TotC/sum(TotC)
   weights <- list(columns = TotC, rows = TotR) # unit sums
-  Nobs <- nrow(Y)
+  Nobs <- nrow(response)
   if (is.null(formulaTraits)) {
     formulaTraits <- as.formula(paste("~", paste0(names(dataTraits),
                                                   collapse = "+")))
@@ -465,8 +476,8 @@ check_data_dc_CA <- function(formulaEnv, formulaTraits,
     warning("formulaEnv set to ~. in fCWMSNC.\n")
   }
   
-  out <- list(formulaEnv= formulaEnv, formulaTraits=formulaTraits,
-              data = list(Y=Y, dataEnv= dataEnv, dataTraits=dataTraits),
+  out <- list(formulaTraits=formulaTraits,formulaEnv= formulaEnv,
+              data = list(Y=response, dataEnv= dataEnv, dataTraits=dataTraits),
               call = call,  weights = weights, Nobs = Nobs)
   return(out)
 }

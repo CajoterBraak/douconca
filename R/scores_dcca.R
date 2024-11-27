@@ -324,7 +324,7 @@ scores_dcca <- function(x,
     } else {
       whichc <- which_cor[[2]]
       if (whichc[1] == "in model") {
-        whichc <- get_Z_X_XZ_formula(formulaEnv)$focal_nams
+        whichc <- get_Z_X_XZ_formula(formulaEnv, dataEnv)$focal_nams
       }
       cor_Env_CWM <- f_env_axes(x, which_cor = whichc)
       sol$correlation <- cor_Env_CWM$correlation[, choices, drop = FALSE]
@@ -339,7 +339,7 @@ scores_dcca <- function(x,
     } else {
       whichc <- which_cor[[2]]
       if (whichc[1] == "in model") {
-        whichc <- get_Z_X_XZ_formula(formulaEnv)$focal_nams
+        whichc <- get_Z_X_XZ_formula(formulaEnv, dataEnv)$focal_nams
       }
       cor_Env_CWM <- f_env_axes(x, which_cor = whichc)
       e_rcor <- cor_Env_CWM$correlation[, choices, drop = FALSE]
@@ -388,7 +388,7 @@ scores_dcca <- function(x,
     } else {
       whichc <- which_cor[[2]]
       if (whichc[1] ==  "in model") {
-        whichc <- get_Z_X_XZ_formula(formulaEnv)$focal_nams
+        whichc <- get_Z_X_XZ_formula(formulaEnv, dataEnv)$focal_nams
       }
     }
     dat <- dataEnv[, whichc, drop = FALSE]
@@ -455,7 +455,7 @@ scores_dcca <- function(x,
       } else {
         whichc <- which_cor[[1]]
         if (whichc[1] == "in model") {
-          whichc <- get_Z_X_XZ_formula(x$formulaTraits)$focal_nams
+          whichc <- get_Z_X_XZ_formula(x$formulaTraits, x$data$dataTraits)$focal_nams
         }
         corTraitSNC <- f_trait_axes(x, which_cor = whichc)
         sol$correlation_traits <- 
@@ -471,7 +471,7 @@ scores_dcca <- function(x,
       } else {
         whichc <- which_cor[[1]]
         if (whichc[1] == "in model") {
-          whichc <- get_Z_X_XZ_formula(x$formulaTraits)$focal_nams
+          whichc <- get_Z_X_XZ_formula(x$formulaTraits, x$data$dataTraits)$focal_nams
         }
         corTraitSNC <- f_trait_axes(x, which_cor = whichc)
         e_rcor <- corTraitSNC$correlation[, choices, drop = FALSE]
@@ -515,11 +515,11 @@ scores_dcca <- function(x,
     }
     if ("centroids_traits" %in%take) {
       if (!is.list(which_cor)) {
-        whichc <- get_Z_X_XZ_formula(x$formulaTraits)$focal_nams
+        whichc <- get_Z_X_XZ_formula(x$formulaTraits, x$data$dataTraits)$focal_nams
       } else {
         whichc <- which_cor[[1]]
         if (whichc[1] == "in model") {
-          whichc <- get_Z_X_XZ_formula(x$formulaTraits)$focal_nams
+          whichc <- get_Z_X_XZ_formula(x$formulaTraits, x$data$dataTraits)$focal_nams
         }
       }
       dat <- x$data$dataTraits[, whichc, drop = FALSE]
