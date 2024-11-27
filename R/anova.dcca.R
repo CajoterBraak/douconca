@@ -49,7 +49,7 @@
 #' 
 #' @return
 #' A list of 3 of structures as from \code{\link[vegan]{anova.cca}}. The 
-#' elements are \code{c("species", "sites", "max")}
+#' elements are \code{c("species", "sites", "maxP")}
 #'
 #' @references
 #' ter Braak, C.J.F. & te Beest, D.E. 2022. Testing environmental effects

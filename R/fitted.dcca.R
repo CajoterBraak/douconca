@@ -16,9 +16,8 @@
 #' 
 #' @details
 #'
-#' If \code{type="response"} the row sums of the \code{object$data$Y} are used
-#' to scale the fit to these sums, otherwise the row weights of the analysis are used
-#' and the overall sum of the fit is 1 (in full rank).
+#' If \code{type="response"} the rowsums of \code{object$data$Y} are used
+#' to scale the fit to these sums.
 #' Many of the predicted response values may be negative, 
 #' indicating expected absences (0) or small expected response values.
 #' 

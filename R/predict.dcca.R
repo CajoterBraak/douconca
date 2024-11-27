@@ -39,8 +39,7 @@
 #' mean of the quantitative variables not included. Predictions with 
 #' not-included factors are at the reference level (the first level of the factor).
 #'
-#' For \code{type = "response"} and non-null \code{newdata}, the species weights of 
-#' the training are used; the site weights are taken equal. Many of the 
+#' For \code{type = "response"}, many of the 
 #' predicted values may be negative, indicating expected absences (0) or small
 #' expected response values.
 #' 

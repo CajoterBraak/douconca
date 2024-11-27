@@ -45,7 +45,7 @@
 #' @return
 #' The default returns a list of CWM, SNC, weights, \code{formulaTraits} and
 #' inertia (weighted variance explained by
-#' the traits and by the environmental variable)
+#' the traits and by the environmental variables)
 #' a list of data with elements \code{dataEnv} and \code{dataTraits}. When 
 #' \code{minimal_output = FALSE}, some more statistics are given that are 
 #' mainly technical or recomputed when the return value is used as 
