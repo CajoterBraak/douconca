@@ -35,7 +35,7 @@ of an svd of permuted data sets.}
 }
 \value{
 A list of 3 of structures as from \code{\link[vegan]{anova.cca}}. The 
-elements are \code{c("species", "sites", "max")}
+elements are \code{c("species", "sites", "maxP")}
 }
 \description{
 \code{anova.dcca} performs the community- and species-level permutation tests

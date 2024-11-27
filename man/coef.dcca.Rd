@@ -33,7 +33,7 @@ regression coefficients and (unstandardized) biplot scores.}
 }
 \value{
 a matrix with coefficients. The exact content of the matrix 
-depends on the \code{type} of coefficient that are asked for.
+depends on the \code{type} of coefficient that is asked for.
 
 Regression coefficients for a response variable 
 are usually column-vectors. 
