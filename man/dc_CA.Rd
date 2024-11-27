@@ -85,18 +85,26 @@ orthonormalized traits.}
 \item{c_traits_normed0}{mean, sd, VIF and (regression) coefficients of 
 the traits that define the dc-CA axes in terms of the 
 traits with t-ratios missing indicated by \code{NA}s for 'tval1'.}
-\item{inertia}{a one-column matrix with four inertias (weighted variances):
+\item{inertia}{a one-column matrix with, at most,
+six inertias (weighted variances):
 \itemize{
 \item total: the total inertia.
 \item conditionT: the inertia explained by the condition in 
 \code{formulaTraits} if present (neglecting row constraints).
-\item traits_explain: the inertia explained by the traits (neglecting the 
-row predictors and any condition in \code{formulaTraits}). This is the 
-maximum that the row predictors could explain in dc-CA (the sum of the 
-following two items is thus less than this value).
-\item conditionE: the trait-constrained inertia explained by the condition 
+\item traits_explain: the trait-structured variation, \emph{i.e.}
+the inertia explained by the traits (without
+constaints on the rows and conditional on the Condition in \code{formulaTraits}).
+This is the  maximum that the row predictors could explain in dc-CA
+(the sum of the last two items is thus less than this value).
+\item env_explain: the environmentally structured variation, \emph{i.e.}
+the inertia explained by the environment (without
+constraints on the columns but conditional on the Condition \code{formulaEnv}). 
+This is the maximum that the column predictors could explain in 
+dc-CA (the item \code{constraintsTE} is thus less than this value).
+The value is \code{NA}, if there is collinearity in the environmental data.
+\item conditionTE: the trait-constrained variation explained by the condition 
 in \code{formulaEnv}.
-\item constraintsTE: the trait-constrained inertia explained by the 
+\item constraintsTE: the trait-constrained variation explained by the 
 predictors (without the row covariates).
 }
 }
