@@ -48,7 +48,7 @@ The morphological \code{traits} are
 \itemize{
 \item \code{SLA}:	    Specific Leaf Area
 \item \code{Height}:	  Canopy height of a shoot
-\item \code{LDMC}:  	  Lead dry matter content
+\item \code{LDMC}:  	  Leaf dry matter content
 \item \code{Seedmass}:	Seed mass
 \item \code{Lifespan}:	Life span. Nominal; annual vs. perennial
 }
