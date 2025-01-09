@@ -42,12 +42,11 @@
 #' variables in the formulas gives an error ('undefined columns selected') 
 #' when the \code{\link{scores}} function is applied.
 #'
-#' @return
+#' @returns
 #' The default returns a list of CWM, SNC, weights, \code{formulaTraits} and
-#' inertia (weighted variance explained by
-#' the traits and by the environmental variables)
-#' a list of data with elements \code{dataEnv} and \code{dataTraits}. When 
-#' \code{minimal_output = FALSE}, some more statistics are given that are 
+#' inertia (weighted variance explained by the traits and by the environmental
+#' variables) a list of data with elements \code{dataEnv} and \code{dataTraits}. 
+#' When  \code{minimal_output = FALSE}, some more statistics are given that are 
 #' mainly technical or recomputed when the return value is used as 
 #' \code{response} in a call to \code{\link{dc_CA}}.
 #'
@@ -96,32 +95,32 @@ fCWM_SNC <- function(response = NULL,
   # If set, formulaTraits, response, dataEnv, dataTraits are not used at all 
   # and have no efffect on the result
   call <- match.call()
-  out <- check_data_dc_CA(formulaEnv, formulaTraits,
-                          response, dataEnv, dataTraits, divideBySiteTotals, call)
+  out <- check_data_dc_CA(formulaEnv, formulaTraits, response, dataEnv, 
+                          dataTraits, divideBySiteTotals, call)
   # CWM and CWM ortho
   ms <- try(f_wmean(out$formulaTraits, tY = out$data$Y, out$data$dataTraits,
-                weights=out$weights, name= "CWM"))
+                    weights=out$weights, name= "CWM"))
   if (inherits(ms, "try-error")) {
-    stop("singular trait data. No CWMs generated.\n") 
-  }   
+    stop("singular trait data. No CWMs generated.\n")    
+  }
   # SNC and SNC ortho
-  mt <- try(f_wmean(out$formulaEnv, tY = t(out$data$Y), out$data$dataEnv,
-                weights=out$weights, name= "SNC"))
+  mt <- try(f_wmean(formulaEnv = out$formulaEnv, tY = t(out$data$Y), out$data$dataEnv,
+                    weights=out$weights, name= "SNC"))
   if (inherits(mt, "try-error")) {
-    stop("singular environment data. No SNCs generated\n") 
+    stop("singular environment data. No SNCs generated\n")   
   } 
   out <- list(
     CWM = ms$wmean,
     SNC = mt$wmean,
     formulaEnv = out$formulaEnv,
     formulaTraits = out$formulaTraits, 
-    inertia = c(traits_explain=ms$explained, env_explain =mt$explained),
+    inertia = c(traits_explain = ms$explained, env_explain = mt$explained),
     weights = out$weights, 
     call = out$call, 
-    data = out$data[-1]# remove Y from out$data
-    )
-if (!minimal_output) { 
-     out <- c(out, list( 
+    data = out$data[-1] # remove Y from out$data
+  )
+  if (!minimal_output) { 
+    out <- c(out, list( 
       CWMs_orthonormal_traits = ms$wmean_ortho,
       SNCs_orthonormal_env = mt$wmean_ortho,
       trans2ortho = list(CWM2CWM_ortho = ms$to_ortho, 
@@ -129,7 +128,7 @@ if (!minimal_output) {
       T_ortho = ms$to_ortho,
       E_ortho = mt$to_ortho
     ))
-}
+  }
   return(out)
 }
 
@@ -243,24 +242,29 @@ checkCWM2dc_CA <- function(object,
   if ("dataTraits" %in% names(object)) {
     if (is.null(dataTraits)) {
       dataTraits<- as.data.frame(object$dataTraits)
-      dataTraits <- as.data.frame(lapply(dataTraits, function(x) {
-        if (is.character(x)) x<- as.factor(x) else x
-        return(x)
+      dataTraits <- as.data.frame(lapply(X = dataTraits, FUN = function(x) {
+        if (is.character(x)) {
+          as.factor(x)
+        } else {
+          x
+        }
       }))
       rownames(dataTraits) <- rownames(object$dataTraits)
       object[["data"]]$dataTraits <- dataTraits
-      
     }
     object$dataTraits <- NULL
   }
   if ("dataEnv" %in% names(object)) {
     if (is.null(dataEnv)) {
       dataEnv<- as.data.frame(object$dataEnv)
-      dataEnv <- as.data.frame(lapply(dataEnv, function(x) {
-        if (is.character(x)) x<- as.factor(x) else x
-        return(x) 
+      dataEnv <- as.data.frame(lapply(X = dataEnv, FUN = function(x) {
+        if (is.character(x)) {
+          as.factor(x)
+        } else {
+          x
+        }
       }))
-      rownames(dataEnv) <- rownames(object$dataEnv)
+      rownames(dataEnv) <- rownames(object$dataEnv)							   
       object[["data"]]$dataEnv <- object$dataEnv
     }
     object$dataEnv<-NULL
@@ -304,30 +308,27 @@ checkCWM2dc_CA <- function(object,
   }
   if (is.null(object$weights)) {
     warning("no weights supplied with response$CWM; weigths all set to 1.\n")
-    object$weights <- list(columns = rep(1 / nrow(object$data$dataTraits),
+    object$weights <- list(columns = rep(1 / nrow(object$data$dataTraits),																		  
                                          nrow(object$data$dataTraits)),
-                           rows = rep(1 / object$Nobs, object$Nobs)
-                           )
+                           rows = rep(1 / object$Nobs, object$Nobs))
   } else if (!is.list(object$weights)) {
     ll <- length(object$weights)
     if (ll == object$Nobs) {
       warning("no species weights supplied with response$CWM; ",
               "weigths all set to 1.\n")
       object$weights <- list(columns = object$weights,
-                        rows = rep(1 / object$Nobs, object$Nobs)
-                             )
+                             rows = rep(1 / object$Nobs, object$Nobs))
     } else if (ll == nrow(object$data$dataTraits)) {
       warning("no site weights supplied with response$CWM; ", 
               "site weigths all set to 1.\n")
       object$weights <- list(
         columns = rep(1 / nrow(object$data$dataTraits),
-                                          nrow(object$data$dataTraits)),
-        rows = object$weights
-                             )
+                      nrow(object$data$dataTraits)),
+        rows = object$weights)
     }
   }
-  if (!is.null(object$weights)){
-    if (is.null(object$weights$rows)){
+  if (!is.null(object$weights)) {
+    if (is.null(object$weights$rows)) {
       warning("no site weights supplied with response$CWM; ", 
               "site weigths all set to 1.\n")
       object$weights$rows <- rep(1 / object$Nobs, object$Nobs)
@@ -339,9 +340,10 @@ checkCWM2dc_CA <- function(object,
                                     nrow(object$data$dataTraits))
     }
   }
-  # make sure columns is the first in the list...
-  object$weights <- list(columns = object$weights$columns, rows = object$weights$rows)
-  object$weights <- lapply(object$weights, function(x)x/sum(x))
+  # make sure columns is the first in the list.
+  object$weights <- list(columns = object$weights$columns, 
+                         rows = object$weights$rows)
+  object$weights <- lapply(X = object$weights, FUN = function(x) x / sum(x))
   # change ~. to names
   formulaTraits <- change_reponse(object$formulaTraits, "Y", 
                                   object$data$dataTraits)
@@ -360,26 +362,39 @@ checkCWM2dc_CA <- function(object,
   object$CWM2CWM_ortho <- CWM2ortho$CWM2CWM_ortho
   return(object)
 }
+
 #' @noRd
 #' @keywords internal
-f_wmean <- function(formulaEnv, tY, dataEnv, weights, name = "SNC"){
+f_wmean <- function(formulaEnv, 
+                    tY, 
+                    dataEnv, 
+                    weights, 
+                    name = "SNC") {
   # SNC and SNC ortho or 
   # CWM and CWM ortho if name = "CwM" from formulaTraits, Y and dataTraits
   tot <- sum(tY)
   formulaEnv <- change_reponse(formulaEnv, "Y", dataEnv)
-  if (name == "SNC")  w <- weights$rows else w <- weights$columns
+  if (name == "SNC") {
+    w <- weights$rows 
+  } else {
+    w <- weights$columns
+  }
   msqr <- msdvif(formulaEnv, dataEnv, w, XZ = FALSE)
   sWn <- sqrt(w)
   X <- msqr$Xw / sWn 
   msd <- msqr$meansdvif
   E_ortho <- qr.Q(msqr$qrX) / sWn
   # so Q represents the orthonormalized predictors
-  if (name == "SNC")  w <- weights$columns else w <- weights$rows
-  SNC <- diag(1 /( tot * w)) %*% as.matrix(tY) %*% X
+  if (name == "SNC") {
+    w <- weights$columns
+  } else {
+    w <- weights$rows
+  }
+  SNC <- diag(1 / (tot * w)) %*% as.matrix(tY) %*% X
   SNC2SNC_ortho <- try(solve(qr.R(msqr$qrX)))
   if (inherits(SNC2SNC_ortho, "try-error")) {
     warning("singular environment data. Env_explain not available.\n") 
-    SNC2SNC_ortho <- matrix(NA,nrow = ncol(SNC), ncol= 1)
+    SNC2SNC_ortho <- matrix(nrow = ncol(SNC), ncol = 1)
   }
   SNCs_orthonormal_env <- SNC %*% SNC2SNC_ortho
   env_explain <- sum(SNCs_orthonormal_env ^ 2 * w)
@@ -390,10 +405,16 @@ f_wmean <- function(formulaEnv, tY, dataEnv, weights, name = "SNC"){
               wmean_ortho = SNCs_orthonormal_env, name = name, to_ortho=E_ortho)
   return(res)
 }
+
 #' @noRd
 #' @keywords internal
-check_data_dc_CA <- function(formulaEnv, formulaTraits,
-                             response, dataEnv, dataTraits, divideBySiteTotals, call){
+check_data_dc_CA <- function(formulaEnv, 
+                             formulaTraits,
+                             response,
+                             dataEnv, 
+                             dataTraits,
+                             divideBySiteTotals,
+                             call) {
   #  check and amend: make sure there are no empty rows or columns
   if (any(is.na(response))) {
     stop("The response should not have missing entries.\n")
@@ -415,14 +436,14 @@ check_data_dc_CA <- function(formulaEnv, formulaTraits,
     TotR <- rowSums(response)
     id0 <- which(TotR == 0)
     if (length(id0)) {
-      response <- response[-id0, ]
-      dataEnv  <- dataEnv[-id0, ]
+      response <- response[-id0,,drop= FALSE ]
+      dataEnv  <- dataEnv[-id0,,drop= FALSE ]
     }
     TotC <- colSums(response)
     id0 <- which(TotC == 0)
     if (length(id0)) {
-      response <- response[, -id0]
-      dataTraits <- dataTraits[-id0, ]
+      response <- response[, -id0,drop= FALSE]
+      dataTraits <- dataTraits[-id0,,drop= FALSE ]
     }
   }
   # delete columns with missing data
@@ -434,7 +455,7 @@ check_data_dc_CA <- function(formulaEnv, formulaTraits,
               "has missing values and is deleted from the environmental data.\n")
     }
   }
-  dataEnv <- dataEnv[, id]
+  dataEnv <- dataEnv[, id, drop = FALSE]
   id <- rep(FALSE, ncol(dataTraits))
   for (ii  in seq_along(id)) {
     id[ii] <- sum(is.na(dataTraits[,ii])) == 0
@@ -443,7 +464,7 @@ check_data_dc_CA <- function(formulaEnv, formulaTraits,
               "has missing values and is deleted from trait data.\n")
     }
   }
-  dataTraits <- dataTraits[, id]
+  dataTraits <- dataTraits[, id, drop = FALSE]
   dataEnv <- as.data.frame(lapply(dataEnv, function(x) {
     if (is.character(x)) x <- as.factor(x) else x
     return(x)
@@ -461,8 +482,8 @@ check_data_dc_CA <- function(formulaEnv, formulaTraits,
     TotR <- rep(1, length(TotR))
   }
   TotC <- colSums(response)
-  TotR <- TotR /sum(TotR)
-  TotC <- TotC/sum(TotC)
+  TotR <- TotR / sum(TotR)
+  TotC <- TotC / sum(TotC)
   weights <- list(columns = TotC, rows = TotR) # unit sums
   Nobs <- nrow(response)
   if (is.null(formulaTraits)) {
@@ -476,8 +497,9 @@ check_data_dc_CA <- function(formulaEnv, formulaTraits,
     warning("formulaEnv set to ~. in fCWMSNC.\n")
   }
   
-  out <- list(formulaTraits=formulaTraits,formulaEnv= formulaEnv,
-              data = list(Y=response, dataEnv= dataEnv, dataTraits=dataTraits),
+  out <- list(formulaTraits = formulaTraits, formulaEnv = formulaEnv,
+              data = list(Y = response, dataEnv = dataEnv, 
+                          dataTraits = dataTraits),
               call = call,  weights = weights, Nobs = Nobs)
   return(out)
 }
